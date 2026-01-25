@@ -16,6 +16,7 @@
     "@mui/material": "^6.1.1",
     "@mui/material-nextjs": "^7.3.7",
     "@mui/styled-engine-sc": "^7.3.7",
+    "@mui/x-charts": "^7.23.2",
     "@neondatabase/serverless": "^1.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "axios": "^1.13.2",

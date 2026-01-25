@@ -21,19 +21,15 @@ export default async function authenticate(
   debug?: boolean
 ) {
   const cookieStore = await cookies();
-  const authorization = cookieStore.get("token")?.value;
+  const token = cookieStore.get("token")?.value;
   if (debug) {
-    console.debug("Authorization header:", authorization);
+    console.debug("token:", token);
   }
-  if (!authorization) {
+  if (!token) {
     if (debug) {
-      console.debug("Authorization header missing");
+      console.debug("token missing");
     }
     return undefined;
-  }
-  const token = authorization.split(" ")[1];
-  if (debug) {
-    console.debug("Token at authenticate fx:", token);
   }
   const decoded = verify(token, debug);
   if (debug) {

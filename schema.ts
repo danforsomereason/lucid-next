@@ -7,7 +7,7 @@ import {
   date,
   uuid,
 } from "drizzle-orm/pg-core";
-import { desc, relations } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
 // Enums
@@ -92,6 +92,16 @@ export const coursesTable = pgTable("courses", {
   quizTitle: text("quiz_title"),
 });
 
+export const courseCategoriesTable = pgTable("course_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  courseId: uuid("course_id")
+    .notNull()
+    .references(() => coursesTable.id),
+  categoryId: uuid("category_id")
+    .notNull()
+    .references(() => categoriesTable.id),
+});
+
 export const learningObjectivesTable = pgTable("learning_objectives", {
   id: uuid("id").primaryKey().defaultRandom(),
   courseId: uuid("course_id")
@@ -102,10 +112,13 @@ export const learningObjectivesTable = pgTable("learning_objectives", {
 
 export const modulesTable = pgTable("modules", {
   id: uuid("id").primaryKey().defaultRandom(),
+  content: text("content").notNull(),
   courseId: uuid("course_id")
     .notNull()
     .references(() => coursesTable.id),
+  estimatedMinutes: integer("estimated_minutes").notNull(),
   heading: text("heading").notNull(),
+  order: integer("order").notNull(),
 });
 
 export const questionsTable = pgTable("questions", {
@@ -116,7 +129,7 @@ export const questionsTable = pgTable("questions", {
   order: integer("order").notNull(),
   questionText: text("question_text").notNull(),
   questionType: questionTypeEnum("question_type").notNull(),
-  correctOptionId: uuid("correct_option_id").notNull(),
+  correctOptionOrder: integer("correct_option_order").notNull(),
   explanation: text("explanation").notNull(),
 });
 
@@ -126,6 +139,7 @@ export const optionsTable = pgTable("options", {
     .notNull()
     .references(() => questionsTable.id),
   option: text("option").notNull(),
+  order: integer("order").notNull(),
 });
 
 export const organizationsTable = pgTable("organizations", {
@@ -230,6 +244,10 @@ export const usersRelations = relations(usersTable, ({ one, many }) => ({
   }),
 }));
 
+export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
+  courseCategories: many(courseCategoriesTable),
+}));
+
 export const coursesRelations = relations(coursesTable, ({ one, many }) => ({
   instructor: one(usersTable, {
     fields: [coursesTable.instructorId],
@@ -239,6 +257,7 @@ export const coursesRelations = relations(coursesTable, ({ one, many }) => ({
   modules: many(modulesTable),
   questions: many(questionsTable),
   assignedCourses: many(assignedCoursesTable),
+  courseCategories: many(courseCategoriesTable),
 }));
 
 export const learningObjectivesRelations = relations(
