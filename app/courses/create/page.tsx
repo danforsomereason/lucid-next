@@ -13,7 +13,7 @@ import z, { ZodError } from "zod";
 
 export default function CoursesCreate() {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState('');
   const [modules, setModules] = useState<ModuleDef[]>([NEW_MODULE]);
   const [quizQuestions, setQuizQuestions] = useState<QuestionDef[]>([]);
 
@@ -163,15 +163,15 @@ export default function CoursesCreate() {
   }
 
   async function submitCourse () {
-    const input = {
+    const input: CreateCourseInput = {
       title,
-      // description,
+      description,
       modules,
       questions: quizQuestions
     }
     try {
-      // const body = createCourseInputSchema.parse(input)
-      await axios.post('/api/v1/courses/create', input)
+      const body = createCourseInputSchema.parse(input)
+      await axios.post('/api/v1/courses/create', body)
     } catch (error) {
       if (!(error instanceof Error)) {
         alert('Unknown error')

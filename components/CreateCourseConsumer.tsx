@@ -90,9 +90,9 @@ export default function CreateCourseConsumer() {
               value={module.heading}
               onChange={(event) => {
                 courseCreator.updateModule(
-                  "heading",
+                  "estimatedMinutes",
                   moduleIndex,
-                  event.target.value
+                  1
                 );
               }}
             />

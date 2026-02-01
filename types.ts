@@ -222,6 +222,9 @@ export type CreateCourseInput = z.infer<typeof createCourseInputSchema>
 export const createCourseOutputSchema = courseSchema
 export type CreateCourseOutput = z.infer<typeof createCourseOutputSchema>
 
+export const readCoursesOutputSchema = courseSchema.array()
+export type ReadCoursesOutput = z.infer<typeof readCoursesOutputSchema>
+
 export const endpointSchemas = {
   register: {
     input: registerInputSchema,

@@ -21,6 +21,7 @@ import CourseCard from "@/components/CourseCard";
 import { getCourses, getCoursesByCategory } from "@/requests/courses";
 import "@/styles/Courses.css";
 import { useSearchParams } from "next/navigation";
+import { Course } from "@/types";
 
 const tags = [
   "Human Resources",
@@ -45,8 +46,8 @@ const licenseTypes = [
 
 const Courses: React.FC = () => {
   const searchRef = useRef<HTMLDivElement | null>(null);
-  const [courses, setCourses] = useState([]);
-  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
   const [search, setSearch] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedLicenseTypes, setSelectedLicenseTypes] = useState<string[]>(
@@ -56,6 +57,8 @@ const Courses: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 12;
   const searchParams = useSearchParams();
+
+  console.log('courses', courses)
 
   // Scroll to search list
   const handleBrowseClick = () => {
@@ -93,17 +96,18 @@ const Courses: React.FC = () => {
 
   // Update filtered courses based on search, tags, and license types
   useEffect(() => {
-    let results = courses.filter((course: any) => {
-      const matchesSearch = course.course_name
+    let results = courses.filter((course) => {
+      const matchesSearch = course.title
         .toLowerCase()
         .includes(search.toLowerCase());
       const matchesTag = selectedTags.length
-        ? selectedTags.some((tag) => course.course_tags.includes(tag))
+        ? false // selectedTags.some((tag) => course..includes(tag))
         : true;
       const matchesLicense = selectedLicenseTypes.length
-        ? selectedLicenseTypes.some((type) =>
-          course.course_tags.includes(type)
-        )
+        ? false
+        // ? selectedLicenseTypes.some((type) =>
+        //   course.course_tags.includes(type)
+        // )
         : true;
 
       return matchesSearch && matchesTag && matchesLicense;
@@ -332,13 +336,13 @@ const Courses: React.FC = () => {
           {/* Mapped Courses & Pagination */}
           <Box className="course-">
             <Grid className="course-grid">
-              {currentCourses.map((course: any) => (
+              {currentCourses.map((course) => (
                 <Grid
                   item
                   xs={12}
                   sm={6}
                   md={4}
-                  key={course._id}
+                  key={course.id}
                 >
                   <CourseCard
                     course={course}

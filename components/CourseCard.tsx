@@ -1,3 +1,4 @@
+import { Course } from "@/types";
 import {
   Button,
   Card,
@@ -9,12 +10,7 @@ import {
 import { useRouter } from 'next/navigation'
 
 interface CourseCardProps {
-  course: {
-    _id: string;
-    course_name: string;
-    course_description: string;
-    ce_hours: number;
-  };
+  course: Course;
   className?: string;
 }
 
@@ -22,14 +18,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, className }) => {
   const router = useRouter();
 
   const handleViewDetails = () => {
-    router.push(`/course/${course._id}`);
+    router.push(`/course/${course.id}`);
   };
 
   return (
     <Card className={`course-card ${className || ""}`}>
       <CardHeader
         className="course-card-header"
-        title={course.course_name}
+        title={course.title}
         sx={{
           pb: 0,
           "& .MuiCardHeader-content": {
@@ -44,7 +40,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, className }) => {
         className="course-card-content"
         sx={{ pt: 0, position: "relative", height: "100%" }}
       >
-        <p>{course.course_description}</p>
+        <p>{course.description}</p>
         <Box
           sx={{
             display: "flex",
@@ -52,7 +48,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, className }) => {
             mb: 0,
           }}
         >
-          <p>CE Hours: {course.ce_hours}</p>
+          <p>CE Hours: {course.ceHours}</p>
 
           <Button
             variant="contained"

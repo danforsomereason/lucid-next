@@ -1,14 +1,11 @@
+import { readCoursesOutputSchema } from "@/types";
 import axios from "axios";
 
 export async function getCourses() {
-  try {
-    const url = 'http://localhost:3000/api/v1/courses';
-    const response = await axios.get(url);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching courses:", error);
-    return [];
-  }
+  const url = 'http://localhost:3000/api/v1/courses';
+  const response = await axios.get(url);
+  const output = readCoursesOutputSchema.parse(response.data)
+  return output;
 }
 
 export async function getCoursesByCategory(categoryId: string) {
