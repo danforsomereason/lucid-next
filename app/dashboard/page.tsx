@@ -1,12 +1,10 @@
 'use client'
 
-import { useContext } from "react";
-import { globalContext } from "../../context/globalContext";
-import { DashboardLayout } from "../../components/dashboard/DashboardLayout";
 import { Box, Typography, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { redirect } from "next/navigation";
-// import BasicPie from "../../components/dashboard/UserCompliance";
+import BasicPie from "@/components/BasicPie";
+import { redirect } from 'next/navigation'
+import { useGlobal } from "@/context/globalContext";
 
 // Pie chart will show completed course / required course * 100
 // If the user belongs to an organization, the org will determine required courses
@@ -24,127 +22,123 @@ import { redirect } from "next/navigation";
 // List of certificates - for course that have been completed
 
 const Dashboard: React.FC = () => {
-  const globalValue = useContext(globalContext);
-  console.log("Global value: ", globalValue);
-  const userName = globalValue?.currentUser?.firstName;
-
+  const globalValue = useGlobal();
+  const userName = globalValue?.currentUser?.firstName || "User";
   if (!globalValue || !globalValue.currentUser) {
-    return redirect("/signin");
+    redirect("/signin");
   }
 
   return (
-    <DashboardLayout>
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 9, lg: 6 }}>
-          <Paper
+    <Grid container spacing={3}>
+      <Grid size={{ xs: 12, md: 9, lg: 6 }}>
+        <Paper
+          sx={{
+            p: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Required Courses ({userName})
+          </Typography>
+          <Box
             sx={{
-              p: 2,
-              height: "100%",
+              flexGrow: 1,
+              position: "relative",
+              minHeight: "300px",
+              width: "100%",
               display: "flex",
-              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <Typography variant="h6" gutterBottom>
-              Required Courses
-            </Typography>
-            <Box
-              sx={{
-                flexGrow: 1,
-                position: "relative",
-                minHeight: "300px",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* <BasicPie /> */}
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 9, md: 6 }}>
-          <Paper
-            sx={{
-              p: 2,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Required Courses
-            </Typography>
-            <Box
-              sx={{
-                flexGrow: 1,
-                position: "relative",
-                minHeight: "300px",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* <BasicPie /> */}
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 9, md: 6 }}>
-          <Paper
-            sx={{
-              p: 2,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Required Courses
-            </Typography>
-            <Box
-              sx={{
-                flexGrow: 1,
-                position: "relative",
-                minHeight: "300px",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* <BasicPie /> */}
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 9, md: 6 }}>
-          <Paper
-            sx={{
-              p: 2,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Required Courses
-            </Typography>
-            <Box
-              sx={{
-                flexGrow: 1,
-                position: "relative",
-                minHeight: "300px",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* <BasicPie /> */}
-            </Box>
-          </Paper>
-        </Grid>
+            <BasicPie />
+          </Box>
+        </Paper>
       </Grid>
-    </DashboardLayout>
+      <Grid size={{ xs: 12, sm: 9, md: 6 }}>
+        <Paper
+          sx={{
+            p: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Required Courses
+          </Typography>
+          <Box
+            sx={{
+              flexGrow: 1,
+              position: "relative",
+              minHeight: "300px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <BasicPie />
+          </Box>
+        </Paper>
+      </Grid>
+      <Grid size={{ xs: 12, sm: 9, md: 6 }}>
+        <Paper
+          sx={{
+            p: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Required Courses
+          </Typography>
+          <Box
+            sx={{
+              flexGrow: 1,
+              position: "relative",
+              minHeight: "300px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <BasicPie />
+          </Box>
+        </Paper>
+      </Grid>
+      <Grid size={{ xs: 12, sm: 9, md: 6 }}>
+        <Paper
+          sx={{
+            p: 2,
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Required Courses
+          </Typography>
+          <Box
+            sx={{
+              flexGrow: 1,
+              position: "relative",
+              minHeight: "300px",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <BasicPie />
+          </Box>
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

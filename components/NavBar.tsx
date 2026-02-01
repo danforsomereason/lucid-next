@@ -1,23 +1,31 @@
 'use client'
 
-import React, { useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
+import Popover from "@mui/material/Popover";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MenuIcon from "@mui/icons-material/Menu";
-import IconButton from "@mui/material/IconButton";
-import { globalContext } from "../context/globalContext";
-import { useContext } from "react";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useGlobal } from "../context/globalContext";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const context = useContext(globalContext);
+  const context = useGlobal();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) {
+    return <></>
+  }
   // need to get the token out of the context as opposed to the localStorage
   const userName =
     context?.currentUser?.firstName || "You are not logged in.";
@@ -132,48 +140,48 @@ const NavBar: React.FC = () => {
         )}
 
         {/* Menu (for both mobile and logged-in users) */}
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
-          slotProps={{
-            paper: {
-              sx: {
-                '&[aria-hidden="true"]': {
-                  visibility: "hidden",
-                  display: "none",
-                },
-              },
-            },
-          }}
-        >
-          {menuItems.map((item) => (
-            <MenuItem
-              key={item.path}
-              onClick={() => {
-                router.push(item.path);
-                handleMenuClose();
-              }}
-            >
-              {item.label}
-            </MenuItem>
-          ))}
-          {context?.currentUser ? (
-            <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
-          ) : (
-            <MenuItem
-              onClick={() => {
-                router.push("/signin");
-                handleMenuClose();
-              }}
-            >
-              Sign In
-            </MenuItem>
-          )}
-        </Menu>
+        {mounted && typeof window !== 'undefined' && (
+          <Popover
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={handleMenuClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            disableScrollLock
+          >
+            <MenuList>
+            {menuItems.map((item) => (
+              <MenuItem
+                key={item.path}
+                onClick={() => {
+                  router.push(item.path);
+                  handleMenuClose();
+                }}
+              >
+                {item.label}
+              </MenuItem>
+            ))}
+            {context?.currentUser ? (
+              <MenuItem onClick={handleLogout}>Sign Out</MenuItem>
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  router.push("/signin");
+                  handleMenuClose();
+                }}
+              >
+                Sign In
+              </MenuItem>
+            )}
+            </MenuList>
+          </Popover>
+        )}
       </Toolbar>
     </AppBar>
   );

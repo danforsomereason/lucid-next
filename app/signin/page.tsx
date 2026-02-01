@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Button, TextField, Typography, Box, Link } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { globalContext } from "@/context/globalContext";
-import { login } from "@/requests/user";
+import { useGlobal } from "@/context/globalContext";
+import { login } from "@/requests/users";
 
 interface SignUpFormData {
     email: string;
@@ -14,7 +14,7 @@ interface SignUpFormData {
 const SignIn: React.FC = () => {
     // navigate to the dashboard page after successful login
     const router = useRouter();
-    const globalValue = useContext(globalContext);
+    const globalValue = useGlobal();
     // Create a state to store the form data
     // SignUpFormData is an interface that defines the shape of the form data, so the angle brackets are used to create a state of that type
     // Iniitially, the form data is an empty object with empty strings for both fields
@@ -36,7 +36,6 @@ const SignIn: React.FC = () => {
         // We pass the email and password from our form state as arguments
         const response = await login(formData.email, formData.password);
         // if there is a global value, call the setCurrentUser
-        console.log("response", response);
         globalValue?.setCurrentUser(response.user);
         // After successful login, use the navigate function from react-router-dom
         // to programmatically redirect the user to the dashboard page

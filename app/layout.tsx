@@ -8,6 +8,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import '../styles/global.css';
 
 export const metadata: Metadata = {
   title: "Lucid",
@@ -24,7 +25,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppRouterCacheProvider>
+        <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <GlobalProvider currentUser={currentUser}>
             <ThemeProvider theme={theme}>
               {children}
