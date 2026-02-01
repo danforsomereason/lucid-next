@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect, useRef } from "react";
 import {
-  Grid,
+  Grid2,
   Divider,
   FormGroup,
   Typography,
@@ -337,23 +337,20 @@ const Courses: React.FC = () => {
           </Box>
 
           {/* Mapped Courses & Pagination */}
-          <Box className="course-grid-container" sx={{ flex: "1 1 auto" }}>
-            <Grid className="course-grid">
+          <Box className="course-grid-container" sx={{ flex: "1 1 auto", minWidth: "80%" }}>
+            <Grid2 container spacing={2} className="course-grid">
               {currentCourses.map((course) => (
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={4}
-                  key={course.id}
+                <Grid2
+                size={{ xs: 12 }}
+                key={course.id}
                 >
                   <CourseCard
                     course={course}
                     className="course-card"
                   ></CourseCard>
-                </Grid>
+                </Grid2>
               ))}
-            </Grid>
+            </Grid2>
             <Box display="flex" justifyContent="center" mt={4}>
               <Pagination
                 count={Math.ceil(
