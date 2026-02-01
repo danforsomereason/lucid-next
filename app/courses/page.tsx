@@ -337,7 +337,7 @@ const Courses: React.FC = () => {
           </Box>
 
           {/* Mapped Courses & Pagination */}
-          <Box className="course-">
+          <Box className="course-grid-container" sx={{ flex: "1 1 auto" }}>
             <Grid className="course-grid">
               {currentCourses.map((course) => (
                 <Grid
