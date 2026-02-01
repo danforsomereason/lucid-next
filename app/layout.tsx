@@ -1,5 +1,4 @@
 import GlobalProvider from '@/components/GlobalProvider';
-import { globalContext } from '@/context/globalContext';
 import authenticate from '@/utils/authenticate';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import type { Metadata } from "next";
@@ -20,7 +19,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const currentUser = await authenticate()
+  const currentUser = await authenticate(true)
+  console.log('currentUser', currentUser)
   return (
     <html lang="en">
       <body>
