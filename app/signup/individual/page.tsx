@@ -8,9 +8,12 @@ import {
   Card,
   Container,
   FormControl,
-  Grid,
+  Grid2,
   InputLabel,
   Link,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Step,
   StepLabel,
   Stepper,
@@ -19,7 +22,7 @@ import {
 } from "@mui/material";
 import { addYears, format } from "date-fns";
 import { useRouter } from "next/navigation";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface UserFormData {
   firstName: string;
@@ -83,11 +86,10 @@ const IndividualCheckout: React.FC = () => {
     }));
   };
 
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      licenseType: e.target.value,
     }));
   };
 
@@ -156,9 +158,9 @@ const IndividualCheckout: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Grid container spacing={4}>
+      <Grid2 container spacing={4}>
         {/* Left side - Order Summary */}
-        <Grid item xs={12} md={4}>
+        <Grid2 size={{ xs: 12, md: 4 }}>
           <Card sx={{ p: 3, bgcolor: "background.paper" }}>
             <Typography
               variant="h6"
@@ -214,11 +216,11 @@ const IndividualCheckout: React.FC = () => {
               </Box>
             </Box>
           </Card>
-        </Grid>
+        </Grid2>
 
         {/* Right side - Checkout Form */}
 
-        <Grid item xs={12} md={8}>
+        <Grid2 size={{ xs: 12, md: 8 }}>
           <Box sx={{ width: "100%", mb: 4 }}>
             <Stepper activeStep={activeStep}>
               {steps.map((label) => (
@@ -231,8 +233,8 @@ const IndividualCheckout: React.FC = () => {
 
           {activeStep === 0 && (
             <Box component="form" noValidate onSubmit={handleNext}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+              <Grid2 container spacing={3}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -241,9 +243,18 @@ const IndividualCheckout: React.FC = () => {
                     value={formData.firstName}
                     onChange={handleTextFieldChange}
                     autoComplete="given-name"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: "56px",
+                      },
+                      input: { 
+                        color: "var(--black-color)",
+                        padding: "16.5px 14px",
+                      },
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12} sm={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <TextField
                     required
                     fullWidth
@@ -252,9 +263,18 @@ const IndividualCheckout: React.FC = () => {
                     value={formData.lastName}
                     onChange={handleTextFieldChange}
                     autoComplete="family-name"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: "56px",
+                      },
+                      input: { 
+                        color: "var(--black-color)",
+                        padding: "16.5px 14px",
+                      },
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
                   <TextField
                     required
                     fullWidth
@@ -265,9 +285,18 @@ const IndividualCheckout: React.FC = () => {
                     onChange={handleTextFieldChange}
                     onBlur={checkExistingUser}
                     autoComplete="email"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: "56px",
+                      },
+                      input: { 
+                        color: "var(--black-color)",
+                        padding: "16.5px 14px",
+                      },
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
                   <TextField
                     required
                     fullWidth
@@ -277,9 +306,18 @@ const IndividualCheckout: React.FC = () => {
                     value={formData.password}
                     onChange={handleTextFieldChange}
                     autoComplete="new-password"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: "56px",
+                      },
+                      input: { 
+                        color: "var(--black-color)",
+                        padding: "16.5px 14px",
+                      },
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
                   <TextField
                     required
                     fullWidth
@@ -290,34 +328,50 @@ const IndividualCheckout: React.FC = () => {
                     onChange={handleTextFieldChange}
                     onBlur={validateConfirmPassword}
                     autoComplete="new-password"
+                    sx={{
+                      "& .MuiInputBase-root": {
+                        height: "56px",
+                      },
+                      input: { 
+                        color: "var(--black-color)",
+                        padding: "16.5px 14px",
+                      },
+                    }}
                   />
-                </Grid>
-                <Grid item xs={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
                   <FormControl fullWidth required>
                     <InputLabel>License Type</InputLabel>
-                    <select
-                      name="licenseType"
+                    <Select
+                      label="License Type"
                       value={formData.licenseType}
                       onChange={handleSelectChange}
+                      sx={{
+                        "& .MuiInputBase-root": {
+                          height: "56px",
+                        },
+                      }}
                     >
-                      <option value='' disabled>Select a License Type</option>
+                      <MenuItem value="" disabled>
+                        Select a License Type
+                      </MenuItem>
                       {LICENSE_TYPES.map((license) => (
-                        <option
+                        <MenuItem
                           key={license.value}
                           value={license.value}
                         >
                           {license.label}
-                        </option>
+                        </MenuItem>
                       ))}
-                    </select>
+                    </Select>
                   </FormControl>
-                </Grid>
+                </Grid2>
                 {verificationMessage && (
-                  <Grid item xs={12}>
+                  <Grid2 size={{ xs: 12 }}>
                     <Typography color="error">
                       {verificationMessage}
                     </Typography>
-                  </Grid>
+                  </Grid2>
                 )}
                 {existingUserMessage && (
                   <Typography color="primary" sx={{ mt: 1 }}>
@@ -327,7 +381,7 @@ const IndividualCheckout: React.FC = () => {
                     </Link>
                   </Typography>
                 )}
-              </Grid>
+              </Grid2>
 
               <Box
                 sx={{
@@ -351,8 +405,8 @@ const IndividualCheckout: React.FC = () => {
               </Box>
             </Box>
           )}
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Container>
   );
 };

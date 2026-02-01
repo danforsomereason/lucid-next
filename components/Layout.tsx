@@ -36,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({
             zIndex: (theme) => theme.zIndex.drawer + 1 
           }}
         >
-          <NavBar />
+          {/* <NavBar /> */}
         </Box>
       )}
       <Box

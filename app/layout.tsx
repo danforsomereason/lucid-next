@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import type { Metadata } from "next";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/theme";
+import NavBar from '@/components/NavBar';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -21,13 +22,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const currentUser = await authenticate(true)
-  console.log('currentUser', currentUser)
+  console.log('currentUser:', currentUser)
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <GlobalProvider currentUser={currentUser}>
             <ThemeProvider theme={theme}>
+              <NavBar />
               {children}
             </ThemeProvider>
           </GlobalProvider>

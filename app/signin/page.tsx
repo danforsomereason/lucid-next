@@ -109,8 +109,14 @@ const SignIn: React.FC = () => {
                     fullWidth
                     sx={{
                         marginBottom: "20px",
-                        backgroundColor: "hsl(0, 0%, 95%)",
-                        input: { color: "var(--black-color)" },
+                        backgroundColor: "white",
+                        "& .MuiInputBase-root": {
+                            height: "56px",
+                        },
+                        input: { 
+                            color: "var(--black-color)",
+                            padding: "16.5px 14px",
+                        },
                         label: { color: "var(--black-color)" },
                         "& .MuiOutlinedInput-root": {
                             "& fieldset": {
@@ -119,6 +125,7 @@ const SignIn: React.FC = () => {
                             "&:hover fieldset": {
                                 borderColor: "var(--secondary-color)",
                             },
+                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                         },
                     }}
                 />
@@ -133,8 +140,14 @@ const SignIn: React.FC = () => {
                     fullWidth
                     sx={{
                         marginBottom: "20px",
-                        backgroundColor: "hsl(0, 0%, 95%)",
-                        input: { color: "var(--black-color)" },
+                        backgroundColor: "white",
+                        "& .MuiInputBase-root": {
+                            height: "56px",
+                        },
+                        input: { 
+                            color: "var(--black-color)",
+                            padding: "16.5px 14px",
+                        },
                         label: { color: "var(--black-color)" },
                         "& .MuiOutlinedInput-root": {
                             "& fieldset": {
@@ -143,6 +156,7 @@ const SignIn: React.FC = () => {
                             "&:hover fieldset": {
                                 borderColor: "var(--secondary-color)",
                             },
+                            boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                         },
                     }}
                 />
@@ -157,6 +171,7 @@ const SignIn: React.FC = () => {
                         padding: "15px 30px",
                         backgroundColor: "var(--secondary-color)",
                         color: "var(--white-color)",
+                        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                         "&:hover": {
                             backgroundColor: "var(--primary-color)",
                         },
