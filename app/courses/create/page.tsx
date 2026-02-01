@@ -158,31 +158,31 @@ export default function CoursesCreate() {
   }
 
   function clearForm() {
+    setTitle("");
+    setDescription("");
     setModules([NEW_MODULE]);
     setQuizQuestions([]);
   }
 
-  async function submitCourse () {
+  async function submitCourse() {
     const input: CreateCourseInput = {
       title,
       description,
       modules,
-      questions: quizQuestions
-    }
+      questions: quizQuestions,
+    };
     try {
-      const body = createCourseInputSchema.parse(input)
-      await axios.post('/api/v1/courses/create', body)
+      const body = createCourseInputSchema.parse(input);
+      await axios.post("/api/v1/courses/create", body);
     } catch (error) {
       if (!(error instanceof Error)) {
-        alert('Unknown error')
-        throw error
+        throw new Error("Unknown error occurred");
       }
-      if (!(error instanceof ZodError)) {
-        alert(error.message)
-        return
+      if (error instanceof ZodError) {
+        const pretty = z.prettifyError(error);
+        throw new Error(pretty);
       }
-      const pretty = z.prettifyError(error)
-      alert(pretty)
+      throw error;
     }
   }
 

@@ -1,9 +1,12 @@
 import {
   Button,
   Container,
+  FormControl,
+  Grid2,
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Stack,
   TextField,
   Typography,
@@ -11,57 +14,132 @@ import {
   DialogTitle,
   DialogActions,
   DialogContent,
+  Alert,
+  Box,
+  Card,
+  CardContent,
+  IconButton,
 } from "@mui/material";
 import { Fragment, useState } from "react";
-// import { NEW_MODULE, NEW_QUIZ_QUESTION } from "../constants";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import { questionTypeSchema } from "@/types";
 import { useCourseCreator } from "@/context/courseCreator";
 import { useGlobal } from "@/context/globalContext";
+
+const textFieldSx = {
+  "& .MuiInputBase-root": {
+    height: "56px",
+  },
+  input: {
+    color: "var(--black-color)",
+    padding: "16.5px 14px",
+  },
+  "& .MuiInputBase-inputMultiline": {
+    padding: "16.5px 14px",
+    height: "auto",
+  },
+};
 
 export default function CreateCourseConsumer() {
   const global = useGlobal();
   const courseCreator = useCourseCreator();
   const [clearDialogOpened, setClearDialogOpened] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   if (!global.currentUser) {
-    return <p>Unauthenticated</p>
-  }
-
-  if (
-    !["instructor", "super_admin"].includes(global?.currentUser.role)
-  ) {
     return (
       <Container sx={{ mt: 4 }}>
-        <Typography variant="h3">
-          You must be classified as an instructor to create a course.
-        </Typography>
+        <Alert severity="error">Unauthenticated</Alert>
       </Container>
     );
   }
 
-  function handleOpenClearDialog() {
-    setClearDialogOpened(true);
+  if (!["instructor", "super_admin"].includes(global?.currentUser.role)) {
+    return (
+      <Container sx={{ mt: 4 }}>
+        <Alert severity="warning">
+          You must be classified as an instructor to create a course.
+        </Alert>
+      </Container>
+    );
   }
 
-  function handleCloseClearDialog() {
-    setClearDialogOpened(false);
-  }
+  const handleOpenClearDialog = () => setClearDialogOpened(true);
+  const handleCloseClearDialog = () => setClearDialogOpened(false);
+
+  const handleSubmitCourse = async () => {
+    try {
+      await courseCreator.submitCourse();
+      setSubmitStatus({
+        type: "success",
+        message: "Course created successfully!",
+      });
+      courseCreator.clearForm();
+      setTimeout(() => setSubmitStatus(null), 5000);
+    } catch (error) {
+      setSubmitStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Failed to create course",
+      });
+      setTimeout(() => setSubmitStatus(null), 5000);
+    }
+  };
+
+  const handleQuestionTypeChange = (
+    event: SelectChangeEvent<string>,
+    questionIndex: number
+  ) => {
+    const newQuestionType = questionTypeSchema.parse(event.target.value);
+    const currentQuestion = courseCreator.quizQuestions[questionIndex];
+    const newOptions =
+      newQuestionType === "True/False"
+        ? ["True", "False"]
+        : currentQuestion.options;
+
+    courseCreator.updateQuestion("questionType", questionIndex, newQuestionType);
+    courseCreator.updateQuestion("options", questionIndex, newOptions);
+  };
+
+  const handleCorrectAnswerChange = (
+    event: SelectChangeEvent<string>,
+    questionIndex: number
+  ) => {
+    courseCreator.updateQuestion(
+      "correctOptionOrder",
+      questionIndex,
+      Number(event.target.value)
+    );
+  };
 
   return (
-    <Container sx={{ mt: 8 }}>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      {submitStatus && (
+        <Alert
+          severity={submitStatus.type}
+          sx={{ mb: 3 }}
+          onClose={() => setSubmitStatus(null)}
+        >
+          {submitStatus.message}
+        </Alert>
+      )}
+
       <Typography variant="h3" gutterBottom>
         Course Details
       </Typography>
-      <Stack spacing={2}>
+      <Stack spacing={3} sx={{ mb: 4 }}>
         <TextField
           name="title"
           variant="outlined"
           label="Course Title"
           fullWidth
-          onChange={(event) =>
-            courseCreator.updateTitle(event.target.value)
-          }
+          required
+          onChange={(event) => courseCreator.updateTitle(event.target.value)}
           value={courseCreator.title}
+          sx={textFieldSx}
         />
         <TextField
           name="course_description"
@@ -74,248 +152,299 @@ export default function CreateCourseConsumer() {
           fullWidth
           multiline
           rows={4}
+          required
+          sx={textFieldSx}
         />
       </Stack>
-      <Typography variant="h3" gutterBottom sx={{ mt: 2 }}>
-        Course Modules
-      </Typography>
-      {courseCreator.modules.map((module, moduleIndex) => {
-        return (
-          <Stack spacing={2} sx={{ mb: 2 }} key={moduleIndex}>
-            <TextField
-              name="heading"
-              variant="outlined"
-              label="Module Name"
-              fullWidth
-              value={module.heading}
-              onChange={(event) => {
-                courseCreator.updateModule(
-                  "estimatedMinutes",
-                  moduleIndex,
-                  1
-                );
-              }}
-            />
-            <TextField
-              name="content"
-              variant="outlined"
-              label="Module Content"
-              fullWidth
-              value={module.content}
-              onChange={(event) => {
-                courseCreator.updateModule(
-                  "content",
-                  moduleIndex,
-                  event.target.value
-                );
-              }}
-            />
-            <TextField
-              name="estimated_minutes"
-              variant="outlined"
-              label="Estimated Minutes"
-              fullWidth
-              value={module.estimatedMinutes}
-              onChange={(event) => {
-                courseCreator.updateModule(
-                  "estimatedMinutes",
-                  moduleIndex,
-                  Number(event.target.value)
-                );
-              }}
-            />
-            <Button
-              onClick={() => {
-                courseCreator.removeModule(moduleIndex);
-              }}
-            >
-              Remove Module
-            </Button>
-          </Stack>
-        );
-      })}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={courseCreator.addModule}
-      >
-        Add Module
-      </Button>
-      <Typography variant="h3" gutterBottom sx={{ m: 2 }}>
-        Course Quiz
-      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Typography variant="h3">Course Modules</Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={courseCreator.addModule}
+            sx={{
+              bgcolor: "var(--secondary-color)",
+              "&:hover": {
+                bgcolor: "var(--primary-color)",
+              },
+            }}
+          >
+            Add Module
+          </Button>
+        </Box>
+        <Grid2 container spacing={3}>
+          {courseCreator.modules.map((module, moduleIndex) => (
+            <Grid2 size={{ xs: 12 }} key={moduleIndex}>
+              <Card variant="outlined">
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Typography variant="h6">Module {moduleIndex + 1}</Typography>
+                      <IconButton
+                        color="error"
+                        onClick={() => courseCreator.removeModule(moduleIndex)}
+                        disabled={courseCreator.modules.length === 1}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                    <TextField
+                      name="heading"
+                      variant="outlined"
+                      label="Module Name"
+                      fullWidth
+                      required
+                      value={module.heading}
+                      onChange={(event) => {
+                        courseCreator.updateModule(
+                          "heading",
+                          moduleIndex,
+                          event.target.value
+                        );
+                      }}
+                      sx={textFieldSx}
+                    />
+                    <TextField
+                      name="content"
+                      variant="outlined"
+                      label="Module Content"
+                      fullWidth
+                      required
+                      multiline
+                      rows={4}
+                      value={module.content}
+                      onChange={(event) => {
+                        courseCreator.updateModule(
+                          "content",
+                          moduleIndex,
+                          event.target.value
+                        );
+                      }}
+                      sx={textFieldSx}
+                    />
+                    <TextField
+                      name="estimated_minutes"
+                      variant="outlined"
+                      label="Estimated Minutes"
+                      fullWidth
+                      required
+                      type="number"
+                      inputProps={{ min: 0 }}
+                      value={module.estimatedMinutes || ""}
+                      onChange={(event) => {
+                        courseCreator.updateModule(
+                          "estimatedMinutes",
+                          moduleIndex,
+                          Number(event.target.value) || 0
+                        );
+                      }}
+                      sx={textFieldSx}
+                    />
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid2>
+          ))}
+        </Grid2>
+      </Box>
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+          <Typography variant="h3">Course Quiz</Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={courseCreator.addQuestion}
+            sx={{
+              bgcolor: "var(--secondary-color)",
+              "&:hover": {
+                bgcolor: "var(--primary-color)",
+              },
+            }}
+          >
+            Add Quiz Question
+          </Button>
+        </Box>
+        <Grid2 container spacing={3}>
+          {courseCreator.quizQuestions.map((question, questionIndex) => (
+            <Grid2 size={{ xs: 12 }} key={questionIndex}>
+              <Card variant="outlined">
+                <CardContent>
+                  <Stack spacing={3}>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <Typography variant="h6">Question {questionIndex + 1}</Typography>
+                      <IconButton
+                        color="error"
+                        onClick={() => courseCreator.removeQuestion(questionIndex)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
 
-      {courseCreator.quizQuestions.map((question, questionIndex) => {
-        const options = question.options.map((option, optionIndex) => {
-          return (
-            <Fragment key={optionIndex}>
-              <TextField
-                variant="outlined"
-                label="Option"
-                value={option}
-                disabled={
-                  question.questionType === "True/False"
-                }
-                onChange={(event) => {
-                  courseCreator.updateOption(
-                    questionIndex,
-                    optionIndex,
-                    event.target.value
-                  );
-                }}
-              />
-              {question.questionType !== "True/False" &&
-                optionIndex > 1 && (
-                  <Button
-                    onClick={() => {
-                      courseCreator.removeOption(
-                        questionIndex,
-                        optionIndex
-                      );
-                    }}
-                  >
-                    Remove Option
-                  </Button>
-                )}
-            </Fragment>
-          );
-        });
+                    <TextField
+                      name="questionText"
+                      variant="outlined"
+                      label="Question Text"
+                      fullWidth
+                      required
+                      value={question.questionText}
+                      onChange={(event) => {
+                        courseCreator.updateQuestion(
+                          "questionText",
+                          questionIndex,
+                          event.target.value
+                        );
+                      }}
+                      sx={textFieldSx}
+                    />
 
-        return (
-          <Stack spacing={2} key={questionIndex}>
-            <TextField
-              name="heading"
-              variant="outlined"
-              label="Question text"
-              fullWidth
-              value={question.questionText}
-              onChange={(event) => {
-                courseCreator.updateQuestion(
-                  "questionText",
-                  questionIndex,
-                  event.target.value
-                );
-              }}
-              sx={{ mt: 2 }}
-            />
-            <InputLabel>Question type</InputLabel>
-            <Select
-              variant="outlined"
-              value={question.questionType}
-              onChange={(event) => {
-                const newQuestionType = questionTypeSchema.parse(
-                  event.target.value
-                );
-                const newOptions =
-                  newQuestionType === "True/False"
-                    ? ["True", "False"]
-                    : question.options;
+                    <FormControl fullWidth>
+                      <InputLabel>Question Type</InputLabel>
+                      <Select
+                        label="Question Type"
+                        value={question.questionType}
+                        onChange={(event) =>
+                          handleQuestionTypeChange(event, questionIndex)
+                        }
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            height: "56px",
+                          },
+                        }}
+                      >
+                        <MenuItem value="True/False">True/False</MenuItem>
+                        <MenuItem value="Multiple Choice">Multiple Choice</MenuItem>
+                        <MenuItem value="All That Apply">All That Apply</MenuItem>
+                      </Select>
+                    </FormControl>
 
-                courseCreator.updateQuestion(
-                  "questionType",
-                  questionIndex,
-                  newQuestionType
-                );
-                courseCreator.updateQuestion(
-                  "options",
-                  questionIndex,
-                  newOptions
-                );
-              }}
-            >
-              <MenuItem value="True/False">True/False</MenuItem>
-              <MenuItem value="Multiple Choice">
-                Multiple choice
-              </MenuItem>
-              <MenuItem value="All That Apply">
-                All that apply
-              </MenuItem>
-            </Select>
-            {question.questionType !== "True/False" && (
-              <Button
-                onClick={() => {
-                  courseCreator.addOption(questionIndex);
-                }}
-              >
-                Add Option
-              </Button>
-            )}
-            {options}
-            <InputLabel>Correct Answer (Choose)</InputLabel>
-            <select
-              value={question.correctOptionOrder}
-              onChange={(event) => {
-                courseCreator.updateQuestion(
-                  "correctOptionOrder",
-                  questionIndex,
-                  Number(event.target.value)
-                );
-              }}
-            >
-              {question.options.map((option, optionIndex) => {
-                return (
-                  <option value={optionIndex} key={optionIndex}>
-                    {option}
-                  </option>
-                );
-              })}
-            </select>
-            <TextField
-              name="explanation"
-              variant="outlined"
-              label="Explanation"
-              value={question.explanation}
-              placeholder="Explain why this is the correct answer or that the other answers are incorrect"
-              onChange={(event) => {
-                courseCreator.updateQuestion(
-                  "explanation",
-                  questionIndex,
-                  event.target.value
-                );
-              }}
-            />
-            <Button
-              onClick={() => {
-                courseCreator.removeQuestion(questionIndex);
-              }}
-            >
-              Remove Question
-            </Button>
-          </Stack>
-        );
-      })}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={courseCreator.addQuestion}
-        sx={{ mb: 2 }}
-      >
-        Add Quiz Question
-      </Button>
-      <Stack direction={"row"} spacing={2} justifyContent={"flex-end"}>
+                    {question.questionType !== "True/False" && (
+                      <Button
+                        variant="outlined"
+                        startIcon={<AddIcon />}
+                        onClick={() => courseCreator.addOption(questionIndex)}
+                        sx={{ alignSelf: "flex-start" }}
+                      >
+                        Add Option
+                      </Button>
+                    )}
+
+                    <Stack spacing={2}>
+                      {question.options.map((option, optionIndex) => (
+                        <Box
+                          key={optionIndex}
+                          sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
+                        >
+                          <TextField
+                            variant="outlined"
+                            label={`Option ${optionIndex + 1}`}
+                            fullWidth
+                            value={option}
+                            disabled={question.questionType === "True/False"}
+                            onChange={(event) => {
+                              courseCreator.updateOption(
+                                questionIndex,
+                                optionIndex,
+                                event.target.value
+                              );
+                            }}
+                            sx={textFieldSx}
+                          />
+                          {question.questionType !== "True/False" &&
+                            optionIndex > 1 && (
+                              <IconButton
+                                color="error"
+                                onClick={() => {
+                                  courseCreator.removeOption(
+                                    questionIndex,
+                                    optionIndex
+                                  );
+                                }}
+                                sx={{ mt: 1 }}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            )}
+                        </Box>
+                      ))}
+                    </Stack>
+
+                    <FormControl fullWidth>
+                      <InputLabel>Correct Answer</InputLabel>
+                      <Select
+                        label="Correct Answer"
+                        value={question.correctOptionOrder.toString()}
+                        onChange={(event) =>
+                          handleCorrectAnswerChange(event, questionIndex)
+                        }
+                        sx={{
+                          "& .MuiInputBase-root": {
+                            height: "56px",
+                          },
+                        }}
+                      >
+                        {question.options.map((option, optionIndex) => (
+                          <MenuItem value={optionIndex.toString()} key={optionIndex}>
+                            {option || `Option ${optionIndex + 1}`}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+
+                    <TextField
+                      name="explanation"
+                      variant="outlined"
+                      label="Explanation"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      value={question.explanation}
+                      placeholder="Explain why this is the correct answer or why other answers are incorrect"
+                      onChange={(event) => {
+                        courseCreator.updateQuestion(
+                          "explanation",
+                          questionIndex,
+                          event.target.value
+                        );
+                      }}
+                      sx={textFieldSx}
+                    />
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid2>
+          ))}
+        </Grid2>
+      </Box>
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 4 }}>
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
+          color="error"
           onClick={handleOpenClearDialog}
-
         >
-          Clear
+          Clear Form
         </Button>
         <Button
           variant="contained"
-          color="primary"
-          onClick={courseCreator.submitCourse}
+          onClick={handleSubmitCourse}
+          sx={{
+            bgcolor: "var(--secondary-color)",
+            "&:hover": {
+              bgcolor: "var(--primary-color)",
+            },
+          }}
         >
-          Save
+          Save Course
         </Button>
       </Stack>
+
       <Dialog onClose={handleCloseClearDialog} open={clearDialogOpened}>
-        <DialogTitle>
-          Are you sure you want to clear the form?
-        </DialogTitle>
+        <DialogTitle>Clear Form?</DialogTitle>
         <DialogContent>
-          All modules and quiz questions will be cleared. This cannot
-          be undone.
+          <Typography>
+            Are you sure you want to clear the form? All modules and quiz
+            questions will be cleared. This cannot be undone.
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseClearDialog}>Cancel</Button>
@@ -324,14 +453,8 @@ export default function CreateCourseConsumer() {
               courseCreator.clearForm();
               handleCloseClearDialog();
             }}
-            sx={{
-              color: "error.main",
-              "&:hover": {
-                backgroundColor: "error.main",
-                color: "white",
-              },
-              transition: "all 0.2s ease-in-out",
-            }}
+            color="error"
+            variant="contained"
           >
             Clear
           </Button>

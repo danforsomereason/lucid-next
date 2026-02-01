@@ -13,10 +13,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import LaptopChromebookIcon from '@mui/icons-material/LaptopChromebook';
 import Link from "next/link";
 import { useGlobal } from "../context/globalContext";
 
 const drawerWidth = 280;
+const navbarHeight = 86;
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -29,6 +31,7 @@ const Sidebar = ({
 }: SidebarProps) => {
   const context = useGlobal();
   const isAdmin = context?.currentUser?.role === 'admin'
+  const isInstructorOrSuperAdmin = context?.currentUser?.role === 'instructor' || context?.currentUser?.role === 'super_admin'
 
   const userMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, path: "/dashboard" },
@@ -45,6 +48,15 @@ const Sidebar = ({
     { text: "Profile", icon: <PersonIcon />, path: "/dashboard/profile" },
   ];
 
+  const instructorMenuItems = [
+    ...userMenuItems,
+    { 
+      text: "Create Course", 
+      icon: <LaptopChromebookIcon />, 
+      path: "/courses/create" 
+    },
+  ];
+
   const adminMenuItems = [
     ...userMenuItems,
     { text: "Users", icon: <PeopleIcon />, path: "/dashboard/users" },
@@ -55,7 +67,11 @@ const Sidebar = ({
     },
   ];
 
-  const menuItems = isAdmin ? adminMenuItems : userMenuItems;
+  const menuItems = isAdmin 
+    ? adminMenuItems 
+    : isInstructorOrSuperAdmin 
+    ? instructorMenuItems 
+    : userMenuItems;
 
   const drawer = (
     <Box sx={{ mt: 6 }}>
@@ -96,7 +112,9 @@ const Sidebar = ({
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
-            mt: "64px",
+            top: `${navbarHeight}px`,
+            height: `calc(100% - ${navbarHeight}px)`,
+            zIndex: 1000,
           },
         }}
       >
@@ -111,7 +129,9 @@ const Sidebar = ({
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
-            mt: "64px",
+            top: `${navbarHeight}px`,
+            height: `calc(100% - ${navbarHeight}px)`,
+            zIndex: 1000,
           },
         }}
         open
