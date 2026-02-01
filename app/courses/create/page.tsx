@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { NEW_MODULE, NEW_QUIZ_QUESTION } from "@/constants";
-import { ModuleDef, QuestionDef } from "@/types";
+import { CreateCourseInput, createCourseInputSchema, ModuleDef, QuestionDef } from "@/types";
 import CreateCourseConsumer from "@/components/CreateCourseConsumer";
 import {
   CourseCreatorValue,
   CourseCreatorContext,
 } from "@/context/courseCreator";
+import axios from "axios";
+import z, { ZodError } from "zod";
 
 export default function CoursesCreate() {
   const [title, setTitle] = useState("");
@@ -52,6 +54,13 @@ export default function CoursesCreate() {
         return newModule;
       });
     });
+  }
+
+  function removeModule (moduleIndex: number) {
+    const newModules = modules.filter((module, innerIndex) => {
+      return innerIndex !== moduleIndex;
+    });
+    setModules(newModules);
   }
 
   function updateQuestion<K extends keyof QuestionDef>(
@@ -153,6 +162,30 @@ export default function CoursesCreate() {
     setQuizQuestions([]);
   }
 
+  async function submitCourse () {
+    const input = {
+      title,
+      // description,
+      modules,
+      questions: quizQuestions
+    }
+    try {
+      // const body = createCourseInputSchema.parse(input)
+      await axios.post('/api/v1/courses/create', input)
+    } catch (error) {
+      if (!(error instanceof Error)) {
+        alert('Unknown error')
+        throw error
+      }
+      if (!(error instanceof ZodError)) {
+        alert(error.message)
+        return
+      }
+      const pretty = z.prettifyError(error)
+      alert(pretty)
+    }
+  }
+
   const courseCreatorValue: CourseCreatorValue = {
     modules,
     quizQuestions,
@@ -162,6 +195,7 @@ export default function CoursesCreate() {
     updateDescription,
     addModule,
     updateModule,
+    removeModule,
     addQuestion,
     updateQuestion,
     removeQuestion,
@@ -169,6 +203,7 @@ export default function CoursesCreate() {
     updateOption,
     removeOption,
     clearForm,
+    submitCourse,
   };
 
   return (

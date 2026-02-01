@@ -14,6 +14,7 @@ export interface CourseCreatorValue {
         index: number,
         value: ModuleDef[K]
     ) => void;
+    removeModule: (moduleIndex: number) => void
     addQuestion: () => void;
     updateQuestion: <K extends keyof QuestionDef>(
         key: K,
@@ -29,6 +30,7 @@ export interface CourseCreatorValue {
     ) => void;
     removeOption: (questionIndex: number, optionIndex: number) => void;
     clearForm: () => void;
+    submitCourse: () => Promise<void>
 }
 
 export const CourseCreatorContext = createContext<

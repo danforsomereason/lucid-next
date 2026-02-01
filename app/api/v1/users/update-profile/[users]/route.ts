@@ -12,7 +12,6 @@ export async function POST(
   const user = await authenticate();
   const body: unknown = await request.json()
   const input = userProfileUpdateInputSchema.parse(body);
-  // authorization:
   if (user?.id !== context.params.users) {
     throw new Error("You can only update your own profile.");
   }

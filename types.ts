@@ -210,6 +210,17 @@ export type UserProfileUpdateInput = z.infer<typeof userProfileUpdateInputSchema
 export const userProfileUpdateOutputSchema = userSchema;
 export type UserProfileUpdateOutput = z.infer<typeof userProfileUpdateOutputSchema>;
 
+// Create course schemas
+export const createCourseInputSchema = z.object({
+  title: z.string().length(1),
+  description: z.string().length(1),
+  modules: moduleDefSchema.array().length(1),
+  questions: questionDefSchema.array().length(1)
+})
+export type CreateCourseInput = z.infer<typeof createCourseInputSchema>
+
+export const createCourseOutputSchema = courseSchema
+export type CreateCourseOutput = z.infer<typeof createCourseOutputSchema>
 
 export const endpointSchemas = {
   register: {
@@ -223,6 +234,10 @@ export const endpointSchemas = {
   userProfileUpdate: {
     input: userProfileUpdateInputSchema,
     output: userProfileUpdateOutputSchema,
+  },
+  createCourse: {
+    input: createCourseInputSchema,
+    output: createCourseOutputSchema
   }
 };
 export type EndpointSchemas = typeof endpointSchemas;

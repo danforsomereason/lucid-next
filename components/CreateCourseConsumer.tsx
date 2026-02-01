@@ -12,7 +12,7 @@ import {
   DialogActions,
   DialogContent,
 } from "@mui/material";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 // import { NEW_MODULE, NEW_QUIZ_QUESTION } from "../constants";
 import { questionTypeSchema } from "@/types";
 import { useCourseCreator } from "@/context/courseCreator";
@@ -79,9 +79,9 @@ export default function CreateCourseConsumer() {
       <Typography variant="h3" gutterBottom sx={{ mt: 2 }}>
         Course Modules
       </Typography>
-      {courseCreator.modules.map((module, index) => {
+      {courseCreator.modules.map((module, moduleIndex) => {
         return (
-          <Stack spacing={2} sx={{ mb: 2 }} key={index}>
+          <Stack spacing={2} sx={{ mb: 2 }} key={moduleIndex}>
             <TextField
               name="heading"
               variant="outlined"
@@ -91,7 +91,7 @@ export default function CreateCourseConsumer() {
               onChange={(event) => {
                 courseCreator.updateModule(
                   "heading",
-                  index,
+                  moduleIndex,
                   event.target.value
                 );
               }}
@@ -105,7 +105,7 @@ export default function CreateCourseConsumer() {
               onChange={(event) => {
                 courseCreator.updateModule(
                   "content",
-                  index,
+                  moduleIndex,
                   event.target.value
                 );
               }}
@@ -119,11 +119,18 @@ export default function CreateCourseConsumer() {
               onChange={(event) => {
                 courseCreator.updateModule(
                   "estimatedMinutes",
-                  index,
+                  moduleIndex,
                   Number(event.target.value)
                 );
               }}
             />
+            <Button
+              onClick={() => {
+                courseCreator.removeModule(moduleIndex);
+              }}
+            >
+              Remove Module
+            </Button>
           </Stack>
         );
       })}
@@ -141,7 +148,7 @@ export default function CreateCourseConsumer() {
       {courseCreator.quizQuestions.map((question, questionIndex) => {
         const options = question.options.map((option, optionIndex) => {
           return (
-            <>
+            <Fragment key={optionIndex}>
               <TextField
                 variant="outlined"
                 label="Option"
@@ -170,12 +177,12 @@ export default function CreateCourseConsumer() {
                     Remove Option
                   </Button>
                 )}
-            </>
+            </Fragment>
           );
         });
 
         return (
-          <Stack spacing={2}>
+          <Stack spacing={2} key={questionIndex}>
             <TextField
               name="heading"
               variant="outlined"
@@ -217,10 +224,10 @@ export default function CreateCourseConsumer() {
               }}
             >
               <MenuItem value="True/False">True/False</MenuItem>
-              <MenuItem value="Multiple choice">
+              <MenuItem value="Multiple Choice">
                 Multiple choice
               </MenuItem>
-              <MenuItem value="All that apply">
+              <MenuItem value="All That Apply">
                 All that apply
               </MenuItem>
             </Select>
@@ -235,8 +242,7 @@ export default function CreateCourseConsumer() {
             )}
             {options}
             <InputLabel>Correct Answer (Choose)</InputLabel>
-            <Select
-              variant="outlined"
+            <select
               value={question.correctOptionOrder}
               onChange={(event) => {
                 courseCreator.updateQuestion(
@@ -248,12 +254,12 @@ export default function CreateCourseConsumer() {
             >
               {question.options.map((option, optionIndex) => {
                 return (
-                  <MenuItem value={optionIndex}>
+                  <option value={optionIndex} key={optionIndex}>
                     {option}
-                  </MenuItem>
+                  </option>
                 );
               })}
-            </Select>
+            </select>
             <TextField
               name="explanation"
               variant="outlined"
@@ -297,7 +303,9 @@ export default function CreateCourseConsumer() {
         </Button>
         <Button
           variant="contained"
-          color="primary">
+          color="primary"
+          onClick={courseCreator.submitCourse}
+        >
           Save
         </Button>
       </Stack>
