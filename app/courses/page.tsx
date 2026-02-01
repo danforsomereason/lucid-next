@@ -224,9 +224,12 @@ const Courses: React.FC = () => {
             value={search}
             onChange={handleSearch}
             sx={{
-              mt: 2,
-              width: "100%",
+              flex: "1 1 auto",
+              minWidth: "200px",
               backgroundColor: "var(--white-color)",
+              "& .MuiOutlinedInput-root": {
+                height: "56px", // Ensures proper height for the input
+              },
               "& .MuiOutlinedInput-notchedOutline": {
                 borderColor: "var(--color-indigo-250)",
               },
