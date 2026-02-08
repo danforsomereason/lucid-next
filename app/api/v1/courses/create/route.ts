@@ -14,9 +14,17 @@ export async function POST (request: Request) {
   }
   const body: unknown = await request.json()
   const input = createCourseInputSchema.parse(body)
+  const invalidQuestions = input.questions.filter(question => {
+    const set = new Set(question.options)
+    return set.size !== question.options.length
+  })
+  if (invalidQuestions.length > 0) {
+    return NextResponse.json({ message: 'Each question must have unique options' }, { status: 400 })
+  }
   const [course] = await db.insert(coursesTable).values({
     title: input.title,
     description: input.description,
+    ceHours: input.ceHours,
     instructorId: user.id,
     premium: false
   }).returning()

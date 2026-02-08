@@ -15,7 +15,8 @@ export default function CoursesCreate() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState('');
   const [modules, setModules] = useState<ModuleDef[]>([NEW_MODULE]);
-  const [quizQuestions, setQuizQuestions] = useState<QuestionDef[]>([]);
+  const [quizQuestions, setQuizQuestions] = useState<QuestionDef[]>([NEW_QUIZ_QUESTION]);
+  const [ceHours, setCeHours] = useState('');
 
   function updateTitle(value: string) {
     setTitle(value);
@@ -23,6 +24,10 @@ export default function CoursesCreate() {
 
   function updateDescription(value: string) {
     setDescription(value);
+  }
+
+  function updateCeHours(value: string) {
+    setCeHours(value);
   }
 
   function addModule() {
@@ -171,12 +176,19 @@ export default function CoursesCreate() {
       modules,
       questions: quizQuestions,
     };
+    if (ceHours.length > 0) {
+      input.ceHours = Number(ceHours);
+    }
     try {
       const body = createCourseInputSchema.parse(input);
-      await axios.post("/api/v1/courses/create", body);
+      const response = await axios.post("/api/v1/courses/create", body);
+      console.log(response.data);
     } catch (error) {
       if (!(error instanceof Error)) {
         throw new Error("Unknown error occurred");
+      }
+      if (axios.isAxiosError(error)) {
+        throw new Error(error.response?.data?.message);
       }
       if (error instanceof ZodError) {
         const pretty = z.prettifyError(error);
@@ -191,8 +203,10 @@ export default function CoursesCreate() {
     quizQuestions,
     title,
     description,
+    ceHours,
     updateTitle,
     updateDescription,
+    updateCeHours,
     addModule,
     updateModule,
     removeModule,

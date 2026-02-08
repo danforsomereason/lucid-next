@@ -211,9 +211,11 @@ export const userProfileUpdateOutputSchema = userSchema;
 export type UserProfileUpdateOutput = z.infer<typeof userProfileUpdateOutputSchema>;
 
 // Create course schemas
-export const createCourseInputSchema = z.object({
-  title: z.string().length(1),
-  description: z.string().length(1),
+export const createCourseInputSchema = courseInsertSchema.pick({
+  title: true,
+  description: true,
+  ceHours: true
+}).extend({
   modules: moduleDefSchema.array().length(1),
   questions: questionDefSchema.array().length(1)
 })
@@ -222,8 +224,19 @@ export type CreateCourseInput = z.infer<typeof createCourseInputSchema>
 export const createCourseOutputSchema = courseSchema
 export type CreateCourseOutput = z.infer<typeof createCourseOutputSchema>
 
+// Read Course schemas
 export const readCoursesOutputSchema = courseSchema.array()
 export type ReadCoursesOutput = z.infer<typeof readCoursesOutputSchema>
+
+// Assign Course schemas
+export const assignCourseInputSchema = z.object({
+  courseId: courseSchema.shape.id,
+})
+export type AssignCourseInput = z.infer<typeof assignCourseInputSchema>;
+
+export const assignCourseOutputSchema = assignedCourseSchema;
+export type AssignCourseOutput = z.infer<typeof assignCourseOutputSchema>;
+
 
 export const endpointSchemas = {
   register: {
@@ -245,3 +258,8 @@ export const endpointSchemas = {
 };
 export type EndpointSchemas = typeof endpointSchemas;
 
+export const relatedCourseSchema = courseSchema.extend({
+  learningObjectives: learningObjectiveSchema.array(),
+  instructor: userSchema,
+})
+export type RelatedCourse = z.infer<typeof relatedCourseSchema>;

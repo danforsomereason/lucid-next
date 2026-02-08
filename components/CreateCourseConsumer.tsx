@@ -155,6 +155,17 @@ export default function CreateCourseConsumer() {
           required
           sx={textFieldSx}
         />
+        <TextField
+          name="ce_hours"
+          variant="outlined"
+          label="Continuing Education (CE) Hours"
+          value={courseCreator.ceHours}
+          onChange={(event) => courseCreator.updateCeHours(event.target.value)}
+          fullWidth
+          type="number"
+          inputProps={{ min: 1 }}
+          sx={textFieldSx}
+        />
       </Stack>
       <Box sx={{ mb: 4 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
@@ -276,6 +287,7 @@ export default function CreateCourseConsumer() {
                       <IconButton
                         color="error"
                         onClick={() => courseCreator.removeQuestion(questionIndex)}
+                        disabled={courseCreator.quizQuestions.length === 1}
                       >
                         <DeleteIcon />
                       </IconButton>

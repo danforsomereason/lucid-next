@@ -177,7 +177,6 @@ export const assignedCoursesTable = pgTable("assigned_courses", {
     .notNull()
     .references(() => usersTable.id),
   organizationId: uuid("organization_id")
-    .notNull()
     .references(() => organizationsTable.id),
   assignedDate: date("assigned_date").notNull().defaultNow(),
   completedAt: date("completed_at"),

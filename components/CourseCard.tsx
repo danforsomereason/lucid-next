@@ -45,11 +45,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, className }) => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
+            flexDirection: "row-reverse",
             mb: 0,
           }}
         >
-          <p>CE Hours: {course.ceHours}</p>
-
           <Button
             variant="contained"
             color="primary"
@@ -58,6 +57,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, className }) => {
           >
             View Details
           </Button>
+          {course.ceHours && <p>CE Hours: {course.ceHours}</p>}
         </Box>
       </CardContent>
     </Card>

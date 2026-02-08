@@ -6,8 +6,10 @@ export interface CourseCreatorValue {
     quizQuestions: QuestionDef[];
     title: string;
     description: string;
+    ceHours: string;
     updateTitle: (value: string) => void;
     updateDescription: (value: string) => void;
+    updateCeHours: (value: string) => void;
     addModule: () => void;
     updateModule: <K extends keyof ModuleDef>(
         key: K,
