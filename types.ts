@@ -13,9 +13,16 @@ import {
   tracksAssignmentsTable,
   verifiedUsersTable,
   categoriesTable,
+  answersTable,
 } from "./schema";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
+
+// Answers
+export const answerSchema = createSelectSchema(answersTable);
+export type Answer = z.infer<typeof answerSchema>;
+export const answerInsertSchema = createInsertSchema(answersTable);
+export type AnswerInsert = z.infer<typeof answerInsertSchema>;
 
 // Users
 export const userInsertSchema = createInsertSchema(usersTable);
@@ -25,10 +32,7 @@ export type UserInsert = z.infer<typeof userInsertSchema>;
 export const userUpdateSchema = createUpdateSchema(usersTable)
 export type UserUpdate = z.infer<typeof userUpdateSchema>;
 
-export const userSchema = createSelectSchema(usersTable, {
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-})
+export const userSchema = createSelectSchema(usersTable)
 export type User = z.infer<typeof userSchema>;
 
 // Categories
@@ -76,12 +80,7 @@ export type Option = z.infer<typeof optionSchema>;
 // Organizations
 export const organizationInsertSchema = createInsertSchema(organizationsTable);
 export type OrganizationInsert = z.infer<typeof organizationInsertSchema>;
-export const organizationSchema = createSelectSchema(
-  organizationsTable,
-  {
-    createdAt: z.coerce.date(),
-  }
-);
+export const organizationSchema = createSelectSchema(organizationsTable);
 export type Organization = z.infer<typeof organizationSchema>;
 
 // Job Roles
@@ -94,35 +93,20 @@ export type JobRole = z.infer<typeof jobRoleSchema>;
 export const moduleProgressInsertSchema =
   createInsertSchema(moduleProgressTable);
 export type ModuleProgressInsert = z.infer<typeof moduleProgressInsertSchema>;
-export const moduleProgressSchema = createSelectSchema(
-  moduleProgressTable,
-  {
-    startModule: z.coerce.date(),
-    endModule: z.coerce.date().optional(),
-  }
-);
+export const moduleProgressSchema = createSelectSchema(moduleProgressTable);
 export type ModuleProgress = z.infer<typeof moduleProgressSchema>;
 
 // Assigned Courses
 export const assignedCourseInsertSchema =
   createInsertSchema(assignedCoursesTable);
 export type AssignedCourseInsert = z.infer<typeof assignedCourseInsertSchema>;
-export const assignedCourseSchema = createSelectSchema(
-  assignedCoursesTable,
-  {
-    assignedDate: z.coerce.date(),
-    completedAt: z.coerce.date().optional(),
-  }
-);
+export const assignedCourseSchema = createSelectSchema(assignedCoursesTable);
 export type AssignedCourse = z.infer<typeof assignedCourseSchema>;
 
 // Tracks
 export const trackInsertSchema = createInsertSchema(tracksTable);
 export type TrackInsert = z.infer<typeof trackInsertSchema>;
-export const trackSchema = createSelectSchema(tracksTable, {
-  complianceCycle: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
+export const trackSchema = createSelectSchema(tracksTable);
 export type Track = z.infer<typeof trackSchema>;
 
 // Tracks Assignments
@@ -132,23 +116,13 @@ export const trackAssignmentInsertSchema = createInsertSchema(
 export type TrackAssignmentInsert = z.infer<
   typeof trackAssignmentInsertSchema
 >;
-export const tracksAssignmentSchema = createSelectSchema(
-  tracksAssignmentsTable,
-  {
-    assignedAt: z.coerce.date(),
-  }
-);
+export const tracksAssignmentSchema = createSelectSchema(tracksAssignmentsTable);
 export type TrackAssignment = z.infer<typeof tracksAssignmentSchema>;
 
 // Verified Users
 export const verifiedUserInsertSchema = createInsertSchema(verifiedUsersTable);
 export type VerifiedUserInsert = z.infer<typeof verifiedUserInsertSchema>;
-export const verifiedUserSchema = createSelectSchema(
-  verifiedUsersTable,
-  {
-    invitedAt: z.coerce.date(),
-  }
-);
+export const verifiedUserSchema = createSelectSchema(verifiedUsersTable);
 export type VerifiedUser = z.infer<typeof verifiedUserSchema>;
 
 // Custom Schemas
@@ -237,6 +211,14 @@ export type AssignCourseInput = z.infer<typeof assignCourseInputSchema>;
 export const assignCourseOutputSchema = assignedCourseSchema;
 export type AssignCourseOutput = z.infer<typeof assignCourseOutputSchema>;
 
+// End Module schemas
+export const endModuleInputSchema = z.object({
+  moduleId: moduleSchema.shape.id,
+})
+export type EndModuleInput = z.infer<typeof endModuleInputSchema>;
+
+export const endModuleOutputSchema = moduleProgressSchema;
+export type EndModuleOutput = z.infer<typeof endModuleOutputSchema>;
 
 export const endpointSchemas = {
   register: {
@@ -263,3 +245,14 @@ export const relatedCourseSchema = courseSchema.extend({
   instructor: userSchema,
 })
 export type RelatedCourse = z.infer<typeof relatedCourseSchema>;
+
+export const relatedModuleSchema = moduleSchema.extend({
+  moduleProgresses: moduleProgressSchema.array(),
+})
+export type RelatedModule = z.infer<typeof relatedModuleSchema>;
+
+export const relatedQuestionSchema = questionSchema.extend({
+  options: optionSchema.array(),
+  answers: answerSchema.array(),
+})
+export type RelatedQuestion = z.infer<typeof relatedQuestionSchema>;

@@ -7,7 +7,7 @@ import CreateCourseConsumer from "@/components/CreateCourseConsumer";
 import {
   CourseCreatorValue,
   CourseCreatorContext,
-} from "@/context/courseCreator";
+} from "@/context/courseCreatorContext";
 import axios from "axios";
 import z, { ZodError } from "zod";
 

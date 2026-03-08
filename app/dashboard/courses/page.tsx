@@ -1,3 +1,4 @@
+import AssignedCourseItem from "@/components/AssignedCourseItem";
 import db from "@/db";
 import { assignedCoursesTable } from "@/schema";
 import authenticate from "@/utils/authenticate";
@@ -5,7 +6,6 @@ import { eq } from "drizzle-orm";
 
 export default async function DashboardCourses() {
   const currentUser = await authenticate(true)
-  console.log('currentUser', currentUser)
   if (!currentUser) {
     return <p>Unauthenticated</p>
   }
@@ -21,10 +21,11 @@ export default async function DashboardCourses() {
       <h2>Assigned Courses ({assignments.length})</h2>
       <ol>
         {assignments.map((assignment) => (
-          <li key={assignment.id}>
-            <p>{assignment.course.title}</p>
-            <button>Continue</button>
-          </li>
+          <AssignedCourseItem
+            key={assignment.id}
+            assignment={assignment}
+            course={assignment.course}
+          />
         ))}
       </ol>
     </>

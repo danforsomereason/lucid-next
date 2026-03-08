@@ -51,6 +51,34 @@ export const trackAssignmentStatusEnum = pgEnum("track_assignment_status", [
 ]);
 
 // Tables
+export const answersTable = pgTable("answers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  optionId: uuid("option_id")
+    .notNull()
+    .references(() => optionsTable.id),
+  questionId: uuid("question_id")
+    .notNull()
+    .references(() => questionsTable.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => usersTable.id),
+  answeredAt: date("answered_at").notNull().defaultNow(),
+});
+
+export const assignedCoursesTable = pgTable("assigned_courses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  courseId: uuid("course_id")
+    .notNull()
+    .references(() => coursesTable.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => usersTable.id),
+  organizationId: uuid("organization_id")
+    .references(() => organizationsTable.id),
+  assignedDate: date("assigned_date").notNull().defaultNow(),
+  completedAt: date("completed_at"),
+});
+
 export const usersTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   firstName: text("first_name").notNull(),
@@ -168,18 +196,18 @@ export const moduleProgressTable = pgTable("module_progress", {
   endModule: date("end_module"),
 });
 
-export const assignedCoursesTable = pgTable("assigned_courses", {
+export const tracksAssignmentsTable = pgTable("tracks_assignments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  courseId: uuid("course_id")
-    .notNull()
-    .references(() => coursesTable.id),
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  organizationId: uuid("organization_id")
-    .references(() => organizationsTable.id),
-  assignedDate: date("assigned_date").notNull().defaultNow(),
-  completedAt: date("completed_at"),
+  trackId: uuid("track_id")
+    .notNull()
+    .references(() => tracksTable.id),
+  assignedBy: uuid("assigned_by")
+    .notNull()
+    .references(() => usersTable.id),
+  assignedAt: date("assigned_at").notNull().defaultNow(),
 });
 
 export const tracksTable = pgTable("tracks", {
@@ -200,20 +228,6 @@ export const tracksTable = pgTable("tracks", {
   isMandatory: boolean("is_mandatory").notNull(),
 });
 
-export const tracksAssignmentsTable = pgTable("tracks_assignments", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => usersTable.id),
-  trackId: uuid("track_id")
-    .notNull()
-    .references(() => tracksTable.id),
-  assignedBy: uuid("assigned_by")
-    .notNull()
-    .references(() => usersTable.id),
-  assignedAt: date("assigned_at").notNull().defaultNow(),
-});
-
 export const verifiedUsersTable = pgTable("verified_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
@@ -224,7 +238,23 @@ export const verifiedUsersTable = pgTable("verified_users", {
 });
 
 // Relations
+export const answersRelations = relations(answersTable, ({ one }) => ({
+  option: one(optionsTable, {
+    fields: [answersTable.optionId],
+    references: [optionsTable.id],
+  }),
+  question: one(questionsTable, {
+    fields: [answersTable.questionId],
+    references: [questionsTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [answersTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
+  answers: many(answersTable),
   organization: one(organizationsTable, {
     fields: [usersTable.organizationId],
     references: [organizationsTable.id],
@@ -274,12 +304,13 @@ export const modulesRelations = relations(modulesTable, ({ one, many }) => ({
     fields: [modulesTable.courseId],
     references: [coursesTable.id],
   }),
-  moduleProgress: many(moduleProgressTable),
+  moduleProgresses: many(moduleProgressTable),
 }));
 
 export const questionsRelations = relations(
   questionsTable,
   ({ one, many }) => ({
+    answers: many(answersTable),
     course: one(coursesTable, {
       fields: [questionsTable.courseId],
       references: [coursesTable.id],
@@ -288,11 +319,12 @@ export const questionsRelations = relations(
   })
 );
 
-export const optionsRelations = relations(optionsTable, ({ one }) => ({
+export const optionsRelations = relations(optionsTable, ({ one, many }) => ({
   question: one(questionsTable, {
     fields: [optionsTable.questionId],
     references: [questionsTable.id],
   }),
+  answers: many(answersTable),
 }));
 
 export const organizationsRelations = relations(

@@ -22,6 +22,7 @@ import "../styles/CourseDescription.css";
 import { globalContext } from "../context/globalContext";
 import { useRouter } from "next/navigation";
 import { Course, RelatedCourse } from "@/types";
+import axios from "axios";
 
 interface CourseDescriptionProps {
   course: RelatedCourse
@@ -34,17 +35,13 @@ const CourseDescription: React.FC<CourseDescriptionProps> = ({ course }) => {
     const global = useContext(globalContext);
 
     const handleBeginCourse = async () => {
-        const init = { method: "POST" };
-        const response = await fetch(
-            `/api/v1/assigned_courses/${course.id}`,
-            init
-        );
+        const body = { courseId: course.id };
+        const response = await axios.post("/api/v1/courses/assign", body);
         if (response.status === 409) {
             console.log("Course already assigned. Proceeding to modules.");
-        } else if (!response.ok) throw new Error("Course not found");
+        } else if (response.status !== 200) throw new Error("Course not found");
 
-        const data = await response.json();
-        console.log("Data - Assigned Course Response", data);
+        console.log("Data - Assigned Course Response", response.data);
 
         router.push(`/course/${course.id}/modules`);
     };

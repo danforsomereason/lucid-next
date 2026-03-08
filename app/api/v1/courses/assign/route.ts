@@ -1,5 +1,5 @@
 import db from "@/db";
-import { assignedCoursesTable } from "@/schema";
+import { assignedCoursesTable, coursesTable, moduleProgressTable } from "@/schema";
 import { assignCourseInputSchema } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { and, eq } from "drizzle-orm";
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     userId: user.id,
   });
   const course = await db.query.coursesTable.findFirst({
-    where: eq(assignedCoursesTable.courseId, input.courseId),
+    where: eq(coursesTable.id, input.courseId),
     with: {
       modules: true,
     }
@@ -39,29 +39,27 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Course not found" }, { status: 404 });
   }
 
+  const sortedModules = course.modules.sort((a, b) => a.order - b.order);
 
-  // const firstModule = sortedModules[0];
+  const firstModule = sortedModules[0];
 
-  // if (!firstModule) {
-  //   return res
-  //     .status(404)
-  //     .json({ message: "No modules found for this course" });
-  // }
+  if (!firstModule) {
+    return NextResponse.json({ message: "No modules found for this course" }, { status: 404 });
+  }
 
-  // const existingProgress = await ModuleProgressModel.findOne({
-  //   user_id: user.id,
-  //   module_id: firstModule._id,
-  // });
+  const existingProgress = await db.query.moduleProgressTable.findFirst({
+    where: and(
+      eq(moduleProgressTable.moduleId, firstModule.id),
+      eq(moduleProgressTable.userId, user.id),
+    )
+  });
 
-  // if (!existingProgress) {
-  //   await ModuleProgressModel.create({
-  //     course_id: new mongoose.Types.ObjectId(req.params.courseId),
-  //     user_id: new mongoose.Types.ObjectId(user.id),
-  //     module_id: firstModule._id,
-  //     start_module: new Date(),
-  //     end_module: null,
-  //   });
-  // }
+  if (!existingProgress) {
+    await db.insert(moduleProgressTable).values({
+      moduleId: firstModule.id,
+      userId: user.id,
+    })
+  }
 
   return NextResponse.json({
     message: "Course assigned and progress started",

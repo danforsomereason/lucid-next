@@ -61,7 +61,7 @@ const NavBar: React.FC = () => {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       sx={{ backgroundColor: "var(--black-color)", padding: "10px 20px" }}
     >
       <Toolbar

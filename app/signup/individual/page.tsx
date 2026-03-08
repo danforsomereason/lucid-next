@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import { addYears, format } from "date-fns";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 
 interface UserFormData {
   firstName: string;
@@ -86,7 +86,7 @@ const IndividualCheckout: React.FC = () => {
     }));
   };
 
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
       licenseType: e.target.value,
@@ -342,28 +342,22 @@ const IndividualCheckout: React.FC = () => {
                 <Grid2 size={{ xs: 12 }}>
                   <FormControl fullWidth required>
                     <InputLabel>License Type</InputLabel>
-                    <Select
-                      label="License Type"
+                    <select
                       value={formData.licenseType}
                       onChange={handleSelectChange}
-                      sx={{
-                        "& .MuiInputBase-root": {
-                          height: "56px",
-                        },
-                      }}
                     >
-                      <MenuItem value="" disabled>
+                      <option value="" disabled>
                         Select a License Type
-                      </MenuItem>
+                      </option>
                       {LICENSE_TYPES.map((license) => (
-                        <MenuItem
+                        <option
                           key={license.value}
                           value={license.value}
                         >
                           {license.label}
-                        </MenuItem>
+                        </option>
                       ))}
-                    </Select>
+                    </select>
                   </FormControl>
                 </Grid2>
                 {verificationMessage && (

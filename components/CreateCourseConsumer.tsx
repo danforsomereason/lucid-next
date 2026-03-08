@@ -24,7 +24,7 @@ import { Fragment, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { questionTypeSchema } from "@/types";
-import { useCourseCreator } from "@/context/courseCreator";
+import { useCourseCreator } from "@/context/courseCreatorContext";
 import { useGlobal } from "@/context/globalContext";
 
 const textFieldSx = {
