@@ -39,11 +39,15 @@ export default async function CoursePage({ params }: CoursePageProps) {
   if (!relatedCourse) {
     return <p>Course not found</p>;
   }
+  const safeQuestions = relatedCourse.questions.map((question) => {
+    const { correctOptionOrder, explanation, ...rest } = question
+    return rest
+  })
   return (
     <CourseModules
       relatedCourse={relatedCourse}
       relatedModules={relatedCourse.modules}
-      relatedQuestions={relatedCourse.questions}
+      relatedQuestions={safeQuestions}
     />
   )
 }

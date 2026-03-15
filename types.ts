@@ -16,7 +16,7 @@ import {
   answersTable,
 } from "./schema";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
-import { z } from "zod";
+import { check, z } from "zod";
 
 // Answers
 export const answerSchema = createSelectSchema(answersTable);
@@ -220,6 +220,31 @@ export type EndModuleInput = z.infer<typeof endModuleInputSchema>;
 export const endModuleOutputSchema = moduleProgressSchema;
 export type EndModuleOutput = z.infer<typeof endModuleOutputSchema>;
 
+// Check Quiz schemas
+export const checkQuestionInputSchema = z.object({
+  questionId: questionSchema.shape.id,
+  selectedOptionOrder: z.number(),
+})
+
+export type CheckQuestionInput = z.infer<typeof checkQuestionInputSchema>;
+
+export const checkQuizInputSchema = z.object({
+  answers: checkQuestionInputSchema.array(),
+  courseId: z.string(),
+})
+export type CheckQuizInput = z.infer<typeof checkQuizInputSchema>;
+
+export const checkQuestionOutputSchema = z.object({
+  correct: z.boolean(),
+  explanation: z.string(),
+})
+export type CheckQuestionOutput = z.infer<typeof checkQuestionOutputSchema>;
+
+export const checkQuizOutputSchema = z.object({
+  results: checkQuestionOutputSchema.array(),
+})
+export type CheckQuizOutput = z.infer<typeof checkQuizOutputSchema>;
+
 export const endpointSchemas = {
   register: {
     input: registerInputSchema,
@@ -236,6 +261,10 @@ export const endpointSchemas = {
   createCourse: {
     input: createCourseInputSchema,
     output: createCourseOutputSchema
+  },
+  checkQuestion: {
+    input: checkQuizInputSchema,
+    output: checkQuizOutputSchema
   }
 };
 export type EndpointSchemas = typeof endpointSchemas;
@@ -256,3 +285,9 @@ export const relatedQuestionSchema = questionSchema.extend({
   answers: answerSchema.array(),
 })
 export type RelatedQuestion = z.infer<typeof relatedQuestionSchema>;
+
+export const safeQuestionSchema = relatedQuestionSchema.omit({
+  correctOptionOrder: true,
+  explanation: true,
+})
+export type SafeQuestion = z.infer<typeof safeQuestionSchema>;

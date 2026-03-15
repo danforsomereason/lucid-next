@@ -1,18 +1,24 @@
-import { RelatedCourse, RelatedModule, RelatedQuestion } from "@/types";
+import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion } from "@/types";
 import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {
+  checkQuiz: () => Promise<void>
   completeModule: () => Promise<void>
   course: RelatedCourse
-  selectedModuleId?: string
-  selectedModule?: RelatedModule
   modules: RelatedModule[]
   modulesCompleted: boolean
-  questions: RelatedQuestion[]
+  selectModule: (moduleId: string) => void
+  selectOption: (optionId: string) => void
+  selectedModuleId?: string
+  selectedModule?: RelatedModule
+  selectedOption?: Option
+  selectedOptionId?: string
+  selectedQuestionId?: string
+  selectedQuestion?: SafeQuestion
+  showQuiz: () => void
+  questions: SafeQuestion[]
   quizCompleted: boolean
   quizShown: boolean
-  selectModule: (moduleId: string) => void
-  showQuiz: () => void
 }
 
 export const CourseModulesContext = createContext<CourseModulesContextValue | undefined>(undefined);

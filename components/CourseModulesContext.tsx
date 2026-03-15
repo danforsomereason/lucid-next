@@ -1,10 +1,11 @@
 import { useCourseModules } from "@/context/courseModulesContext";
 import CourseModule from "./CourseModule";
+import Quiz from "./Quiz";
 
 export default function CourseModulesContent () {
   const courseModules = useCourseModules()
   if (courseModules.quizShown) {
-    return <div>QUIZ</div>
+    return <Quiz />
   }
   return <CourseModule />
 }
