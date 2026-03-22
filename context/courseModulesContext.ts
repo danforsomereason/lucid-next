@@ -1,12 +1,14 @@
-import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion } from "@/types";
+import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion, CheckQuestionOutput } from "@/types";
 import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {
-  checkQuiz: () => Promise<void>
+  advanceQuestion: () => Promise<void>
   completeModule: () => Promise<void>
   course: RelatedCourse
   modules: RelatedModule[]
   modulesCompleted: boolean
+  onLastQuestion: boolean
+  results: CheckQuestionOutput[]
   selectModule: (moduleId: string) => void
   selectOption: (optionId: string) => void
   selectedModuleId?: string

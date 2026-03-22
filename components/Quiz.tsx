@@ -9,7 +9,6 @@ export default function Quiz() {
   if (!courseModules.selectedQuestion) {
     return <div>REVIEW</div>
   }
-  const onLast = courseModules.selectedQuestion.order === courseModules.questions.length - 1
   return (
     <Paper sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
       <Typography variant="h5" gutterBottom>
@@ -66,10 +65,10 @@ export default function Quiz() {
         <Button
           variant="contained"
           endIcon={<NavigateNextIcon />}
-          onClick={() => {}}
+          onClick={courseModules.advanceQuestion}
           disabled={!courseModules.selectedOptionId}
         >
-          {onLast ? 'Finish Quiz' : 'Next Question'}
+          {courseModules.onLastQuestion ? 'Finish Quiz' : 'Next Question'}
         </Button>
       </Box>
     </Paper>

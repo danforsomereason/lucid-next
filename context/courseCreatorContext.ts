@@ -2,14 +2,28 @@ import { createContext, useContext } from "react";
 import { ModuleDef, QuestionDef } from "@/types";
 
 export interface CourseCreatorValue {
+    ceHours: string;
+    description: string;
+    maximumAttempts: string;
     modules: ModuleDef[];
+    passingScore: string;
     quizQuestions: QuestionDef[];
     title: string;
-    description: string;
-    ceHours: string;
-    updateTitle: (value: string) => void;
-    updateDescription: (value: string) => void;
     updateCeHours: (value: string) => void;
+    updateDescription: (value: string) => void;
+    updateMaximumAttempts: (value: string) => void;
+    updateOption: (
+        questionIndex: number,
+        optionIndex: number,
+        optionValue: string
+    ) => void;
+    updatePassingScore: (value: string) => void;
+    updateQuestion: <K extends keyof QuestionDef>(
+        key: K,
+        index: number,
+        value: QuestionDef[K]
+    ) => void;
+    updateTitle: (value: string) => void;
     addModule: () => void;
     updateModule: <K extends keyof ModuleDef>(
         key: K,
@@ -18,18 +32,8 @@ export interface CourseCreatorValue {
     ) => void;
     removeModule: (moduleIndex: number) => void
     addQuestion: () => void;
-    updateQuestion: <K extends keyof QuestionDef>(
-        key: K,
-        index: number,
-        value: QuestionDef[K]
-    ) => void;
     removeQuestion: (questionIndex: number) => void;
     addOption: (questionIndex: number) => void;
-    updateOption: (
-        questionIndex: number,
-        optionIndex: number,
-        optionValue: string
-    ) => void;
     removeOption: (questionIndex: number, optionIndex: number) => void;
     clearForm: () => void;
     submitCourse: () => Promise<void>

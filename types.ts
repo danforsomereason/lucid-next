@@ -188,7 +188,9 @@ export type UserProfileUpdateOutput = z.infer<typeof userProfileUpdateOutputSche
 export const createCourseInputSchema = courseInsertSchema.pick({
   title: true,
   description: true,
-  ceHours: true
+  ceHours: true,
+  maximumAttempts: true,
+  passingScore: true,
 }).extend({
   modules: moduleDefSchema.array().length(1),
   questions: questionDefSchema.array().length(1)

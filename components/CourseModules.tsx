@@ -9,6 +9,7 @@ import CourseModulesContent from "./CourseModulesContext"
 import ModulesSidebarController from "./ModulesSidebarController"
 import { MainContent, ModuleContainer } from "./styled"
 import { Check } from "drizzle-orm/gel-core"
+import { ne } from "drizzle-orm"
 
 interface CourseModulesProps {
   relatedCourse: RelatedCourse
@@ -44,6 +45,7 @@ export default function CourseModules({
   const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
   console.log('selectedQuestion', selectedQuestion)
   const selectedOption = selectedQuestion?.options.find((option) => option.id === selectedOptionId)
+  const onLastQuestion = selectedQuestion?.order === relatedQuestions.length - 1
   async function completeModule() {
     if (!selectedModuleId) {
       throw new Error('No module selected')
@@ -87,25 +89,53 @@ export default function CourseModules({
     setQuizShown(true)
     setSelectedModuleId(undefined)
   }
-  async function checkQuiz () {
+  async function checkQuiz (answers: CheckQuestionInput[]) {
     const inputData: CheckQuizInput = {
-      answers: answers,
+      answers,
       courseId: relatedCourse.id,
     }
     const input = checkQuizInputSchema.parse(inputData)
-    const response = await axios.post("/api/v1/quiz/check", input)
+    const response = await axios.post("/api/v1/questions/check", input)
     const output = checkQuizOutputSchema.parse(response.data)
     setResults(output.results)
   }
+  async function advanceQuestion () {
+    if (!selectedQuestion) {
+      throw new Error("No question selected")
+    }
+    if (!selectedOption) {
+      throw new Error("No option selected")
+    }
+    const newAnswer: CheckQuestionInput = {
+      questionId: selectedQuestion.id,
+      selectedOptionOrder: selectedOption.order,
+    }
+    const newAnswers = [...answers, newAnswer]
+    setAnswers(newAnswers)
+    if (onLastQuestion) {
+      await checkQuiz(newAnswers)
+      setSelectedQuestionId(undefined)
+    } else {
+      const nextQuestionOrder = selectedQuestion.order + 1
+      const nextQuestion = relatedQuestions.find((question) => question.order === nextQuestionOrder)
+      if (!nextQuestion) {
+        throw new Error("Next question not found")
+      }
+      setSelectedQuestionId(nextQuestion.id)
+    }
+    setSelectedOptionId(undefined)
+  }
   const value: CourseModulesContextValue = {
-    checkQuiz,
+    advanceQuestion,
     completeModule,
     course: relatedCourse,
     modules,
     modulesCompleted,
+    onLastQuestion,
     questions: relatedQuestions,
     quizCompleted,
     quizShown,
+    results,
     selectModule,
     selectOption,
     selectedModule,

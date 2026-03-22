@@ -67,16 +67,17 @@ export const answersTable = pgTable("answers", {
 
 export const assignedCoursesTable = pgTable("assigned_courses", {
   id: uuid("id").primaryKey().defaultRandom(),
+  assignedDate: date("assigned_date").notNull().defaultNow(),
+  completedAt: date("completed_at"),
   courseId: uuid("course_id")
     .notNull()
     .references(() => coursesTable.id),
+  organizationId: uuid("organization_id")
+    .references(() => organizationsTable.id),
+  quizAttempts: integer("quiz_attempts").notNull().default(0),
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  organizationId: uuid("organization_id")
-    .references(() => organizationsTable.id),
-  assignedDate: date("assigned_date").notNull().defaultNow(),
-  completedAt: date("completed_at"),
 });
 
 export const usersTable = pgTable("users", {
@@ -107,17 +108,18 @@ export const categoriesTable = pgTable("categories", {
 
 export const coursesTable = pgTable("courses", {
   id: uuid("id").primaryKey().defaultRandom(),
-  title: text("title").notNull(),
+  approvedBy: approvedByEnum("approved_by"),
+  ceHours: integer("ce_hours"),
   description: text("description").notNull(),
+  imageUrl: text("image_url"),
   instructorId: uuid("instructor_id")
     .notNull()
     .references(() => usersTable.id),
+  maximumAttempts: integer("maximum_attempts").notNull(),
+  passingScore: integer("passing_score").notNull(),
   premium: boolean("premium").notNull(),
-  passingScore: integer("passing_score"),
-  approvedBy: approvedByEnum("approved_by"),
-  imageUrl: text("image_url"),
-  ceHours: integer("ce_hours"),
   quizTitle: text("quiz_title"),
+  title: text("title").notNull(),
 });
 
 export const courseCategoriesTable = pgTable("course_categories", {

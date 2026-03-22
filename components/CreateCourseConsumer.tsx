@@ -72,6 +72,7 @@ export default function CreateCourseConsumer() {
   const handleCloseClearDialog = () => setClearDialogOpened(false);
 
   const handleSubmitCourse = async () => {
+    console.log('handleSuubmitCourse called')
     try {
       await courseCreator.submitCourse();
       setSubmitStatus({
@@ -79,13 +80,12 @@ export default function CreateCourseConsumer() {
         message: "Course created successfully!",
       });
       courseCreator.clearForm();
-      setTimeout(() => setSubmitStatus(null), 5000);
     } catch (error) {
+      console.log('error creating course', error)
       setSubmitStatus({
         type: "error",
         message: error instanceof Error ? error.message : "Failed to create course",
       });
-      setTimeout(() => setSubmitStatus(null), 5000);
     }
   };
 
@@ -114,19 +114,10 @@ export default function CreateCourseConsumer() {
       Number(event.target.value)
     );
   };
+  console.log('submitStatus', submitStatus)
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      {submitStatus && (
-        <Alert
-          severity={submitStatus.type}
-          sx={{ mb: 3 }}
-          onClose={() => setSubmitStatus(null)}
-        >
-          {submitStatus.message}
-        </Alert>
-      )}
-
       <Typography variant="h3" gutterBottom>
         Course Details
       </Typography>
@@ -161,6 +152,28 @@ export default function CreateCourseConsumer() {
           label="Continuing Education (CE) Hours"
           value={courseCreator.ceHours}
           onChange={(event) => courseCreator.updateCeHours(event.target.value)}
+          fullWidth
+          type="number"
+          inputProps={{ min: 1 }}
+          sx={textFieldSx}
+        />
+        <TextField
+          name="maximum_attempts"
+          variant="outlined"
+          label="Maximum Quiz Attempts"
+          value={courseCreator.maximumAttempts}
+          onChange={(event) => courseCreator.updateMaximumAttempts(event.target.value)}
+          fullWidth
+          type="number"
+          inputProps={{ min: 1 }}
+          sx={textFieldSx}
+        />
+        <TextField
+          name="passing_score"
+          variant="outlined"
+          label="Passing Quiz Score"
+          value={courseCreator.passingScore}
+          onChange={(event) => courseCreator.updatePassingScore(event.target.value)}
           fullWidth
           type="number"
           inputProps={{ min: 1 }}
@@ -428,7 +441,7 @@ export default function CreateCourseConsumer() {
           ))}
         </Grid2>
       </Box>
-      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ mt: 4 }}>
+      <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ my: 4 }}>
         <Button
           variant="outlined"
           color="error"
@@ -449,6 +462,15 @@ export default function CreateCourseConsumer() {
           Save Course
         </Button>
       </Stack>
+      {submitStatus && (
+        <Alert
+          severity={submitStatus.type}
+          sx={{ mb: 3 }}
+          onClose={() => setSubmitStatus(null)}
+        >
+          {submitStatus.message}
+        </Alert>
+      )}
 
       <Dialog onClose={handleCloseClearDialog} open={clearDialogOpened}>
         <DialogTitle>Clear Form?</DialogTitle>

@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build": "next build",
     "dev": "next dev",
     "drop": "npx drizzle-kit push --force --config drizzleEmpty.config.ts",
-    "build": "next build",
+    "push": "npx drizzle-kit push",
+    "reset": "npm run drop && npm run push",
     "start": "next start"
   },
   "dependencies": {

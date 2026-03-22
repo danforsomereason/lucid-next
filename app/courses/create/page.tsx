@@ -17,6 +17,8 @@ export default function CoursesCreate() {
   const [modules, setModules] = useState<ModuleDef[]>([NEW_MODULE]);
   const [quizQuestions, setQuizQuestions] = useState<QuestionDef[]>([NEW_QUIZ_QUESTION]);
   const [ceHours, setCeHours] = useState('');
+  const [passingScore, setPassingScore] = useState('');
+  const [maximumAttempts, setMaximumAttempts] = useState('');
 
   function updateTitle(value: string) {
     setTitle(value);
@@ -28,6 +30,12 @@ export default function CoursesCreate() {
 
   function updateCeHours(value: string) {
     setCeHours(value);
+  }
+  function updatePassingScore(value: string) {
+    setPassingScore(value);
+  }
+  function updateMaximumAttempts(value: string) {
+    setMaximumAttempts(value);
   }
 
   function addModule() {
@@ -167,13 +175,41 @@ export default function CoursesCreate() {
     setDescription("");
     setModules([NEW_MODULE]);
     setQuizQuestions([]);
+    setPassingScore("");
+    setMaximumAttempts("");
   }
 
   async function submitCourse() {
+    console.log('submitCourse called')
+    if (title.length === 0) {
+      throw new Error("Title is required");
+    }
+    if (description.length === 0) {
+      throw new Error("Description is required");
+    }
+    if (maximumAttempts.length === 0) {
+      throw new Error("Maximum attempts is required");
+    }
+    const maximumAttemptsNumber = Number(maximumAttempts);
+    if (isNaN(maximumAttemptsNumber) || maximumAttemptsNumber <= 0) {
+      throw new Error("Maximum attempts must be a positive number");
+    }
+    if (modules.length === 0) {
+      throw new Error("At least one module is required");
+    }
+    if (passingScore.length === 0) {
+      throw new Error("Passing score is required");
+    }
+    const passingScoreNumber = Number(passingScore);
+    if (isNaN(passingScoreNumber) || passingScoreNumber < 0) {
+      throw new Error("Passing score must be a positive number or 0");
+    }
     const input: CreateCourseInput = {
       title,
       description,
+      maximumAttempts: maximumAttemptsNumber,
       modules,
+      passingScore: passingScoreNumber,
       questions: quizQuestions,
     };
     if (ceHours.length > 0) {
@@ -199,14 +235,19 @@ export default function CoursesCreate() {
   }
 
   const courseCreatorValue: CourseCreatorValue = {
+    ceHours,
+    description,
+    maximumAttempts,
     modules,
+    passingScore,
     quizQuestions,
     title,
-    description,
-    ceHours,
-    updateTitle,
-    updateDescription,
     updateCeHours,
+    updateDescription,
+    updateMaximumAttempts,
+    updateOption,
+    updatePassingScore,
+    updateTitle,
     addModule,
     updateModule,
     removeModule,
@@ -214,7 +255,6 @@ export default function CoursesCreate() {
     updateQuestion,
     removeQuestion,
     addOption,
-    updateOption,
     removeOption,
     clearForm,
     submitCourse,

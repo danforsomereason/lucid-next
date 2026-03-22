@@ -22,11 +22,13 @@ export async function POST (request: Request) {
     return NextResponse.json({ message: 'Each question must have unique options' }, { status: 400 })
   }
   const [course] = await db.insert(coursesTable).values({
-    title: input.title,
-    description: input.description,
     ceHours: input.ceHours,
+    description: input.description,
     instructorId: user.id,
-    premium: false
+    maximumAttempts: input.maximumAttempts,
+    passingScore: input.passingScore,
+    premium: false,
+    title: input.title,
   }).returning()
   const moduleInserts = input.modules.map((def, index) => {
     const insert: ModuleInsert = {
