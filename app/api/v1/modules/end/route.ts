@@ -1,5 +1,5 @@
 import db from "@/db";
-import { moduleProgressTable } from "@/schema";
+import { moduleProgressesTable } from "@/schema";
 import { endModuleInputSchema } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { and, eq } from "drizzle-orm";
@@ -15,16 +15,16 @@ export async function POST(req: Request) {
   const body: unknown = await req.json();
   const input = endModuleInputSchema.parse(body);
   const condition = and(
-    eq(moduleProgressTable.moduleId, input.moduleId),
-    eq(moduleProgressTable.userId, user.id),
+    eq(moduleProgressesTable.moduleId, input.moduleId),
+    eq(moduleProgressesTable.userId, user.id),
   )
-  const existingProgress = await db.query.moduleProgressTable.findFirst({
+  const existingProgress = await db.query.moduleProgressesTable.findFirst({
     where: condition
   });
   if (!existingProgress) {
     return NextResponse.json({ message: "Module progress not found" }, { status: 404 });
   }
-  const [updated] = await db.update(moduleProgressTable).set({
+  const [updated] = await db.update(moduleProgressesTable).set({
     endModule: new Date().toISOString(),
   }).where(condition).returning();
 

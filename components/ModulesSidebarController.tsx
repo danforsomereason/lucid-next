@@ -27,10 +27,7 @@ export default function ModulesSidebarController() {
 
       {navs}
 
-      <ModulesQuizNav
-        modulesCompleted={courseModules.modulesCompleted}
-        quizCompleted={courseModules.quizCompleted}
-      />
+      <ModulesQuizNav />
 
       <ModulesHelpButton />
     </ModulesSidebar>

@@ -51,20 +51,6 @@ export const trackAssignmentStatusEnum = pgEnum("track_assignment_status", [
 ]);
 
 // Tables
-export const answersTable = pgTable("answers", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  optionId: uuid("option_id")
-    .notNull()
-    .references(() => optionsTable.id),
-  questionId: uuid("question_id")
-    .notNull()
-    .references(() => questionsTable.id),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => usersTable.id),
-  answeredAt: date("answered_at").notNull().defaultNow(),
-});
-
 export const assignedCoursesTable = pgTable("assigned_courses", {
   id: uuid("id").primaryKey().defaultRandom(),
   assignedDate: date("assigned_date").notNull().defaultNow(),
@@ -79,26 +65,6 @@ export const assignedCoursesTable = pgTable("assigned_courses", {
     .notNull()
     .references(() => usersTable.id),
 });
-
-export const usersTable = pgTable("users", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  email: text("email").notNull(),
-  password: text("password").notNull(),
-  organizationId: uuid("organization_id").references(
-    () => organizationsTable.id
-  ),
-  licenseType: licenseTypeEnum("license_type"),
-  createdAt: date("created_at").notNull().defaultNow(),
-  updatedAt: date("updated_at")
-    .notNull()
-    .defaultNow()
-    .$onUpdate(() => sql`CURRENT_DATE`),
-  role: roleEnum("role").notNull(),
-  jobRoleId: uuid("job_role_id").references(() => jobRolesTable.id),
-});
-
 
 export const categoriesTable = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -132,6 +98,14 @@ export const courseCategoriesTable = pgTable("course_categories", {
     .references(() => categoriesTable.id),
 });
 
+export const jobRolesTable = pgTable("job_roles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  organizationId: uuid("organization_id")
+    .notNull()
+    .references(() => organizationsTable.id),
+});
+
 export const learningObjectivesTable = pgTable("learning_objectives", {
   id: uuid("id").primaryKey().defaultRandom(),
   courseId: uuid("course_id")
@@ -151,16 +125,16 @@ export const modulesTable = pgTable("modules", {
   order: integer("order").notNull(),
 });
 
-export const questionsTable = pgTable("questions", {
+export const moduleProgressesTable = pgTable("module_progress", {
   id: uuid("id").primaryKey().defaultRandom(),
-  courseId: uuid("course_id")
+  moduleId: uuid("module_id")
     .notNull()
-    .references(() => coursesTable.id),
-  order: integer("order").notNull(),
-  questionText: text("question_text").notNull(),
-  questionType: questionTypeEnum("question_type").notNull(),
-  correctOptionOrder: integer("correct_option_order").notNull(),
-  explanation: text("explanation").notNull(),
+    .references(() => modulesTable.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => usersTable.id),
+  startModule: date("start_module").notNull().defaultNow(),
+  endModule: date("end_module"),
 });
 
 export const optionsTable = pgTable("options", {
@@ -178,24 +152,40 @@ export const organizationsTable = pgTable("organizations", {
   createdAt: date("created_at").notNull().defaultNow(),
 });
 
-export const jobRolesTable = pgTable("job_roles", {
+export const questionsTable = pgTable("questions", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  organizationId: uuid("organization_id")
+  courseId: uuid("course_id")
     .notNull()
-    .references(() => organizationsTable.id),
+    .references(() => coursesTable.id),
+  order: integer("order").notNull(),
+  questionText: text("question_text").notNull(),
+  questionType: questionTypeEnum("question_type").notNull(),
+  correctOptionOrder: integer("correct_option_order").notNull(),
+  explanation: text("explanation").notNull(),
 });
 
-export const moduleProgressTable = pgTable("module_progress", {
+export const surveyAnswersTable = pgTable("survey_answers", {
   id: uuid("id").primaryKey().defaultRandom(),
-  moduleId: uuid("module_id")
+  assignedCourseId: uuid("assigned_course_id")
+    .references(() => assignedCoursesTable.id)
+    .notNull(),
+  order: integer("order").notNull(),
+  answer: text("answer").notNull(),
+  answeredAt: date("created_at").notNull().defaultNow(),
+})
+
+export const quizAnswersTable = pgTable("quiz_answers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  optionId: uuid("option_id")
     .notNull()
-    .references(() => modulesTable.id),
+    .references(() => optionsTable.id),
+  questionId: uuid("question_id")
+    .notNull()
+    .references(() => questionsTable.id),
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  startModule: date("start_module").notNull().defaultNow(),
-  endModule: date("end_module"),
+  answeredAt: date("answered_at").notNull().defaultNow(),
 });
 
 export const tracksAssignmentsTable = pgTable("tracks_assignments", {
@@ -230,6 +220,25 @@ export const tracksTable = pgTable("tracks", {
   isMandatory: boolean("is_mandatory").notNull(),
 });
 
+export const usersTable = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  password: text("password").notNull(),
+  organizationId: uuid("organization_id").references(
+    () => organizationsTable.id
+  ),
+  licenseType: licenseTypeEnum("license_type"),
+  createdAt: date("created_at").notNull().defaultNow(),
+  updatedAt: date("updated_at")
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => sql`CURRENT_DATE`),
+  role: roleEnum("role").notNull(),
+  jobRoleId: uuid("job_role_id").references(() => jobRolesTable.id),
+});
+
 export const verifiedUsersTable = pgTable("verified_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
@@ -240,40 +249,24 @@ export const verifiedUsersTable = pgTable("verified_users", {
 });
 
 // Relations
-export const answersRelations = relations(answersTable, ({ one }) => ({
-  option: one(optionsTable, {
-    fields: [answersTable.optionId],
-    references: [optionsTable.id],
-  }),
-  question: one(questionsTable, {
-    fields: [answersTable.questionId],
-    references: [questionsTable.id],
-  }),
-  user: one(usersTable, {
-    fields: [answersTable.userId],
-    references: [usersTable.id],
-  }),
-}));
-
-export const usersRelations = relations(usersTable, ({ one, many }) => ({
-  answers: many(answersTable),
-  organization: one(organizationsTable, {
-    fields: [usersTable.organizationId],
-    references: [organizationsTable.id],
-  }),
-  jobRole: one(jobRolesTable, {
-    fields: [usersTable.jobRoleId],
-    references: [jobRolesTable.id],
-  }),
-  courses: many(coursesTable),
-  moduleProgress: many(moduleProgressTable),
-  assignedCourses: many(assignedCoursesTable),
-  tracksUpdated: many(tracksTable),
-  tracksAssignments: many(tracksAssignmentsTable),
-  tracksAssignmentsAssigned: many(tracksAssignmentsTable, {
-    relationName: "assignedBy",
-  }),
-}));
+export const assignedCoursesRelations = relations(
+  assignedCoursesTable,
+  ({ one, many }) => ({
+    course: one(coursesTable, {
+      fields: [assignedCoursesTable.courseId],
+      references: [coursesTable.id],
+    }),
+    organization: one(organizationsTable, {
+      fields: [assignedCoursesTable.organizationId],
+      references: [organizationsTable.id],
+    }),
+    user: one(usersTable, {
+      fields: [assignedCoursesTable.userId],
+      references: [usersTable.id],
+    }),
+    surveyAnswersTable: many(surveyAnswersTable)
+  })
+);
 
 export const categoriesRelations = relations(categoriesTable, ({ many }) => ({
   courseCategories: many(courseCategoriesTable),
@@ -306,27 +299,15 @@ export const modulesRelations = relations(modulesTable, ({ one, many }) => ({
     fields: [modulesTable.courseId],
     references: [coursesTable.id],
   }),
-  moduleProgresses: many(moduleProgressTable),
+  moduleProgresses: many(moduleProgressesTable),
 }));
-
-export const questionsRelations = relations(
-  questionsTable,
-  ({ one, many }) => ({
-    answers: many(answersTable),
-    course: one(coursesTable, {
-      fields: [questionsTable.courseId],
-      references: [coursesTable.id],
-    }),
-    options: many(optionsTable),
-  })
-);
 
 export const optionsRelations = relations(optionsTable, ({ one, many }) => ({
   question: one(questionsTable, {
     fields: [optionsTable.questionId],
     references: [questionsTable.id],
   }),
-  answers: many(answersTable),
+  answers: many(quizAnswersTable),
 }));
 
 export const organizationsRelations = relations(
@@ -349,36 +330,52 @@ export const jobRolesRelations = relations(jobRolesTable, ({ one, many }) => ({
 }));
 
 export const moduleProgressRelations = relations(
-  moduleProgressTable,
+  moduleProgressesTable,
   ({ one }) => ({
     module: one(modulesTable, {
-      fields: [moduleProgressTable.moduleId],
+      fields: [moduleProgressesTable.moduleId],
       references: [modulesTable.id],
     }),
     user: one(usersTable, {
-      fields: [moduleProgressTable.userId],
+      fields: [moduleProgressesTable.userId],
       references: [usersTable.id],
     }),
   })
 );
 
-export const assignedCoursesRelations = relations(
-  assignedCoursesTable,
-  ({ one }) => ({
+export const questionsRelations = relations(
+  questionsTable,
+  ({ one, many }) => ({
+    quizAnswers: many(quizAnswersTable),
     course: one(coursesTable, {
-      fields: [assignedCoursesTable.courseId],
+      fields: [questionsTable.courseId],
       references: [coursesTable.id],
     }),
-    user: one(usersTable, {
-      fields: [assignedCoursesTable.userId],
-      references: [usersTable.id],
-    }),
-    organization: one(organizationsTable, {
-      fields: [assignedCoursesTable.organizationId],
-      references: [organizationsTable.id],
-    }),
+    options: many(optionsTable),
   })
 );
+
+export const quizAnswersRelations = relations(quizAnswersTable, ({ one }) => ({
+  option: one(optionsTable, {
+    fields: [quizAnswersTable.optionId],
+    references: [optionsTable.id],
+  }),
+  question: one(questionsTable, {
+    fields: [quizAnswersTable.questionId],
+    references: [questionsTable.id],
+  }),
+  user: one(usersTable, {
+    fields: [quizAnswersTable.userId],
+    references: [usersTable.id],
+  }),
+}));
+
+export const surveyAnswersRelations = relations(surveyAnswersTable, ({ one }) => ({
+  assignedCourse: one(assignedCoursesTable, {
+    fields: [surveyAnswersTable.assignedCourseId],
+    references: [assignedCoursesTable.id],
+  }),
+}))
 
 export const tracksRelations = relations(tracksTable, ({ one, many }) => ({
   organization: one(organizationsTable, {
@@ -410,6 +407,26 @@ export const tracksAssignmentsRelations = relations(
     }),
   })
 );
+
+export const usersRelations = relations(usersTable, ({ one, many }) => ({
+  quizAnswers: many(quizAnswersTable),
+  organization: one(organizationsTable, {
+    fields: [usersTable.organizationId],
+    references: [organizationsTable.id],
+  }),
+  jobRole: one(jobRolesTable, {
+    fields: [usersTable.jobRoleId],
+    references: [jobRolesTable.id],
+  }),
+  courses: many(coursesTable),
+  moduleProgress: many(moduleProgressesTable),
+  assignedCourses: many(assignedCoursesTable),
+  tracksUpdated: many(tracksTable),
+  tracksAssignments: many(tracksAssignmentsTable),
+  tracksAssignmentsAssigned: many(tracksAssignmentsTable, {
+    relationName: "assignedBy",
+  }),
+}));
 
 export const verifiedUsersRelations = relations(
   verifiedUsersTable,

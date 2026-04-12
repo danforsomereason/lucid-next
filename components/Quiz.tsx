@@ -3,11 +3,14 @@ import { Paper, Typography, FormControl, Alert, Box, Button, RadioGroup } from "
 import QuizOption from "./QuizOption";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import QuizResults from "./QuizResults";
 
 export default function Quiz() {
   const courseModules = useCourseModules()
   if (!courseModules.selectedQuestion) {
-    return <div>REVIEW</div>
+    return (
+      <QuizResults />
+    )
   }
   return (
     <Paper sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>

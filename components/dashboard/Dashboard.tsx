@@ -23,8 +23,6 @@ import { redirect } from "next/navigation";
 
 const Dashboard: React.FC = () => {
   const globalValue = useContext(globalContext);
-  console.log("Global value: ", globalValue);
-  const userName = globalValue?.currentUser?.firstName;
 
   if (!globalValue || !globalValue.currentUser) {
     return redirect("/signin");

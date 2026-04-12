@@ -59,6 +59,12 @@ const SignIn: React.FC = () => {
     };
 
     return (
+        <form
+            onSubmit={(event) => {
+                event.preventDefault();
+                handleSignIn();
+            }}
+        >
         <Box
             sx={{
                 display: "flex",
@@ -164,7 +170,7 @@ const SignIn: React.FC = () => {
                     <Typography sx={{ color: "red" }}>{error}</Typography>
                 )}
                 <Button
-                    onClick={handleSignIn}
+                    type="submit"
                     variant="contained"
                     fullWidth
                     sx={{
@@ -204,6 +210,7 @@ const SignIn: React.FC = () => {
                 </Typography>
             </Box>
         </Box>
+        </form>
     );
 };
 

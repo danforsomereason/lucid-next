@@ -7,22 +7,22 @@ import {
   optionsTable,
   organizationsTable,
   jobRolesTable,
-  moduleProgressTable,
+  moduleProgressesTable,
   assignedCoursesTable,
   tracksTable,
   tracksAssignmentsTable,
   verifiedUsersTable,
   categoriesTable,
-  answersTable,
+  quizAnswersTable,
 } from "./schema";
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { check, z } from "zod";
 
 // Answers
-export const answerSchema = createSelectSchema(answersTable);
-export type Answer = z.infer<typeof answerSchema>;
-export const answerInsertSchema = createInsertSchema(answersTable);
-export type AnswerInsert = z.infer<typeof answerInsertSchema>;
+export const quizAnswerSchema = createSelectSchema(quizAnswersTable);
+export type QuizAnswer = z.infer<typeof quizAnswerSchema>;
+export const quizAnswerInsertSchema = createInsertSchema(quizAnswersTable);
+export type QuizAnswerInsert = z.infer<typeof quizAnswerInsertSchema>;
 
 // Users
 export const userInsertSchema = createInsertSchema(usersTable);
@@ -91,9 +91,9 @@ export type JobRole = z.infer<typeof jobRoleSchema>;
 
 // Module Progress
 export const moduleProgressInsertSchema =
-  createInsertSchema(moduleProgressTable);
+  createInsertSchema(moduleProgressesTable);
 export type ModuleProgressInsert = z.infer<typeof moduleProgressInsertSchema>;
-export const moduleProgressSchema = createSelectSchema(moduleProgressTable);
+export const moduleProgressSchema = createSelectSchema(moduleProgressesTable);
 export type ModuleProgress = z.infer<typeof moduleProgressSchema>;
 
 // Assigned Courses
@@ -230,11 +230,11 @@ export const checkQuestionInputSchema = z.object({
 
 export type CheckQuestionInput = z.infer<typeof checkQuestionInputSchema>;
 
-export const checkQuizInputSchema = z.object({
+export const checkQuestionsInputSchema = z.object({
   answers: checkQuestionInputSchema.array(),
   courseId: z.string(),
 })
-export type CheckQuizInput = z.infer<typeof checkQuizInputSchema>;
+export type CheckQuestionsInput = z.infer<typeof checkQuestionsInputSchema>;
 
 export const checkQuestionOutputSchema = z.object({
   correct: z.boolean(),
@@ -242,10 +242,12 @@ export const checkQuestionOutputSchema = z.object({
 })
 export type CheckQuestionOutput = z.infer<typeof checkQuestionOutputSchema>;
 
-export const checkQuizOutputSchema = z.object({
+export const checkQuestionsOutputSchema = z.object({
+  maximized: z.boolean(),
+  passing: z.boolean(),
   results: checkQuestionOutputSchema.array(),
 })
-export type CheckQuizOutput = z.infer<typeof checkQuizOutputSchema>;
+export type CheckQuestionsOutput = z.infer<typeof checkQuestionsOutputSchema>;
 
 export const endpointSchemas = {
   register: {
@@ -264,9 +266,9 @@ export const endpointSchemas = {
     input: createCourseInputSchema,
     output: createCourseOutputSchema
   },
-  checkQuestion: {
-    input: checkQuizInputSchema,
-    output: checkQuizOutputSchema
+  checkQuestions: {
+    input: checkQuestionsInputSchema,
+    output: checkQuestionsOutputSchema
   }
 };
 export type EndpointSchemas = typeof endpointSchemas;
@@ -284,7 +286,7 @@ export type RelatedModule = z.infer<typeof relatedModuleSchema>;
 
 export const relatedQuestionSchema = questionSchema.extend({
   options: optionSchema.array(),
-  answers: answerSchema.array(),
+  quizAnswers: quizAnswerSchema.array(),
 })
 export type RelatedQuestion = z.infer<typeof relatedQuestionSchema>;
 

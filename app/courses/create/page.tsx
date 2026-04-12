@@ -180,7 +180,6 @@ export default function CoursesCreate() {
   }
 
   async function submitCourse() {
-    console.log('submitCourse called')
     if (title.length === 0) {
       throw new Error("Title is required");
     }
@@ -218,7 +217,6 @@ export default function CoursesCreate() {
     try {
       const body = createCourseInputSchema.parse(input);
       const response = await axios.post("/api/v1/courses/create", body);
-      console.log(response.data);
     } catch (error) {
       if (!(error instanceof Error)) {
         throw new Error("Unknown error occurred");

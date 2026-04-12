@@ -39,8 +39,8 @@ const NavBar: React.FC = () => {
   };
 
   const handleLogout = () => {
-    // should also be reset in the context to be undefined
-    localStorage.removeItem("token");
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    context?.setCurrentUser(undefined);
     handleMenuClose();
     router.push("/");
   };

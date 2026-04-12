@@ -1,5 +1,5 @@
 import db from "@/db";
-import { assignedCoursesTable, coursesTable, moduleProgressTable } from "@/schema";
+import { assignedCoursesTable, coursesTable, moduleProgressesTable } from "@/schema";
 import { assignCourseInputSchema } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { and, eq } from "drizzle-orm";
@@ -47,15 +47,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "No modules found for this course" }, { status: 404 });
   }
 
-  const existingProgress = await db.query.moduleProgressTable.findFirst({
+  const existingProgress = await db.query.moduleProgressesTable.findFirst({
     where: and(
-      eq(moduleProgressTable.moduleId, firstModule.id),
-      eq(moduleProgressTable.userId, user.id),
+      eq(moduleProgressesTable.moduleId, firstModule.id),
+      eq(moduleProgressesTable.userId, user.id),
     )
   });
 
   if (!existingProgress) {
-    await db.insert(moduleProgressTable).values({
+    await db.insert(moduleProgressesTable).values({
       moduleId: firstModule.id,
       userId: user.id,
     })

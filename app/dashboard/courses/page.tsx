@@ -5,7 +5,7 @@ import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 
 export default async function DashboardCourses() {
-  const currentUser = await authenticate(true)
+  const currentUser = await authenticate()
   if (!currentUser) {
     return <p>Unauthenticated</p>
   }

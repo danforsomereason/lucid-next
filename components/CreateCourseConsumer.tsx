@@ -72,7 +72,6 @@ export default function CreateCourseConsumer() {
   const handleCloseClearDialog = () => setClearDialogOpened(false);
 
   const handleSubmitCourse = async () => {
-    console.log('handleSuubmitCourse called')
     try {
       await courseCreator.submitCourse();
       setSubmitStatus({
@@ -81,7 +80,6 @@ export default function CreateCourseConsumer() {
       });
       courseCreator.clearForm();
     } catch (error) {
-      console.log('error creating course', error)
       setSubmitStatus({
         type: "error",
         message: error instanceof Error ? error.message : "Failed to create course",
@@ -114,7 +112,6 @@ export default function CreateCourseConsumer() {
       Number(event.target.value)
     );
   };
-  console.log('submitStatus', submitStatus)
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -167,6 +164,7 @@ export default function CreateCourseConsumer() {
           type="number"
           inputProps={{ min: 1 }}
           sx={textFieldSx}
+          required
         />
         <TextField
           name="passing_score"
@@ -176,6 +174,7 @@ export default function CreateCourseConsumer() {
           onChange={(event) => courseCreator.updatePassingScore(event.target.value)}
           fullWidth
           type="number"
+          required
           inputProps={{ min: 1 }}
           sx={textFieldSx}
         />

@@ -58,8 +58,6 @@ const Courses: React.FC = () => {
   const coursesPerPage = 12;
   const searchParams = useSearchParams();
 
-  console.log('courses', courses)
-
   // Scroll to search list
   const handleBrowseClick = () => {
     if (searchRef.current) {
@@ -72,8 +70,6 @@ const Courses: React.FC = () => {
     async function download() {
       const categoryId = searchParams.get("category");
       if (categoryId) {
-        console.log("Category ID from URL:", categoryId);
-
         const data = await getCoursesByCategory(categoryId)
         // console.log("Course data structure:", data[0]);
         // console.log("Course ID type:", typeof data[0]._id);

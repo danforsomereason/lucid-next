@@ -18,7 +18,6 @@ export async function getCourseById(courseId: string) {
   try {
     const cleanId = courseId.replace(/^\/+|\/+$/g, "");
     const url = `http://localhost:3000/api/v1/courses/${cleanId}`;
-    console.log("Attempting to fetch course with URL:", url);
 
     const response = await axios.get(url);
     return response.data;
@@ -45,5 +44,4 @@ export async function getRequiredCourses(organizationId: string) {
 export async function getCourseProgress() {
   const url = `http://localhost:3000/api/v1/course_progress`;
   const response = await axios.get(url);
-  console.log("Response.data", response.data);
 }
