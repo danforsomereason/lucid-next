@@ -39,23 +39,6 @@ export default function Quiz() {
           })}
         </RadioGroup>
       </FormControl>
-
-      {/* {showFeedback && (
-        <Alert
-          severity={selectedAnswer.toLowerCase() === currentQuestion.correct_answer.toLowerCase() ? "success" : "error"}
-          sx={{ mt: 2 }}
-        >
-          <Typography variant="body1" gutterBottom>
-            {selectedAnswer.toLowerCase() === currentQuestion.correct_answer.toLowerCase()
-              ? "Correct!"
-              : `Incorrect. The correct answer was: ${currentQuestion.correct_answer}`}
-          </Typography>
-          <Typography variant="body2">
-            {currentQuestion.explanation}
-          </Typography>
-        </Alert>
-      )} */}
-
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button
           variant="outlined"

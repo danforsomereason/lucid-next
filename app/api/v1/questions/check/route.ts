@@ -99,7 +99,8 @@ export async function POST(request: Request) {
     }
     return answerInsert
   })
-  db.insert(quizAnswersTable).values(answerInserts)
+  console.log('answerInserts', answerInserts)
+  await db.insert(quizAnswersTable).values(answerInserts)
   const results = input.answers.map((answer) => {
     const question = course.questions.find((question) => question.id === answer.questionId)
     if (!question) {

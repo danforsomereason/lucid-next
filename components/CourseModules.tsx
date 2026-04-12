@@ -14,6 +14,7 @@ interface CourseModulesProps {
   relatedCourse: RelatedCourse
   relatedModules: RelatedModule[]
   relatedQuestions: SafeQuestion[]
+  savedResults: CheckQuestionOutput[]
 }
 
 export default function CourseModules({
@@ -21,11 +22,12 @@ export default function CourseModules({
   relatedCourse,
   relatedModules,
   relatedQuestions,
+  savedResults
 }: CourseModulesProps) {
   console.log('relatedCourse', relatedCourse)
   const [assignment, setAssignment] = useState(assignedCourse)
   console.log('assignment', assignment)
-  const [results, setResults] = useState<CheckQuestionOutput[]>([])
+  const [results, setResults] = useState<CheckQuestionOutput[]>(savedResults)
   const [modules, setModules] = useState(relatedModules)
   const modulesCompleted = areModulesCompleted(modules)
   const [selectedModuleId, setSelectedModuleId] = useState<string | undefined>(() => {
@@ -36,6 +38,9 @@ export default function CourseModules({
   })
   const quizCompleted = assignment.completedAt !== null
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | undefined>(() => {
+    if (quizCompleted) {
+      return undefined
+    }
     if (modulesCompleted) {
       return relatedQuestions[0].id
     }
