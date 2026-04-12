@@ -4,7 +4,8 @@ import {
   QuizAnswerInsert,
   checkQuestionsInputSchema,
   CheckQuestionsOutput,
-  checkQuestionsOutputSchema
+  checkQuestionsOutputSchema,
+  CheckQuestionOutput
 } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { and, eq, inArray } from "drizzle-orm";
@@ -105,8 +106,13 @@ export async function POST(request: Request) {
       throw new Error("Question not found")
     }
     const correct = question.correctOptionOrder === answer.selectedOptionOrder
-    const output = {
+    const correctOption = question.options[question.correctOptionOrder]
+    if (!correctOption) {
+      throw new Error("Correct option not found")
+    }
+    const output: CheckQuestionOutput = {
       correct,
+      correctAnswer: correctOption.option,
       explanation: question.explanation,
     }
     return output

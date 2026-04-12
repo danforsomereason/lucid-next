@@ -238,6 +238,7 @@ export type CheckQuestionsInput = z.infer<typeof checkQuestionsInputSchema>;
 
 export const checkQuestionOutputSchema = z.object({
   correct: z.boolean(),
+  correctAnswer: z.string(),
   explanation: z.string(),
 })
 export type CheckQuestionOutput = z.infer<typeof checkQuestionOutputSchema>;

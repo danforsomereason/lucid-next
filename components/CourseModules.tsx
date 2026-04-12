@@ -36,9 +36,6 @@ export default function CourseModules({
   })
   const quizCompleted = assignment.completedAt !== null
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | undefined>(() => {
-    if (quizCompleted) {
-      return undefined
-    }
     if (modulesCompleted) {
       return relatedQuestions[0].id
     }
@@ -177,6 +174,7 @@ export default function CourseModules({
     setSelectedQuestionId(relatedQuestions[0].id)
   }
   function restart() {
+    setAnswers([])
     selectModule(relatedModules[0].id)
   }
   const value: CourseModulesContextValue = {

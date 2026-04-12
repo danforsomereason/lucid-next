@@ -8,6 +8,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DownloadIcon from "@mui/icons-material/Download";
 import { useCourseModules } from "@/context/courseModulesContext";
 import { useRouter } from "next/navigation";
+import QuizResult from "./QuizResult";
 
 const QuizResults: React.FC = () => {
   const courseModules = useCourseModules();
@@ -31,6 +32,15 @@ const QuizResults: React.FC = () => {
         <Typography variant="h5" sx={{ mb: 3 }}>
           Your Score: {score}%
         </Typography>
+
+        {courseModules.results.map((result, index) => {
+          return (
+            <QuizResult
+              key={index}
+              result={result}
+            />
+          )
+        })}
 
         {passed ? (
           <>
