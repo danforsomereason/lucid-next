@@ -24,6 +24,9 @@ export async function POST(req: Request) {
   if (!existingProgress) {
     return NextResponse.json({ message: "Module progress not found" }, { status: 404 });
   }
+  if (existingProgress.endModule) {
+    return NextResponse.json({ message: "Module already completed" }, { status: 400 });
+  }
   const [updated] = await db.update(moduleProgressesTable).set({
     endModule: new Date().toISOString(),
   }).where(condition).returning();

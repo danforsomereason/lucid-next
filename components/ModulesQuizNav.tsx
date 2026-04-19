@@ -20,6 +20,7 @@ export default function ModulesQuizNav() {
             ? "auto"
             : "none",
       }}
+      onClick={courseModules.showQuiz}
     >
       {courseModules.quizCompleted ? (
         <CheckCircleIcon color="success" />

@@ -54,9 +54,30 @@ export default function CourseModules({
   const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
   const selectedOption = selectedQuestion?.options.find((option) => option.id === selectedOptionId)
   const onLastQuestion = selectedQuestion?.order === relatedQuestions.length - 1
+  function progressModule(modules: RelatedModule[]) {
+    const modulesCompleted = areModulesCompleted(modules)
+    console.log('completed', modulesCompleted)
+    if (modulesCompleted) {
+      showQuiz()
+      if (!quizCompleted) {
+        setSelectedQuestionId(relatedQuestions[0].id)
+      }
+    }
+  }
   async function completeModule() {
     if (!selectedModuleId) {
       throw new Error('No module selected')
+    }
+    if (!selectedModule) {
+      throw new Error('Selected module not found')
+    }
+    if (selectedModule.moduleProgresses.length !== 1) {
+      throw new Error('Invalid module progresses')
+    }
+    const moduleProgress = selectedModule.moduleProgresses[0]
+    if (moduleProgress.endModule) {
+      progressModule(modules)
+      return
     }
     const body: EndModuleInput = { moduleId: selectedModuleId }
     const input = endModuleInputSchema.parse(body)
@@ -79,12 +100,7 @@ export default function CourseModules({
     })
     console.log('newRelatedModules', newRelatedModules)
     setModules(newRelatedModules)
-    const completed = areModulesCompleted(newRelatedModules)
-    console.log('completed', completed)
-    if (completed) {
-      showQuiz()
-      setSelectedQuestionId(relatedQuestions[0].id)
-    }
+    progressModule(newRelatedModules)
   }
   function selectModule(moduleId: string) {
     setSelectedModuleId(moduleId)
