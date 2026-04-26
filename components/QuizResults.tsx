@@ -12,7 +12,6 @@ import QuizResult from "./QuizResult";
 
 const QuizResults: React.FC = () => {
   const courseModules = useCourseModules();
-  console.log('courseModule.results', courseModules.results)
   const correctAnswers = courseModules.results.filter(result => result.correct)
   const score = Math.round((correctAnswers.length / courseModules.results.length) * 100);
   const passed = score >= courseModules.course.passingScore;

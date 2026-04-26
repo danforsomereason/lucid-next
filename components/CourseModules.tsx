@@ -1,7 +1,7 @@
 'use client'
 
 import { CourseModulesContext, CourseModulesContextValue } from "@/context/courseModulesContext"
-import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, RelatedCourse, RelatedModule, SafeQuestion } from "@/types"
+import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer } from "@/types"
 import areModulesCompleted from "@/utils/areModulesCompleted"
 import axios from "axios"
 import { useState } from "react"
@@ -15,6 +15,7 @@ interface CourseModulesProps {
   relatedModules: RelatedModule[]
   relatedQuestions: SafeQuestion[]
   savedResults: CheckQuestionOutput[]
+  surveyAnswersProp: SurveyAnswer[]
 }
 
 export default function CourseModules({
@@ -22,14 +23,14 @@ export default function CourseModules({
   relatedCourse,
   relatedModules,
   relatedQuestions,
-  savedResults
+  savedResults,
+  surveyAnswersProp
 }: CourseModulesProps) {
-  console.log('relatedCourse', relatedCourse)
   const [assignment, setAssignment] = useState(assignedCourse)
-  console.log('assignment', assignment)
   const [results, setResults] = useState<CheckQuestionOutput[]>(savedResults)
   const [modules, setModules] = useState(relatedModules)
   const modulesCompleted = areModulesCompleted(modules)
+  console.log('modulesCompleted', modulesCompleted)
   const [selectedModuleId, setSelectedModuleId] = useState<string | undefined>(() => {
     if (modulesCompleted) {
       return undefined
@@ -37,6 +38,7 @@ export default function CourseModules({
     return relatedModules[0].id
   })
   const quizCompleted = assignment.completedAt !== null
+  console.log('quizCompleted', quizCompleted)
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | undefined>(() => {
     if (quizCompleted) {
       return undefined
@@ -46,9 +48,12 @@ export default function CourseModules({
     }
     return undefined
   })
-  const [quizShown, setQuizShown] = useState(modulesCompleted)
+  const [quizShown, setQuizShown] = useState(() => !quizCompleted && modulesCompleted)
+  console.log('quizShown', quizShown)
   const [selectedOptionId, setSelectedOptionId] = useState<string | undefined>(undefined)
   const [answers, setAnswers] = useState<CheckQuestionInput[]>([])
+  const [surveyAnswers, setSurveyAnswers] = useState(surveyAnswersProp)
+  const [surveyShown, setSurveyShown] = useState(quizCompleted)
 
   const selectedModule = modules.find((module) => module.id === selectedModuleId)
   const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
@@ -56,7 +61,6 @@ export default function CourseModules({
   const onLastQuestion = selectedQuestion?.order === relatedQuestions.length - 1
   function progressModule(modules: RelatedModule[]) {
     const modulesCompleted = areModulesCompleted(modules)
-    console.log('completed', modulesCompleted)
     if (modulesCompleted) {
       showQuiz()
       if (!quizCompleted) {
@@ -81,10 +85,8 @@ export default function CourseModules({
     }
     const body: EndModuleInput = { moduleId: selectedModuleId }
     const input = endModuleInputSchema.parse(body)
-    console.log('input', input)
     const response = await axios.post("/api/v1/modules/end", body)
     const output = endModuleOutputSchema.parse(response.data)
-    console.log('output', output)
     if (!output.endModule) {
       throw new Error("Failed to end module");
     }
@@ -98,13 +100,13 @@ export default function CourseModules({
       }
       return newModule
     })
-    console.log('newRelatedModules', newRelatedModules)
     setModules(newRelatedModules)
     progressModule(newRelatedModules)
   }
   function selectModule(moduleId: string) {
     setSelectedModuleId(moduleId)
     setQuizShown(false)
+    setSurveyShown(false)
     setSelectedQuestionId(undefined)
   }
   function selectOption(optionId: string) {
@@ -112,6 +114,13 @@ export default function CourseModules({
   }
   function showQuiz() {
     setQuizShown(true)
+    setSurveyShown(false)
+    setSelectedModuleId(undefined)
+  }
+  function showSurvey() {
+    console.log('showing survey')
+    setSurveyShown(true)
+    setQuizShown(false)
     setSelectedModuleId(undefined)
   }
   async function checkQuiz(answers: CheckQuestionInput[]) {
@@ -190,6 +199,7 @@ export default function CourseModules({
     }
     setSelectedOptionId(undefined)
   }
+
   function retakeQuiz() {
     setAnswers([])
     setSelectedQuestionId(relatedQuestions[0].id)
@@ -220,7 +230,10 @@ export default function CourseModules({
     selectedOptionId,
     selectedQuestion,
     selectedQuestionId,
-    showQuiz
+    showQuiz,
+    showSurvey,
+    surveyAnswers,
+    surveyShown,
   }
   return (
     <CourseModulesContext value={value}>

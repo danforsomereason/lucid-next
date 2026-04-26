@@ -1,50 +1,19 @@
-import { Typography } from "@mui/material";
-import { SectionItem } from "./styled";
-import QuizIcon from "@mui/icons-material/Quiz";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { useCourseModules } from "@/context/courseModulesContext";
+import QuizIcon from "@mui/icons-material/Quiz";
+import ModulesNav from "./ModulesNav";
 
 export default function ModulesQuizNav() {
   const courseModules = useCourseModules()
   return (
-    <SectionItem
-      sx={{
-        mt: 2,
-        borderTop: 1,
-        borderColor: "divider",
-        opacity:
-          courseModules.modulesCompleted ? 1 : 0.5,
-        pointerEvents:
-          courseModules.modulesCompleted
-            ? "auto"
-            : "none",
-      }}
+    <ModulesNav
+      completed={courseModules.quizCompleted}
+      current={courseModules.assignedCourse.quizAttempts}
+      icon={<QuizIcon sx={{ ml: "auto" }} />}
+      locked={!courseModules.modulesCompleted}
       onClick={courseModules.showQuiz}
+      total={courseModules.course.maximumAttempts}
     >
-      {courseModules.quizCompleted ? (
-        <CheckCircleIcon color="success" />
-      ) : (
-        <CancelIcon color="disabled" />
-      )}
-      <Typography
-        color={
-          courseModules.quizCompleted ? "text.primary" : "text.secondary"
-        }
-      >
-        Course Quiz
-        {' '}
-        {!courseModules.quizCompleted && (
-          <>
-          (
-            {courseModules.assignedCourse.quizAttempts}
-            /
-            {courseModules.course.maximumAttempts}
-          )
-          </>
-        )}
-      </Typography>
-      <QuizIcon sx={{ ml: "auto" }} />
-    </SectionItem>
+      Course Quiz
+    </ModulesNav>
   )
 }

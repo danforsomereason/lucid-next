@@ -1,9 +1,7 @@
-import { Typography } from "@mui/material";
-import { SectionItem } from "./styled";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import { RelatedModule } from "@/types";
 import { useCourseModules } from "@/context/courseModulesContext";
+import { RelatedModule } from "@/types";
+import ModulesNavLabel from "./ModulesNavLabel";
+import { SectionItem } from "./styled";
 
 interface ModuleNavProps {
   module: RelatedModule
@@ -30,20 +28,9 @@ export default function ModuleNav({
         pointerEvents: locked ? "none" : "auto",
       }}
     >
-      {completed ? (
-        <CheckCircleIcon color="success" />
-      ) : locked ? (
-        <CancelIcon color="disabled" />
-      ) : (
-        <CheckCircleIcon color="disabled" />
-      )}
-      <Typography
-        color={
-          locked ? "text.disabled" : "text.primary"
-        }
-      >
+      <ModulesNavLabel completed={completed} locked={locked}>
         {module.heading}
-      </Typography>
+      </ModulesNavLabel>
     </SectionItem>
   )
 }

@@ -64,7 +64,7 @@ export const assignedCoursesTable = pgTable("assigned_courses", {
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-});
+})
 
 export const categoriesTable = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -264,7 +264,7 @@ export const assignedCoursesRelations = relations(
       fields: [assignedCoursesTable.userId],
       references: [usersTable.id],
     }),
-    surveyAnswersTable: many(surveyAnswersTable)
+    surveyAnswers: many(surveyAnswersTable)
   })
 );
 

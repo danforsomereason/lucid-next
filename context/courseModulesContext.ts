@@ -1,4 +1,4 @@
-import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse } from "@/types";
+import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse, SurveyAnswer } from "@/types";
 import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {
@@ -9,6 +9,9 @@ export interface CourseModulesContextValue {
   modules: RelatedModule[]
   modulesCompleted: boolean
   onLastQuestion: boolean
+  questions: SafeQuestion[]
+  quizCompleted: boolean
+  quizShown: boolean
   results: CheckQuestionOutput[]
   restart: () => void
   retakeQuiz: () => void
@@ -21,9 +24,9 @@ export interface CourseModulesContextValue {
   selectedQuestionId?: string
   selectedQuestion?: SafeQuestion
   showQuiz: () => void
-  questions: SafeQuestion[]
-  quizCompleted: boolean
-  quizShown: boolean
+  showSurvey: () => void
+  surveyAnswers: SurveyAnswer[]
+  surveyShown: boolean
 }
 
 export const CourseModulesContext = createContext<CourseModulesContextValue | undefined>(undefined);

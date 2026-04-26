@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json()
+  // Validate the body with zod
   const input = registerInputSchema.parse(body);
 
   const existingUser = await db.query.usersTable.findFirst({

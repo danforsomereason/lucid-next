@@ -6,6 +6,7 @@ import ModulesQuizNav from "./ModulesQuizNav";
 import { CourseTitle, ModulesSidebar } from "./styled";
 import { useCourseModules } from "@/context/courseModulesContext";
 import ModuleNav from "./ModuleNav";
+import ModulesSurveyNav from "./ModulesSurveyNav";
 
 export default function ModulesSidebarController() {
   const courseModules = useCourseModules()
@@ -28,6 +29,7 @@ export default function ModulesSidebarController() {
       {navs}
 
       <ModulesQuizNav />
+      <ModulesSurveyNav />
 
       <ModulesHelpButton />
     </ModulesSidebar>

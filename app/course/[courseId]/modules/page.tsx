@@ -20,6 +20,9 @@ export default async function CoursePage({ params }: CoursePageProps) {
     with: {
       assignedCourses: {
         where: eq(assignedCoursesTable.userId, currentUser.id),
+        with: {
+          surveyAnswers: true,
+        }
       },
       learningObjectives: true,
       instructor: true,
@@ -53,7 +56,6 @@ export default async function CoursePage({ params }: CoursePageProps) {
   const answers = relatedCourse.questions.flatMap((question) => {
     return question.quizAnswers
   })
-  console.log('answers', answers)
   const results = answers.map((answer) => {
     const question = relatedCourse.questions.find((question) => question.id === answer.questionId)
     if (!question) {
@@ -78,6 +80,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
       relatedModules={relatedCourse.modules}
       relatedQuestions={safeQuestions}
       savedResults={results}
+      surveyAnswersProp={relatedCourse.assignedCourses[0].surveyAnswers}
     />
   )
 }

@@ -126,7 +126,14 @@ const IndividualCheckout: React.FC = () => {
     if (formErrors) return;
 
     try {
-      const data = { ...formData, jobRoleId: 'user' };
+      const data = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        licenseType: formData.licenseType,
+        password: formData.password,
+        jobRoleId: 'user'
+      };
       const body = JSON.stringify(data);
       const headers = {
         "Content-Type": "application/json",
@@ -247,7 +254,7 @@ const IndividualCheckout: React.FC = () => {
                       "& .MuiInputBase-root": {
                         height: "56px",
                       },
-                      input: { 
+                      input: {
                         color: "var(--black-color)",
                         padding: "16.5px 14px",
                       },
@@ -267,7 +274,7 @@ const IndividualCheckout: React.FC = () => {
                       "& .MuiInputBase-root": {
                         height: "56px",
                       },
-                      input: { 
+                      input: {
                         color: "var(--black-color)",
                         padding: "16.5px 14px",
                       },
@@ -289,7 +296,7 @@ const IndividualCheckout: React.FC = () => {
                       "& .MuiInputBase-root": {
                         height: "56px",
                       },
-                      input: { 
+                      input: {
                         color: "var(--black-color)",
                         padding: "16.5px 14px",
                       },
@@ -310,7 +317,7 @@ const IndividualCheckout: React.FC = () => {
                       "& .MuiInputBase-root": {
                         height: "56px",
                       },
-                      input: { 
+                      input: {
                         color: "var(--black-color)",
                         padding: "16.5px 14px",
                       },
@@ -332,7 +339,7 @@ const IndividualCheckout: React.FC = () => {
                       "& .MuiInputBase-root": {
                         height: "56px",
                       },
-                      input: { 
+                      input: {
                         color: "var(--black-color)",
                         padding: "16.5px 14px",
                       },

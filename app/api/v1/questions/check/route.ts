@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   const user = await authenticate();
   if (!user) {
     return NextResponse.json({
-      message: "You must be logged in to register for a course",
+      message: "You must be logged in to answer a question",
     }, { status: 401 });
   }
   const body: unknown = await request.json();
@@ -99,7 +99,6 @@ export async function POST(request: Request) {
     }
     return answerInsert
   })
-  console.log('answerInserts', answerInserts)
   await db.insert(quizAnswersTable).values(answerInserts)
   const results = input.answers.map((answer) => {
     const question = course.questions.find((question) => question.id === answer.questionId)
@@ -119,10 +118,7 @@ export async function POST(request: Request) {
     return output
   })
   const correctOutputs = results.filter((output) => output.correct)
-  console.log("Correct outputs: ", correctOutputs.length, "out of", course.questions.length)
   const score = (correctOutputs.length / course.questions.length) * 100
-  console.log('score', score)
-  console.log('course.passingScore', course.passingScore)
   const passing = score >= course.passingScore
   const newAttempts = course.assignedCourses[0].quizAttempts + 1
   const maximized = newAttempts >= course.maximumAttempts
@@ -130,7 +126,6 @@ export async function POST(request: Request) {
     eq(assignedCoursesTable.courseId, course.id),
     eq(assignedCoursesTable.userId, user.id),
   )
-  console.log('passing', passing)
   if (passing) {
     await db.update(assignedCoursesTable).set({
       completedAt: new Date().toISOString(),
