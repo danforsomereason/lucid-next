@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {
   advanceQuestion: () => Promise<void>
+  advanceSurvey: () => Promise<void>
   assignedCourse: AssignedCourse
   completeModule: () => Promise<void>
   course: RelatedCourse
@@ -23,9 +24,12 @@ export interface CourseModulesContextValue {
   selectedOptionId?: string
   selectedQuestionId?: string
   selectedQuestion?: SafeQuestion
+  selectSurveyAnswer: (answer: string) => void
   showQuiz: () => void
   showSurvey: () => void
+  surveyAnswer: string
   surveyAnswers: SurveyAnswer[]
+  surveyCompleted: boolean
   surveyShown: boolean
 }
 

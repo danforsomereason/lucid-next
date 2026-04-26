@@ -26,20 +26,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { questionTypeSchema } from "@/types";
 import { useCourseCreator } from "@/context/courseCreatorContext";
 import { useGlobal } from "@/context/globalContext";
-
-const textFieldSx = {
-  "& .MuiInputBase-root": {
-    height: "56px",
-  },
-  input: {
-    color: "var(--black-color)",
-    padding: "16.5px 14px",
-  },
-  "& .MuiInputBase-inputMultiline": {
-    padding: "16.5px 14px",
-    height: "auto",
-  },
-};
+import LucidInput from "./LucidInput";
 
 export default function CreateCourseConsumer() {
   const global = useGlobal();
@@ -119,7 +106,7 @@ export default function CreateCourseConsumer() {
         Course Details
       </Typography>
       <Stack spacing={3} sx={{ mb: 4 }}>
-        <TextField
+        <LucidInput
           name="title"
           variant="outlined"
           label="Course Title"
@@ -127,9 +114,8 @@ export default function CreateCourseConsumer() {
           required
           onChange={(event) => courseCreator.updateTitle(event.target.value)}
           value={courseCreator.title}
-          sx={textFieldSx}
         />
-        <TextField
+        <LucidInput
           name="course_description"
           variant="outlined"
           label="Course Description"
@@ -141,9 +127,8 @@ export default function CreateCourseConsumer() {
           multiline
           rows={4}
           required
-          sx={textFieldSx}
         />
-        <TextField
+        <LucidInput
           name="ce_hours"
           variant="outlined"
           label="Continuing Education (CE) Hours"
@@ -152,9 +137,8 @@ export default function CreateCourseConsumer() {
           fullWidth
           type="number"
           inputProps={{ min: 1 }}
-          sx={textFieldSx}
         />
-        <TextField
+        <LucidInput
           name="maximum_attempts"
           variant="outlined"
           label="Maximum Quiz Attempts"
@@ -163,10 +147,9 @@ export default function CreateCourseConsumer() {
           fullWidth
           type="number"
           inputProps={{ min: 1 }}
-          sx={textFieldSx}
           required
         />
-        <TextField
+        <LucidInput
           name="passing_score"
           variant="outlined"
           label="Passing Quiz Score"
@@ -176,7 +159,6 @@ export default function CreateCourseConsumer() {
           type="number"
           required
           inputProps={{ min: 1 }}
-          sx={textFieldSx}
         />
       </Stack>
       <Box sx={{ mb: 4 }}>
@@ -212,7 +194,7 @@ export default function CreateCourseConsumer() {
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                    <TextField
+                    <LucidInput
                       name="heading"
                       variant="outlined"
                       label="Module Name"
@@ -226,9 +208,8 @@ export default function CreateCourseConsumer() {
                           event.target.value
                         );
                       }}
-                      sx={textFieldSx}
                     />
-                    <TextField
+                    <LucidInput
                       name="content"
                       variant="outlined"
                       label="Module Content"
@@ -244,9 +225,8 @@ export default function CreateCourseConsumer() {
                           event.target.value
                         );
                       }}
-                      sx={textFieldSx}
                     />
-                    <TextField
+                    <LucidInput
                       name="estimated_minutes"
                       variant="outlined"
                       label="Estimated Minutes"
@@ -262,7 +242,6 @@ export default function CreateCourseConsumer() {
                           Number(event.target.value) || 0
                         );
                       }}
-                      sx={textFieldSx}
                     />
                   </Stack>
                 </CardContent>
@@ -305,7 +284,7 @@ export default function CreateCourseConsumer() {
                       </IconButton>
                     </Box>
 
-                    <TextField
+                    <LucidInput
                       name="questionText"
                       variant="outlined"
                       label="Question Text"
@@ -319,7 +298,6 @@ export default function CreateCourseConsumer() {
                           event.target.value
                         );
                       }}
-                      sx={textFieldSx}
                     />
 
                     <FormControl fullWidth>
@@ -359,8 +337,7 @@ export default function CreateCourseConsumer() {
                           key={optionIndex}
                           sx={{ display: "flex", gap: 1, alignItems: "flex-start" }}
                         >
-                          <TextField
-                            variant="outlined"
+                          <LucidInput
                             label={`Option ${optionIndex + 1}`}
                             fullWidth
                             value={option}
@@ -372,7 +349,6 @@ export default function CreateCourseConsumer() {
                                 event.target.value
                               );
                             }}
-                            sx={textFieldSx}
                           />
                           {question.questionType !== "True/False" &&
                             optionIndex > 1 && (
@@ -415,7 +391,7 @@ export default function CreateCourseConsumer() {
                       </Select>
                     </FormControl>
 
-                    <TextField
+                    <LucidInput
                       name="explanation"
                       variant="outlined"
                       label="Explanation"
@@ -431,7 +407,6 @@ export default function CreateCourseConsumer() {
                           event.target.value
                         );
                       }}
-                      sx={textFieldSx}
                     />
                   </Stack>
                 </CardContent>

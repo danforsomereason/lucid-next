@@ -1,13 +1,14 @@
 'use client'
 
 import { CourseModulesContext, CourseModulesContextValue } from "@/context/courseModulesContext"
-import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer } from "@/types"
+import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
 import areModulesCompleted from "@/utils/areModulesCompleted"
 import axios from "axios"
 import { useState } from "react"
 import CourseModulesContent from "./CourseModulesContent"
 import ModulesSidebarController from "./ModulesSidebarController"
 import { MainContent, ModuleContainer } from "./styled"
+import { SURVEY_QUESTIONS } from "@/constants"
 
 interface CourseModulesProps {
   assignedCourse: AssignedCourse
@@ -52,9 +53,10 @@ export default function CourseModules({
   console.log('quizShown', quizShown)
   const [selectedOptionId, setSelectedOptionId] = useState<string | undefined>(undefined)
   const [answers, setAnswers] = useState<CheckQuestionInput[]>([])
+  const [surveyAnswer, setSurveyAnswer] = useState('')
   const [surveyAnswers, setSurveyAnswers] = useState(surveyAnswersProp)
   const [surveyShown, setSurveyShown] = useState(quizCompleted)
-
+  const surveyCompleted = surveyAnswers.length === SURVEY_QUESTIONS.length
   const selectedModule = modules.find((module) => module.id === selectedModuleId)
   const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
   const selectedOption = selectedQuestion?.options.find((option) => option.id === selectedOptionId)
@@ -199,6 +201,25 @@ export default function CourseModules({
     }
     setSelectedOptionId(undefined)
   }
+  async function advanceSurvey() {
+    if (surveyCompleted) {
+      throw new Error("Survey completed")
+    }
+    if (surveyAnswer === '') {
+      throw new Error("No survey answer selected")
+    }
+    const input: SurveyInput = {
+      assignedCourseId: assignment.id,
+      order: surveyAnswers.length,
+      answer: surveyAnswer,
+    }
+    const surveyResponse = await axios.post("/api/v1/survey", input)
+    const surveyOutput = surveyOutputSchema.parse(surveyResponse.data)
+    setSurveyAnswers([...surveyAnswers, surveyOutput])
+  }
+  function selectSurveyAnswer(answer: string) {
+    setSurveyAnswer(answer)
+  }
 
   function retakeQuiz() {
     setAnswers([])
@@ -210,6 +231,7 @@ export default function CourseModules({
   }
   const value: CourseModulesContextValue = {
     advanceQuestion,
+    advanceSurvey,
     assignedCourse: assignment,
     completeModule,
     course: relatedCourse,
@@ -230,9 +252,12 @@ export default function CourseModules({
     selectedOptionId,
     selectedQuestion,
     selectedQuestionId,
+    selectSurveyAnswer,
     showQuiz,
     showSurvey,
+    surveyAnswer,
     surveyAnswers,
+    surveyCompleted,
     surveyShown,
   }
   return (

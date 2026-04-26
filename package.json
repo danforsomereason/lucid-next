@@ -12,12 +12,12 @@
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource/roboto": "^5.2.9",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
-    "@mui/material-nextjs": "^7.3.7",
-    "@mui/styled-engine-sc": "^7.3.7",
+    "@mui/material-nextjs": "^6.4.3",
     "@mui/x-charts": "^7.23.2",
     "@neondatabase/serverless": "^1.0.2",
     "@types/jsonwebtoken": "^9.0.10",
@@ -31,7 +31,6 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "styled-components": "^6.3.8",
     "zod": "^4.3.5"
   },
   "devDependencies": {

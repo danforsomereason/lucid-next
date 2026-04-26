@@ -5,6 +5,7 @@ import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import QuizResults from "./QuizResults";
 import { SURVEY_QUESTIONS } from "@/constants";
 import OptionView from "./OptionView";
+import SurveyField from "./SurveyField";
 
 export default function Survey() {
   const courseModules = useCourseModules()
@@ -25,21 +26,7 @@ export default function Survey() {
         {question}
       </Typography>
 
-      <FormControl component="fieldset">
-        <RadioGroup
-          value={courseModules.selectedOptionId ?? ''}
-          onChange={(event) => {
-            courseModules.selectOption(event.target.value)
-          }}
-        >
-          <OptionView value='Not Applicable' />
-          <OptionView value='Needs Improvement' />
-          <OptionView value='Average' />
-          <OptionView value='Good' />
-          <OptionView value='Very Good' />
-          <OptionView value='Excellent' />
-        </RadioGroup>
-      </FormControl>
+      <SurveyField />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button
           variant="outlined"
@@ -52,7 +39,7 @@ export default function Survey() {
         <Button
           variant="contained"
           endIcon={<NavigateNextIcon />}
-          onClick={courseModules.advanceQuestion}
+          onClick={courseModules.advanceSurvey}
           // disabled={!courseModules.selectedOptionId}
         >
           {onLastQuestion ? 'Finish Survey' : 'Next Question'}

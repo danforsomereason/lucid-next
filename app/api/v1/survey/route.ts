@@ -1,11 +1,12 @@
 import db from "@/db";
 import { assignedCoursesTable, surveyAnswersTable } from "@/schema";
-import { SurveyInput, surveyInputSchema, SurveyOutput } from "@/types";
+import { surveyInputSchema, SurveyOutput } from "@/types";
 import authenticate from "@/utils/authenticate";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST (request: Request) {
+  console.log('survey route')
   const user = await authenticate();
   if (!user) {
     return NextResponse.json({
@@ -17,9 +18,14 @@ export async function POST (request: Request) {
   // If the body doesn't match the schema, Zod will throw an error
   const input = surveyInputSchema.parse(body);
   const assignedCourse = await db.query.assignedCoursesTable.findFirst({
-    where: eq(assignedCoursesTable.courseId, input.assignedCourseId),
+    where: eq(assignedCoursesTable.id, input.assignedCourseId),
   })
   if (!assignedCourse) {
+    return NextResponse.json({
+      message: "Course assignment missing",
+    }, { status: 404 })
+  }
+  if (assignedCourse.userId !== user.id) {
     return NextResponse.json({
       message: "You are not assigned to this course",
     }, { status: 403 })
