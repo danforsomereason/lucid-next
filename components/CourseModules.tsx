@@ -138,7 +138,7 @@ export default function CourseModules({
     if (output.passing) {
       const newAssignment = {
         ...assignment,
-        completedAt: new Date().toISOString(),
+        completedAt: new Date(),
       }
       setAssignment(newAssignment)
     } else if (output.maximized) {
@@ -184,7 +184,7 @@ export default function CourseModules({
     }
     const newAnswer: CheckQuestionInput = {
       questionId: selectedQuestion.id,
-      selectedOptionOrder: selectedOption.order,
+      optionId: selectedOption.id,
     }
     const newAnswers = [...answers, newAnswer]
     setAnswers(newAnswers)

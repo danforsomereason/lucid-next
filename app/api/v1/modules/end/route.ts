@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Module already completed" }, { status: 400 });
   }
   const [updated] = await db.update(moduleProgressesTable).set({
-    endModule: new Date().toISOString(),
+    endModule: new Date(),
   }).where(condition).returning();
 
   return NextResponse.json(updated);

@@ -1,19 +1,38 @@
-import { useCourseModules } from "@/context/courseModulesContext";
-import { Paper, Typography, FormControl, Alert, Box, Button, RadioGroup } from "@mui/material";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
-import QuizResults from "./QuizResults";
 import { SURVEY_QUESTIONS } from "@/constants";
-import OptionView from "./OptionView";
+import { useCourseModules } from "@/context/courseModulesContext";
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Box, Button, Paper, Typography } from "@mui/material";
 import SurveyField from "./SurveyField";
+import DownloadIcon from "@mui/icons-material/Download";
 
 export default function Survey() {
   const courseModules = useCourseModules()
-  // if (!courseModules.selectedQuestion) {
-  //   return (
-  //     <QuizResults />
-  //   )
-  // }
+  const surveyCompleted = courseModules.surveyAnswers.length === SURVEY_QUESTIONS.length
+  if (surveyCompleted) {
+    if (!courseModules.assignedCourse.certificateUrl) {
+      throw new Error('Certificate URL is missing')
+    }
+    return (
+      <div>
+        <div>Survey Completed</div>
+
+        <Button
+          variant="contained"
+          startIcon={<DownloadIcon />}
+          onClick={() => {
+            if (!courseModules.assignedCourse.certificateUrl) {
+              throw new Error('Certificate URL is missing')
+            }
+            window.open(courseModules.assignedCourse.certificateUrl)
+          }}
+          sx={{ mb: 3 }}
+        >
+          Download Certificate
+        </Button>
+      </div>
+    )
+  }
   const question = SURVEY_QUESTIONS[courseModules.surveyAnswers.length]
   const onLastQuestion = courseModules.surveyAnswers.length === SURVEY_QUESTIONS.length - 1
   return (
@@ -40,7 +59,7 @@ export default function Survey() {
           variant="contained"
           endIcon={<NavigateNextIcon />}
           onClick={courseModules.advanceSurvey}
-          // disabled={!courseModules.selectedOptionId}
+        // disabled={!courseModules.selectedOptionId}
         >
           {onLastQuestion ? 'Finish Survey' : 'Next Question'}
         </Button>

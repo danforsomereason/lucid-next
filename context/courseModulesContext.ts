@@ -1,4 +1,4 @@
-import { RelatedCourse, RelatedModule, RelatedQuestion, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse, SurveyAnswer } from "@/types";
+import { RelatedCourse, RelatedModule, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse, SurveyAnswer } from "@/types";
 import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {

@@ -2,11 +2,9 @@ import { FormControl, RadioGroup } from "@mui/material"
 import OptionView from "./OptionView"
 import { useCourseModules } from "@/context/courseModulesContext"
 import LucidInput from "./LucidInput"
-import { SURVEY_QUESTIONS } from "@/constants"
 
 export default function SurveyField() {
   const courseModules = useCourseModules()
-  const question = SURVEY_QUESTIONS[courseModules.surveyAnswers.length]
   if (courseModules.surveyAnswers.length < 11) {
     return (
       <FormControl component="fieldset">

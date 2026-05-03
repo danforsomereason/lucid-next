@@ -4,11 +4,12 @@ import {
   boolean,
   integer,
   pgEnum,
-  date,
+  timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import { time } from "console";
 
 // Enums
 export const roleEnum = pgEnum("role", [
@@ -53,8 +54,9 @@ export const trackAssignmentStatusEnum = pgEnum("track_assignment_status", [
 // Tables
 export const assignedCoursesTable = pgTable("assigned_courses", {
   id: uuid("id").primaryKey().defaultRandom(),
-  assignedDate: date("assigned_date").notNull().defaultNow(),
-  completedAt: date("completed_at"),
+  assignedDate: timestamp("assigned_date").notNull().defaultNow(),
+  certificateUrl: text("certificate_url"),
+  completedAt: timestamp("completed_at"),
   courseId: uuid("course_id")
     .notNull()
     .references(() => coursesTable.id),
@@ -133,8 +135,8 @@ export const moduleProgressesTable = pgTable("module_progress", {
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  startModule: date("start_module").notNull().defaultNow(),
-  endModule: date("end_module"),
+  startModule: timestamp("start_module").notNull().defaultNow(),
+  endModule: timestamp("end_module"),
 });
 
 export const optionsTable = pgTable("options", {
@@ -149,7 +151,7 @@ export const optionsTable = pgTable("options", {
 export const organizationsTable = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
-  createdAt: date("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const questionsTable = pgTable("questions", {
@@ -171,7 +173,7 @@ export const surveyAnswersTable = pgTable("survey_answers", {
     .notNull(),
   order: integer("order").notNull(),
   answer: text("answer").notNull(),
-  answeredAt: date("created_at").notNull().defaultNow(),
+  answeredAt: timestamp("answered_at").notNull().defaultNow(),
 })
 
 export const quizAnswersTable = pgTable("quiz_answers", {
@@ -185,7 +187,7 @@ export const quizAnswersTable = pgTable("quiz_answers", {
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  answeredAt: date("answered_at").notNull().defaultNow(),
+  answeredAt: timestamp("answered_at").notNull().defaultNow(),
 });
 
 export const tracksAssignmentsTable = pgTable("tracks_assignments", {
@@ -199,7 +201,7 @@ export const tracksAssignmentsTable = pgTable("tracks_assignments", {
   assignedBy: uuid("assigned_by")
     .notNull()
     .references(() => usersTable.id),
-  assignedAt: date("assigned_at").notNull().defaultNow(),
+  assignedAt: timestamp("assigned_at").notNull().defaultNow(),
 });
 
 export const tracksTable = pgTable("tracks", {
@@ -209,8 +211,8 @@ export const tracksTable = pgTable("tracks", {
   organizationId: uuid("organization_id")
     .notNull()
     .references(() => organizationsTable.id),
-  complianceCycle: date("compliance_cycle").notNull(),
-  updatedAt: date("updated_at")
+  complianceCycle: timestamp("compliance_cycle").notNull(),
+  updatedAt: timestamp("updated_at")
     .notNull()
     .defaultNow()
     .$onUpdate(() => sql`CURRENT_DATE`),
@@ -230,11 +232,11 @@ export const usersTable = pgTable("users", {
     () => organizationsTable.id
   ),
   licenseType: licenseTypeEnum("license_type"),
-  createdAt: date("created_at").notNull().defaultNow(),
-  updatedAt: date("updated_at")
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at")
     .notNull()
     .defaultNow()
-    .$onUpdate(() => sql`CURRENT_DATE`),
+    .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
   role: roleEnum("role").notNull(),
   jobRoleId: uuid("job_role_id").references(() => jobRolesTable.id),
 });
@@ -245,7 +247,7 @@ export const verifiedUsersTable = pgTable("verified_users", {
   organizationId: uuid("organization_id")
     .notNull()
     .references(() => organizationsTable.id),
-  invitedAt: date("invited_at").notNull().defaultNow(),
+  invitedAt: timestamp("invited_at").notNull().defaultNow(),
 });
 
 // Relations

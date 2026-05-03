@@ -16,122 +16,128 @@ import {
   quizAnswersTable,
   surveyAnswersTable,
 } from "./schema";
-import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
+import { createSchemaFactory } from "drizzle-zod";
 import { check, z } from "zod";
+
+const factory = createSchemaFactory({
+  coerce: {
+    date: true
+  }
+});
 
 // Assigned Courses
 
 // Convert Drizzle table to Zod schema
-export const assignedCourseSchema = createSelectSchema(assignedCoursesTable);
+export const assignedCourseSchema = factory.createSelectSchema(assignedCoursesTable);
 // Convert Zod schema to TypeScript type
 export type AssignedCourse = z.infer<typeof assignedCourseSchema>;
 
 
 // Convert Drizzle table to Zod schema
-export const assignedCourseInsertSchema = createInsertSchema(assignedCoursesTable);
+export const assignedCourseInsertSchema = factory.createInsertSchema(assignedCoursesTable);
 // Convert Zod schema to TypeScript type
 export type AssignedCourseInsert = z.infer<typeof assignedCourseInsertSchema>;
 
 // Categories
-export const categorySchema = createSelectSchema(categoriesTable);
+export const categorySchema = factory.createSelectSchema(categoriesTable);
 export type Category = z.infer<typeof categorySchema>;
-export const categoryInsertSchema = createInsertSchema(categoriesTable);
+export const categoryInsertSchema = factory.createInsertSchema(categoriesTable);
 export type CategoryInsert = z.infer<typeof categoryInsertSchema>;
 
 // Courses
-export const courseSchema = createSelectSchema(coursesTable);
+export const courseSchema = factory.createSelectSchema(coursesTable);
 export type Course = z.infer<typeof courseSchema>;
-export const courseInsertSchema = createInsertSchema(coursesTable);
+export const courseInsertSchema = factory.createInsertSchema(coursesTable);
 export type CourseInsert = z.infer<typeof courseInsertSchema>;
 
 // Job Roles
-export const jobRoleInsertSchema = createInsertSchema(jobRolesTable);
+export const jobRoleInsertSchema = factory.createInsertSchema(jobRolesTable);
 export type JobRoleInsert = z.infer<typeof jobRoleInsertSchema>;
-export const jobRoleSchema = createSelectSchema(jobRolesTable);
+export const jobRoleSchema = factory.createSelectSchema(jobRolesTable);
 export type JobRole = z.infer<typeof jobRoleSchema>;
 
 // Learning Objectives
-export const learningObjectiveInsertSchema = createInsertSchema(
+export const learningObjectiveInsertSchema = factory.createInsertSchema(
   learningObjectivesTable
 );
 export type LearningObjectiveInsert = z.infer<
   typeof learningObjectiveInsertSchema
 >;
-export const learningObjectiveSchema = createSelectSchema(
+export const learningObjectiveSchema = factory.createSelectSchema(
   learningObjectivesTable
 );
 export type LearningObjective = z.infer<typeof learningObjectiveSchema>;
 
 // Modules
-export const moduleInsertSchema = createInsertSchema(modulesTable);
+export const moduleInsertSchema = factory.createInsertSchema(modulesTable);
 export type ModuleInsert = z.infer<typeof moduleInsertSchema>;
-export const moduleSchema = createSelectSchema(modulesTable);
+export const moduleSchema = factory.createSelectSchema(modulesTable);
 export type Module = z.infer<typeof moduleSchema>;
 
 // Options
-export const optionInsertSchema = createInsertSchema(optionsTable);
+export const optionInsertSchema = factory.createInsertSchema(optionsTable);
 export type OptionInsert = z.infer<typeof optionInsertSchema>;
-export const optionSchema = createSelectSchema(optionsTable);
+export const optionSchema = factory.createSelectSchema(optionsTable);
 export type Option = z.infer<typeof optionSchema>;
 
 // Organizations
-export const organizationInsertSchema = createInsertSchema(organizationsTable);
+export const organizationInsertSchema = factory.createInsertSchema(organizationsTable);
 export type OrganizationInsert = z.infer<typeof organizationInsertSchema>;
-export const organizationSchema = createSelectSchema(organizationsTable);
+export const organizationSchema = factory.createSelectSchema(organizationsTable);
 export type Organization = z.infer<typeof organizationSchema>;
 
 // Module Progress
-export const moduleProgressInsertSchema = createInsertSchema(moduleProgressesTable);
+export const moduleProgressInsertSchema = factory.createInsertSchema(moduleProgressesTable);
 export type ModuleProgressInsert = z.infer<typeof moduleProgressInsertSchema>;
-export const moduleProgressSchema = createSelectSchema(moduleProgressesTable);
+export const moduleProgressSchema = factory.createSelectSchema(moduleProgressesTable);
 export type ModuleProgress = z.infer<typeof moduleProgressSchema>;
 
 // Questions
-export const questionInsertSchema = createInsertSchema(questionsTable);
+export const questionInsertSchema = factory.createInsertSchema(questionsTable);
 export type QuestionInsert = z.infer<typeof questionInsertSchema>;
-export const questionSchema = createSelectSchema(questionsTable);
+export const questionSchema = factory.createSelectSchema(questionsTable);
 export type Question = z.infer<typeof questionSchema>;
 
 // Quiz Answers
-export const quizAnswerSchema = createSelectSchema(quizAnswersTable);
+export const quizAnswerSchema = factory.createSelectSchema(quizAnswersTable);
 export type QuizAnswer = z.infer<typeof quizAnswerSchema>;
-export const quizAnswerInsertSchema = createInsertSchema(quizAnswersTable);
+export const quizAnswerInsertSchema = factory.createInsertSchema(quizAnswersTable);
 export type QuizAnswerInsert = z.infer<typeof quizAnswerInsertSchema>;
 
 // Survey Answers
-export const surveyAnswerSchema = createSelectSchema(surveyAnswersTable);
+export const surveyAnswerSchema = factory.createSelectSchema(surveyAnswersTable);
 export type SurveyAnswer = z.infer<typeof surveyAnswerSchema>;
-export const surveyAnswerInsertSchema = createInsertSchema(surveyAnswersTable);
+export const surveyAnswerInsertSchema = factory.createInsertSchema(surveyAnswersTable);
 export type SurveyAnswerInsert = z.infer<typeof surveyAnswerInsertSchema>;
 
 // Tracks
-export const trackInsertSchema = createInsertSchema(tracksTable);
+export const trackInsertSchema = factory.createInsertSchema(tracksTable);
 export type TrackInsert = z.infer<typeof trackInsertSchema>;
-export const trackSchema = createSelectSchema(tracksTable);
+export const trackSchema = factory.createSelectSchema(tracksTable);
 export type Track = z.infer<typeof trackSchema>;
 
 // Tracks Assignments
-export const trackAssignmentInsertSchema = createInsertSchema(
+export const trackAssignmentInsertSchema = factory.createInsertSchema(
   tracksAssignmentsTable
 );
 export type TrackAssignmentInsert = z.infer<
   typeof trackAssignmentInsertSchema
 >;
-export const tracksAssignmentSchema = createSelectSchema(tracksAssignmentsTable);
+export const tracksAssignmentSchema = factory.createSelectSchema(tracksAssignmentsTable);
 export type TrackAssignment = z.infer<typeof tracksAssignmentSchema>;
 
 // Users
-export const userSchema = createSelectSchema(usersTable)
+export const userSchema = factory.createSelectSchema(usersTable)
 export type User = z.infer<typeof userSchema>;
-export const userInsertSchema = createInsertSchema(usersTable);
+export const userInsertSchema = factory.createInsertSchema(usersTable);
 export type UserInsert = z.infer<typeof userInsertSchema>;
-export const userUpdateSchema = createUpdateSchema(usersTable)
+export const userUpdateSchema = factory.createUpdateSchema(usersTable)
 export type UserUpdate = z.infer<typeof userUpdateSchema>;
 
 // Verified Users
-export const verifiedUserInsertSchema = createInsertSchema(verifiedUsersTable);
+export const verifiedUserInsertSchema = factory.createInsertSchema(verifiedUsersTable);
 export type VerifiedUserInsert = z.infer<typeof verifiedUserInsertSchema>;
-export const verifiedUserSchema = createSelectSchema(verifiedUsersTable);
+export const verifiedUserSchema = factory.createSelectSchema(verifiedUsersTable);
 export type VerifiedUser = z.infer<typeof verifiedUserSchema>;
 
 // Custom Schemas
@@ -169,7 +175,7 @@ export type AssignCourseOutput = z.infer<typeof assignCourseOutputSchema>;
 // Check Questions
 export const checkQuestionInputSchema = z.object({
   questionId: questionSchema.shape.id,
-  selectedOptionOrder: z.number(),
+  optionId: z.string(),
 })
 
 export type CheckQuestionInput = z.infer<typeof checkQuestionInputSchema>;
@@ -310,7 +316,6 @@ export type RelatedModule = z.infer<typeof relatedModuleSchema>;
 
 export const relatedQuestionSchema = questionSchema.extend({
   options: optionSchema.array(),
-  quizAnswers: quizAnswerSchema.array(),
 })
 export type RelatedQuestion = z.infer<typeof relatedQuestionSchema>;
 

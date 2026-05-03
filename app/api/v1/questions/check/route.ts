@@ -8,6 +8,7 @@ import {
   CheckQuestionOutput
 } from "@/types";
 import authenticate from "@/utils/authenticate";
+import checkQuiz from "@/utils/checkQuiz";
 import { and, eq, inArray } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
       }, { status: 400 })
     }
     const option = question.options.find(
-      (option) => option.order === answer.selectedOptionOrder
+      (option) => option.id === answer.optionId
     )
     if (!option) {
       return NextResponse.json({
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
     if (!question) {
       throw new Error("Question not found")
     }
-    const option = question.options.find((option) => option.order === answer.selectedOptionOrder)
+    const option = question.options.find((option) => option.id === answer.optionId)
     if (!option) {
       throw new Error("Option not found")
     }
@@ -100,26 +101,11 @@ export async function POST(request: Request) {
     return answerInsert
   })
   await db.insert(quizAnswersTable).values(answerInserts)
-  const results = input.answers.map((answer) => {
-    const question = course.questions.find((question) => question.id === answer.questionId)
-    if (!question) {
-      throw new Error("Question not found")
-    }
-    const correct = question.correctOptionOrder === answer.selectedOptionOrder
-    const correctOption = question.options[question.correctOptionOrder]
-    if (!correctOption) {
-      throw new Error("Correct option not found")
-    }
-    const output: CheckQuestionOutput = {
-      correct,
-      correctAnswer: correctOption.option,
-      explanation: question.explanation,
-    }
-    return output
+  const result = checkQuiz({
+    answers: input.answers,
+    questions: course.questions,
   })
-  const correctOutputs = results.filter((output) => output.correct)
-  const score = (correctOutputs.length / course.questions.length) * 100
-  const passing = score >= course.passingScore
+  const passing = result.score >= course.passingScore
   const newAttempts = course.assignedCourses[0].quizAttempts + 1
   const maximized = newAttempts >= course.maximumAttempts
   const assignedCourseCondition = and(
@@ -128,7 +114,7 @@ export async function POST(request: Request) {
   )
   if (passing) {
     await db.update(assignedCoursesTable).set({
-      completedAt: new Date().toISOString(),
+      completedAt: new Date(),
       quizAttempts: newAttempts,
     }).where(assignedCourseCondition)
   } else if (maximized) {
@@ -159,7 +145,7 @@ export async function POST(request: Request) {
   const outputData: CheckQuestionsOutput = {
     maximized,
     passing,
-    results,
+    results: result.results,
   }
   const output = checkQuestionsOutputSchema.parse(outputData)
   return NextResponse.json(output)
