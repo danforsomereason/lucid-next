@@ -5,16 +5,14 @@ import { CheckQuestionOutput } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 
-interface CoursePageProps {
+export default async function CourseModulesPage(props: {
   params: Promise<{ courseId: string }>;
-}
-
-export default async function CoursePage({ params }: CoursePageProps) {
+}) {
   const currentUser = await authenticate()
   if (!currentUser) {
     return <p>You must be logged in to view this course</p>;
   }
-  const { courseId } = await params;
+  const { courseId } = await props.params;
   const relatedCourse = await db.query.coursesTable.findFirst({
     where: eq(coursesTable.id, courseId),
     with: {
@@ -22,22 +20,15 @@ export default async function CoursePage({ params }: CoursePageProps) {
         where: eq(assignedCoursesTable.userId, currentUser.id),
         with: {
           surveyAnswers: true,
+          moduleProgresses: true,
+          quizAnswers: true,
         }
       },
       learningObjectives: true,
       instructor: true,
-      modules: {
-        with: {
-          moduleProgresses: {
-            where: eq(moduleProgressesTable.userId, currentUser.id)
-          }
-        }
-      },
+      modules: true,
       questions: {
         with: {
-          quizAnswers: {
-            where: eq(quizAnswersTable.userId, currentUser.id),
-          },
           options: true,
         }
       }
@@ -53,10 +44,7 @@ export default async function CoursePage({ params }: CoursePageProps) {
     const { correctOptionOrder, explanation, ...rest } = question
     return rest
   })
-  const answers = relatedCourse.questions.flatMap((question) => {
-    return question.quizAnswers
-  })
-  const results = answers.map((answer) => {
+  const results = relatedCourse.assignedCourses[0].quizAnswers.map((answer) => {
     const question = relatedCourse.questions.find((question) => question.id === answer.questionId)
     if (!question) {
       throw new Error("Question not found")
@@ -77,10 +65,10 @@ export default async function CoursePage({ params }: CoursePageProps) {
     <CourseModules
       assignedCourse={relatedCourse.assignedCourses[0]}
       relatedCourse={relatedCourse}
-      relatedModules={relatedCourse.modules}
+      modules={relatedCourse.modules}
       relatedQuestions={safeQuestions}
       savedResults={results}
-      surveyAnswersProp={relatedCourse.assignedCourses[0].surveyAnswers}
+      surveyAnswers={relatedCourse.assignedCourses[0].surveyAnswers}
     />
   )
 }

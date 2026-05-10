@@ -1,7 +1,7 @@
 'use client'
 
 import { CourseModulesContext, CourseModulesContextValue } from "@/context/courseModulesContext"
-import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
+import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, Module, ModuleProgress, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
 import areModulesCompleted from "@/utils/areModulesCompleted"
 import axios from "axios"
 import { useState } from "react"
@@ -10,33 +10,26 @@ import ModulesSidebarController from "./ModulesSidebarController"
 import { MainContent, ModuleContainer } from "./styled"
 import { SURVEY_QUESTIONS } from "@/constants"
 
-interface CourseModulesProps {
+export default function CourseModules(props: {
   assignedCourse: AssignedCourse
   relatedCourse: RelatedCourse
-  relatedModules: RelatedModule[]
+  modules: Module[]
   relatedQuestions: SafeQuestion[]
+  moduleProgresses: ModuleProgress[]
   savedResults: CheckQuestionOutput[]
-  surveyAnswersProp: SurveyAnswer[]
-}
-
-export default function CourseModules({
-  assignedCourse,
-  relatedCourse,
-  relatedModules,
-  relatedQuestions,
-  savedResults,
-  surveyAnswersProp
-}: CourseModulesProps) {
-  const [assignment, setAssignment] = useState(assignedCourse)
-  const [results, setResults] = useState<CheckQuestionOutput[]>(savedResults)
-  const [modules, setModules] = useState(relatedModules)
-  const modulesCompleted = areModulesCompleted(modules)
+  surveyAnswers: SurveyAnswer[]
+}) {
+  const [assignment, setAssignment] = useState(props.assignedCourse)
+  const [results, setResults] = useState<CheckQuestionOutput[]>(props.savedResults)
+  const [modules, setModules] = useState(props.modules)
+  const [moduleProgresses, setModuleProgresses] = useState(props.moduleProgresses)
+  const modulesCompleted = areModulesCompleted(modules, moduleProgresses)
   console.log('modulesCompleted', modulesCompleted)
   const [selectedModuleId, setSelectedModuleId] = useState<string | undefined>(() => {
     if (modulesCompleted) {
       return undefined
     }
-    return relatedModules[0].id
+    return props.modules[0].id
   })
   const quizCompleted = assignment.completedAt !== null
   console.log('quizCompleted', quizCompleted)
@@ -45,7 +38,7 @@ export default function CourseModules({
       return undefined
     }
     if (modulesCompleted) {
-      return relatedQuestions[0].id
+      return props.relatedQuestions[0].id
     }
     return undefined
   })
@@ -54,21 +47,24 @@ export default function CourseModules({
   const [selectedOptionId, setSelectedOptionId] = useState<string | undefined>(undefined)
   const [answers, setAnswers] = useState<CheckQuestionInput[]>([])
   const [surveyAnswer, setSurveyAnswer] = useState('')
-  const [surveyAnswers, setSurveyAnswers] = useState(surveyAnswersProp)
+  const [surveyAnswers, setSurveyAnswers] = useState(props.surveyAnswers)
   const [surveyShown, setSurveyShown] = useState(quizCompleted)
   const surveyCompleted = surveyAnswers.length === SURVEY_QUESTIONS.length
   const selectedModule = modules.find((module) => module.id === selectedModuleId)
-  const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
+  const selectedQuestion = props.relatedQuestions.find((question) => question.id === selectedQuestionId)
   const selectedOption = selectedQuestion?.options.find((option) => option.id === selectedOptionId)
-  const onLastQuestion = selectedQuestion?.order === relatedQuestions.length - 1
+  const onLastQuestion = selectedQuestion?.order === props.relatedQuestions.length - 1
   const correctAnswers = results.filter(result => result.correct)
   const score = Math.round((correctAnswers.length / results.length) * 100);
-  function progressModule(modules: RelatedModule[]) {
-    const modulesCompleted = areModulesCompleted(modules)
+  function progressModule(
+    modules: Module[],
+    moduleProgresses: ModuleProgress[]
+  ) {
+    const modulesCompleted = areModulesCompleted(modules, moduleProgresses)
     if (modulesCompleted) {
       showQuiz()
       if (!quizCompleted) {
-        setSelectedQuestionId(relatedQuestions[0].id)
+        setSelectedQuestionId(props.relatedQuestions[0].id)
       }
     }
   }
@@ -79,33 +75,32 @@ export default function CourseModules({
     if (!selectedModule) {
       throw new Error('Selected module not found')
     }
-    if (selectedModule.moduleProgresses.length !== 1) {
-      throw new Error('Invalid module progresses')
+    const moduleProgress = moduleProgresses.find((m) => m.moduleId === selectedModuleId)
+    if (!moduleProgress) {
+      throw new Error('Module progress not found')
     }
-    const moduleProgress = selectedModule.moduleProgresses[0]
     if (moduleProgress.endModule) {
-      progressModule(modules)
+      progressModule(modules, moduleProgresses)
       return
     }
     const body: EndModuleInput = { moduleId: selectedModuleId }
     const input = endModuleInputSchema.parse(body)
-    const response = await axios.post("/api/v1/modules/end", body)
+    const response = await axios.post("/api/v1/modules/end", input)
     const output = endModuleOutputSchema.parse(response.data)
     if (!output.endModule) {
       throw new Error("Failed to end module");
     }
-    const newRelatedModules = modules.map((m) => {
-      if (m.id !== selectedModuleId) {
-        return m
+    const newModuleProgresses = moduleProgresses.map((moduleProgress) => {
+      if (moduleProgress.moduleId !== selectedModuleId) {
+        return moduleProgress
       }
-      const newModule = {
-        ...m,
-        moduleProgresses: [output],
+      return {
+        ...moduleProgress,
+        endModule: output.endModule,
       }
-      return newModule
     })
-    setModules(newRelatedModules)
-    progressModule(newRelatedModules)
+    setModuleProgresses(newModuleProgresses)
+    progressModule(modules, newModuleProgresses)
   }
   function selectModule(moduleId: string) {
     setSelectedModuleId(moduleId)
@@ -130,7 +125,7 @@ export default function CourseModules({
   async function checkQuiz(answers: CheckQuestionInput[]) {
     const inputData: CheckQuestionsInput = {
       answers,
-      courseId: relatedCourse.id,
+      courseId: props.relatedCourse.id,
     }
     const input = checkQuestionsInputSchema.parse(inputData)
     const response = await axios.post("/api/v1/questions/check", input)
@@ -195,7 +190,7 @@ export default function CourseModules({
       setSelectedQuestionId(undefined)
     } else {
       const nextQuestionOrder = selectedQuestion.order + 1
-      const nextQuestion = relatedQuestions.find((question) => question.order === nextQuestionOrder)
+      const nextQuestion = props.relatedQuestions.find((question) => question.order === nextQuestionOrder)
       if (!nextQuestion) {
         throw new Error("Next question not found")
       }
@@ -234,22 +229,22 @@ export default function CourseModules({
 
   function retakeQuiz() {
     setAnswers([])
-    setSelectedQuestionId(relatedQuestions[0].id)
+    setSelectedQuestionId(props.relatedQuestions[0].id)
   }
   function restart() {
     setAnswers([])
-    selectModule(relatedModules[0].id)
+    selectModule(props.modules[0].id)
   }
   const value: CourseModulesContextValue = {
     advanceQuestion,
     advanceSurvey,
     assignedCourse: assignment,
     completeModule,
-    course: relatedCourse,
+    course: props.relatedCourse,
     modules,
     modulesCompleted,
     onLastQuestion,
-    questions: relatedQuestions,
+    questions: props.relatedQuestions,
     quizCompleted,
     quizShown,
     restart,

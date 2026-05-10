@@ -128,12 +128,12 @@ export const modulesTable = pgTable("modules", {
 
 export const moduleProgressesTable = pgTable("module_progress", {
   id: uuid("id").primaryKey().defaultRandom(),
+  assignedCourseId: uuid("assigned_course_id")
+    .notNull()
+    .references(() => assignedCoursesTable.id),
   moduleId: uuid("module_id")
     .notNull()
     .references(() => modulesTable.id),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => usersTable.id),
   startModule: timestamp("start_module").notNull().defaultNow(),
   endModule: timestamp("end_module"),
 });
@@ -177,15 +177,15 @@ export const surveyAnswersTable = pgTable("survey_answers", {
 
 export const quizAnswersTable = pgTable("quiz_answers", {
   id: uuid("id").primaryKey().defaultRandom(),
+  assignedCourseId: uuid("assigned_course_id")
+    .notNull()
+    .references(() => assignedCoursesTable.id),
   optionId: uuid("option_id")
     .notNull()
     .references(() => optionsTable.id),
   questionId: uuid("question_id")
     .notNull()
     .references(() => questionsTable.id),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => usersTable.id),
   answeredAt: timestamp("answered_at").notNull().defaultNow(),
 });
 
@@ -257,6 +257,7 @@ export const assignedCoursesRelations = relations(
       fields: [assignedCoursesTable.courseId],
       references: [coursesTable.id],
     }),
+    moduleProgresses: many(moduleProgressesTable),
     organization: one(organizationsTable, {
       fields: [assignedCoursesTable.organizationId],
       references: [organizationsTable.id],
@@ -265,7 +266,8 @@ export const assignedCoursesRelations = relations(
       fields: [assignedCoursesTable.userId],
       references: [usersTable.id],
     }),
-    surveyAnswers: many(surveyAnswersTable)
+    surveyAnswers: many(surveyAnswersTable),
+    quizAnswers: many(quizAnswersTable),
   })
 );
 
@@ -333,13 +335,13 @@ export const jobRolesRelations = relations(jobRolesTable, ({ one, many }) => ({
 export const moduleProgressRelations = relations(
   moduleProgressesTable,
   ({ one }) => ({
+    assignedCourse: one(assignedCoursesTable, {
+      fields: [moduleProgressesTable.assignedCourseId],
+      references: [assignedCoursesTable.id],
+    }),
     module: one(modulesTable, {
       fields: [moduleProgressesTable.moduleId],
       references: [modulesTable.id],
-    }),
-    user: one(usersTable, {
-      fields: [moduleProgressesTable.userId],
-      references: [usersTable.id],
     }),
   })
 );
@@ -357,6 +359,10 @@ export const questionsRelations = relations(
 );
 
 export const quizAnswersRelations = relations(quizAnswersTable, ({ one }) => ({
+  assignedCourse: one(assignedCoursesTable, {
+    fields: [quizAnswersTable.assignedCourseId],
+    references: [assignedCoursesTable.id],
+  }),
   option: one(optionsTable, {
     fields: [quizAnswersTable.optionId],
     references: [optionsTable.id],
@@ -364,10 +370,6 @@ export const quizAnswersRelations = relations(quizAnswersTable, ({ one }) => ({
   question: one(questionsTable, {
     fields: [quizAnswersTable.questionId],
     references: [questionsTable.id],
-  }),
-  user: one(usersTable, {
-    fields: [quizAnswersTable.userId],
-    references: [usersTable.id],
   }),
 }));
 
@@ -410,7 +412,6 @@ export const tracksAssignmentsRelations = relations(
 );
 
 export const usersRelations = relations(usersTable, ({ one, many }) => ({
-  quizAnswers: many(quizAnswersTable),
   organization: one(organizationsTable, {
     fields: [usersTable.organizationId],
     references: [organizationsTable.id],
@@ -420,7 +421,6 @@ export const usersRelations = relations(usersTable, ({ one, many }) => ({
     references: [jobRolesTable.id],
   }),
   courses: many(coursesTable),
-  moduleProgress: many(moduleProgressesTable),
   assignedCourses: many(assignedCoursesTable),
   tracksUpdated: many(tracksTable),
   tracksAssignments: many(tracksAssignmentsTable),

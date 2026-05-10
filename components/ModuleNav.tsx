@@ -1,21 +1,19 @@
 import { useCourseModules } from "@/context/courseModulesContext";
-import { RelatedModule } from "@/types";
+import { Module, ModuleProgress } from "@/types";
 import ModulesNavLabel from "./ModulesNavLabel";
 import { SectionItem } from "./styled";
 
-interface ModuleNavProps {
-  module: RelatedModule
-}
-
-export default function ModuleNav({
-  module
-}: ModuleNavProps) {
+export default function ModuleNav(props: {
+  module: Module
+  moduleProgresses: ModuleProgress[]
+}) {
   const courseModules = useCourseModules()
-  const previousModule = courseModules.modules.find((m) => m.order === module.order - 1);
+  const previousModule = courseModules.modules.find((m) => m.order === props.module.order - 1);
+  const moduleProgress = props.moduleProgresses.find((m) => m.moduleId === props.module.id);
   const locked = previousModule
-    ? previousModule.moduleProgresses[0]?.endModule == null
+    ? moduleProgress?.endModule == null
     : false
-  const completed = module.moduleProgresses[0]?.endModule != null;
+  const completed = moduleProgress?.endModule != null;
   return (
     <SectionItem
       onClick={() => courseModules.selectModule(module.id)}
@@ -29,7 +27,7 @@ export default function ModuleNav({
       }}
     >
       <ModulesNavLabel completed={completed} locked={locked}>
-        {module.heading}
+        {props.module.heading}
       </ModulesNavLabel>
     </SectionItem>
   )

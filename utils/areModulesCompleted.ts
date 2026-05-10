@@ -1,6 +1,12 @@
-import { RelatedModule } from "@/types";
+import { Module, ModuleProgress } from "@/types";
 
-export default function areModulesCompleted (modules: RelatedModule[]) {
-  const modulesCompleted = modules.every((module) => module.moduleProgresses[0]?.endModule)
+export default function areModulesCompleted (
+  modules: Module[],
+  moduleProgresses: ModuleProgress[]
+) {
+  const modulesCompleted = modules.every((module) => {
+    const moduleProgress = moduleProgresses.find((m) => m.moduleId === module.id)
+    return moduleProgress?.endModule != null
+  })
   return modulesCompleted
 }

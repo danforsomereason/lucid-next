@@ -1,4 +1,4 @@
-import { RelatedCourse, RelatedModule, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse, SurveyAnswer } from "@/types";
+import { RelatedCourse, Option, SafeQuestion, CheckQuestionOutput, AssignedCourse, SurveyAnswer, Module } from "@/types";
 import { createContext, useContext } from "react";
 
 export interface CourseModulesContextValue {
@@ -7,7 +7,7 @@ export interface CourseModulesContextValue {
   assignedCourse: AssignedCourse
   completeModule: () => Promise<void>
   course: RelatedCourse
-  modules: RelatedModule[]
+  modules: Module[]
   modulesCompleted: boolean
   onLastQuestion: boolean
   questions: SafeQuestion[]
@@ -20,7 +20,7 @@ export interface CourseModulesContextValue {
   selectModule: (moduleId: string) => void
   selectOption: (optionId: string) => void
   selectedModuleId?: string
-  selectedModule?: RelatedModule
+  selectedModule?: Module
   selectedOption?: Option
   selectedOptionId?: string
   selectedQuestionId?: string
