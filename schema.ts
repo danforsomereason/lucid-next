@@ -55,7 +55,6 @@ export const trackAssignmentStatusEnum = pgEnum("track_assignment_status", [
 export const assignedCoursesTable = pgTable("assigned_courses", {
   id: uuid("id").primaryKey().defaultRandom(),
   assignedDate: timestamp("assigned_date").notNull().defaultNow(),
-  certificateUrl: text("certificate_url"),
   completedAt: timestamp("completed_at"),
   courseId: uuid("course_id")
     .notNull()
