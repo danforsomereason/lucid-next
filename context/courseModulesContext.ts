@@ -16,6 +16,7 @@ export interface CourseModulesContextValue {
   results: CheckQuestionOutput[]
   restart: () => void
   retakeQuiz: () => void
+  score: number
   selectModule: (moduleId: string) => void
   selectOption: (optionId: string) => void
   selectedModuleId?: string

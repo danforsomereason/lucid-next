@@ -61,6 +61,8 @@ export default function CourseModules({
   const selectedQuestion = relatedQuestions.find((question) => question.id === selectedQuestionId)
   const selectedOption = selectedQuestion?.options.find((option) => option.id === selectedOptionId)
   const onLastQuestion = selectedQuestion?.order === relatedQuestions.length - 1
+  const correctAnswers = results.filter(result => result.correct)
+  const score = Math.round((correctAnswers.length / results.length) * 100);
   function progressModule(modules: RelatedModule[]) {
     const modulesCompleted = areModulesCompleted(modules)
     if (modulesCompleted) {
@@ -216,6 +218,15 @@ export default function CourseModules({
     const surveyResponse = await axios.post("/api/v1/survey", input)
     const surveyOutput = surveyOutputSchema.parse(surveyResponse.data)
     setSurveyAnswers([...surveyAnswers, surveyOutput])
+    const finishingSurvey = surveyAnswers.length === SURVEY_QUESTIONS.length - 1
+    if (finishingSurvey) {
+      const now = new Date()
+      const newAssignment = {
+        ...assignment,
+        completedAt: now,
+      }
+      setAssignment(newAssignment)
+    }
   }
   function selectSurveyAnswer(answer: string) {
     setSurveyAnswer(answer)
@@ -244,6 +255,7 @@ export default function CourseModules({
     restart,
     results,
     retakeQuiz,
+    score,
     selectModule,
     selectOption,
     selectedModule,

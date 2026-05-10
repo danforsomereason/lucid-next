@@ -12,9 +12,7 @@ import QuizResult from "./QuizResult";
 
 const QuizResults: React.FC = () => {
   const courseModules = useCourseModules();
-  const correctAnswers = courseModules.results.filter(result => result.correct)
-  const score = Math.round((correctAnswers.length / courseModules.results.length) * 100);
-  const passed = score >= courseModules.course.passingScore;
+  const passed = courseModules.score >= courseModules.course.passingScore;
   const certificateUrl = 'CERTIFICATE_URL'
   const router = useRouter()
 
@@ -29,7 +27,7 @@ const QuizResults: React.FC = () => {
         </Typography>
 
         <Typography variant="h5" sx={{ mb: 3 }}>
-          Your Score: {score}%
+          Your Score: {courseModules.score}%
         </Typography>
 
         {courseModules.results.map((result, index) => {

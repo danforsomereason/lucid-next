@@ -5,14 +5,16 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box, Button, Paper, Typography } from "@mui/material";
 import SurveyField from "./SurveyField";
 import DownloadIcon from "@mui/icons-material/Download";
+import { useGlobal } from "@/context/globalContext";
+import { generateCertificatePdf } from "@/utils/generateCertificate";
+import { useState } from "react";
 
 export default function Survey() {
+  const global = useGlobal()
   const courseModules = useCourseModules()
+  const [generating, setGenerating] = useState(false)
   const surveyCompleted = courseModules.surveyAnswers.length === SURVEY_QUESTIONS.length
   if (surveyCompleted) {
-    if (!courseModules.assignedCourse.certificateUrl) {
-      throw new Error('Certificate URL is missing')
-    }
     return (
       <div>
         <div>Survey Completed</div>
@@ -20,15 +22,47 @@ export default function Survey() {
         <Button
           variant="contained"
           startIcon={<DownloadIcon />}
-          onClick={() => {
-            if (!courseModules.assignedCourse.certificateUrl) {
-              throw new Error('Certificate URL is missing')
+          disabled={!global.currentUser || generating}
+          onClick={async () => {
+            if (!global.currentUser) {
+              throw new Error("User not found")
             }
-            window.open(courseModules.assignedCourse.certificateUrl)
+            if (!courseModules.assignedCourse.completedAt) {
+              throw new Error("Course not completed")
+            }
+            const tab = window.open("about:blank", "_blank")
+            if (!tab) {
+              return
+            }
+            tab.opener = null
+            setGenerating(true)
+            try {
+              const userName = `${global.currentUser.firstName} ${global.currentUser.lastName}`
+              const buffer = await generateCertificatePdf({
+                userName,
+                courseName: courseModules.course.title,
+                ceHours: courseModules.course.ceHours,
+                completionDate:
+                  courseModules.assignedCourse.completedAt,
+                score: courseModules.score,
+              })
+              const blob = new Blob([new Uint8Array(buffer)], {
+                type: "application/pdf",
+              })
+              const url = URL.createObjectURL(blob)
+              tab.location.href = url
+              window.setTimeout(() => {
+                URL.revokeObjectURL(url)
+              }, 60_000)
+            } catch {
+              tab.close()
+            } finally {
+              setGenerating(false)
+            }
           }}
           sx={{ mb: 3 }}
         >
-          Download Certificate
+          View certificate
         </Button>
       </div>
     )

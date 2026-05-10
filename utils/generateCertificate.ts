@@ -1,56 +1,65 @@
-import PDFDocument from 'pdfkit';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
-export const generateCertificate = async (props: {
+export type CertificateProps = {
   userName: string;
   courseName: string;
   ceHours?: number | null;
   completionDate: Date;
   score: number;
-}): Promise<Buffer> => {
-  return new Promise((resolve) => {
-    const doc = new PDFDocument({
-      size: 'LETTER',
-      layout: 'landscape'
+};
+
+/** Letter size, landscape (points). */
+const PAGE_WIDTH = 792;
+const PAGE_HEIGHT = 612;
+
+export async function generateCertificatePdf(
+  props: CertificateProps
+): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const drawCentered = (
+    text: string,
+    y: number,
+    size: number,
+    bold = false
+  ) => {
+    const font = bold ? fontBold : fontRegular;
+    const textWidth = font.widthOfTextAtSize(text, size);
+    const x = (PAGE_WIDTH - textWidth) / 2;
+    page.drawText(text, {
+      x,
+      y,
+      size,
+      font,
+      color: rgb(0, 0, 0),
     });
+  };
 
-    // Collect the PDF data chunks
-    const chunks: Buffer[] = [];
-    doc.on('data', (chunk) => chunks.push(chunk));
+  let y = PAGE_HEIGHT - 72;
+  drawCentered('Certificate of Completion', y, 22, true);
+  y -= 36;
+  drawCentered('This is to certify that', y, 14);
+  y -= 32;
+  drawCentered(props.userName, y, 18, true);
+  y -= 36;
+  drawCentered('has successfully completed', y, 14);
+  y -= 32;
+  drawCentered(props.courseName, y, 18, true);
+  y -= 36;
+  drawCentered(`with a score of ${props.score}%`, y, 14);
+  if (props.ceHours) {
+    y -= 28;
+    drawCentered(`CE Hours Earned: ${props.ceHours}`, y, 14);
+  }
+  y -= 28;
+  drawCentered(
+    `Completion Date: ${props.completionDate.toLocaleDateString()}`,
+    y,
+    14
+  );
 
-    // Add content to the PDF
-    doc.fontSize(25)
-      .text('Certificate of Completion', { align: 'center' });
-
-    doc.moveDown();
-    doc.fontSize(15)
-      .text(`This is to certify that`, { align: 'center' });
-
-    doc.moveDown();
-    doc.fontSize(20)
-      .text(props.userName, { align: 'center' });
-
-    doc.moveDown();
-    doc.fontSize(15)
-      .text(`has successfully completed`, { align: 'center' });
-
-    doc.moveDown();
-    doc.fontSize(20)
-      .text(props.courseName, { align: 'center' });
-
-    doc.moveDown();
-    doc.fontSize(15)
-      .text(`with a score of ${props.score}%`, { align: 'center' });
-
-    if (props.ceHours) {
-      doc.moveDown();
-      doc.text(`CE Hours Earned: ${props.ceHours}`, { align: 'center' });
-    }
-
-    doc.moveDown();
-    doc.text(`Completion Date: ${props.completionDate.toLocaleDateString()}`, { align: 'center' });
-
-    // Finalize the PDF
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.end();
-  });
-}; 
+  return pdfDoc.save();
+}
