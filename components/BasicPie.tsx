@@ -1,6 +1,5 @@
 import * as React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
-// import { getCourseProgress } from "../../requests/courses";
 
 // Use the user's id to look up their certificates
 // Get the user's course_ids from certificates collection
@@ -34,10 +33,6 @@ export default function BasicPie() {
   if (!score) {
     return <div>Loading...</div>;
   }
-  React.useEffect(() => {
-    // getCourseProgress();
-  }, []);
-
   return (
     <PieChart
       slotProps={{

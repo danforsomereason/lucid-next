@@ -13,35 +13,3 @@ export async function getCoursesByCategory(categoryId: string) {
   const response = await axios.get(url);
   return response.data;
 }
-
-export async function getCourseById(courseId: string) {
-  try {
-    const cleanId = courseId.replace(/^\/+|\/+$/g, "");
-    const url = `http://localhost:3000/api/v1/courses/${cleanId}`;
-
-    const response = await axios.get(url);
-    return response.data;
-  } catch (error: any) {
-    console.error("Error details:", {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      url: error.config?.url,
-    });
-    throw error;
-  }
-}
-
-//
-export async function getRequiredCourses(organizationId: string) {
-  try {
-    const url = `http://localhost:3000/api/v1/tracks?organization_id=${organizationId}`;
-    const response = await axios.get(url);
-  } catch { }
-}
-
-// get course progress
-export async function getCourseProgress() {
-  const url = `http://localhost:3000/api/v1/course_progress`;
-  const response = await axios.get(url);
-}

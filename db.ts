@@ -3,10 +3,6 @@ import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from './schema'
 import env from "./env";
 
-if (env.DATABASE_URL) {
-    throw new Error("Missing database url");
-}
-
 const sql = neon(env.DATABASE_URL);
 const db = drizzle({ client: sql, schema });
 

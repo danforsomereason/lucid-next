@@ -1,6 +1,6 @@
 import db from "@/db";
 import { usersTable } from "@/schema";
-import { userProfileUpdateInputSchema, userProfileUpdateOutputSchema } from "@/types";
+import { userProfileUpdateInputSchema, userSchema } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -21,6 +21,6 @@ export async function POST(
     .set(input)
     .where(eq(usersTable.id, user.id)) // where always returns an array
     .returning();
-  const output = userProfileUpdateOutputSchema.parse(updatedUser);
+  const output = userSchema.parse(updatedUser);
   return NextResponse.json(output);
 }

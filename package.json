@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "deadcode": "npx knip --reporter ./my-reporter.js && npm run lint",
+    "deadcode": "npx knip --reporter ./my-reporter.js",
     "dev": "next dev",
     "drop": "npx drizzle-kit push --force --config drizzleEmpty.config.ts",
     "push": "npx drizzle-kit push",
@@ -47,8 +47,10 @@
     "project": [
       "**/*.{ts,tsx}"
     ],
-    "emptySchema": [
-      "emptySchema.ts"
+    "ignore": [
+      "drizzleEmpty.config.ts",
+      "emptySchema.ts",
+      "env.ts"
     ],
     "ignoreDependencies": [
       "@types/bcryptjs"
