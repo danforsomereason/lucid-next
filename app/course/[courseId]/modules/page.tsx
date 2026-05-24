@@ -66,6 +66,7 @@ export default async function CourseModulesPage(props: {
       assignedCourse={relatedCourse.assignedCourses[0]}
       relatedCourse={relatedCourse}
       modules={relatedCourse.modules}
+      moduleProgresses={relatedCourse.assignedCourses[0].moduleProgresses}
       relatedQuestions={safeQuestions}
       savedResults={results}
       surveyAnswers={relatedCourse.assignedCourses[0].surveyAnswers}

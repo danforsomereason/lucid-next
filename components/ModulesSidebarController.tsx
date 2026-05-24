@@ -10,10 +10,12 @@ import ModulesSurveyNav from "./ModulesSurveyNav";
 
 export default function ModulesSidebarController() {
   const courseModules = useCourseModules()
+  const moduleProgresses = courseModules.moduleProgresses.filter((m) => m.moduleId === module.id)
   const navs = courseModules.modules.map((module) => {
     return (
       <ModuleNav
         module={module}
+        moduleProgresses={moduleProgresses}
         key={module.id}
       />
     )

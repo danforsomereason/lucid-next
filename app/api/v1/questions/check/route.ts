@@ -21,6 +21,14 @@ export async function POST(request: Request) {
   }
   const body: unknown = await request.json();
   const input = checkQuestionsInputSchema.parse(body);
+  const assignedCourse = await db.query.assignedCoursesTable.findFirst({
+    where: eq(assignedCoursesTable.userId, user.id),
+  })
+  if (!assignedCourse) {
+    return NextResponse.json({
+      message: "You are not assigned to this course",
+    }, { status: 403 })
+  }
   const course = await db.query.coursesTable.findFirst({
     where: eq(coursesTable.id, input.courseId),
     with: {
@@ -30,7 +38,7 @@ export async function POST(request: Request) {
       modules: {
         with: {
           moduleProgresses: {
-            where: eq(moduleProgressesTable.userId, user.id),
+            where: eq(moduleProgressesTable.assignedCourseId, assignedCourse.id),
           }
         }
       },
@@ -82,7 +90,7 @@ export async function POST(request: Request) {
   const questionIds = course.questions.map((question) => question.id)
   await db.delete(quizAnswersTable).where(and(
     inArray(quizAnswersTable.questionId, questionIds),
-    eq(quizAnswersTable.userId, user.id),
+    eq(quizAnswersTable.assignedCourseId, assignedCourse.id),
   ));
   const answerInserts = input.answers.map((answer) => {
     const question = course.questions.find((question) => question.id === answer.questionId)
@@ -96,7 +104,7 @@ export async function POST(request: Request) {
     const answerInsert: QuizAnswerInsert = {
       questionId: answer.questionId,
       optionId: option.id,
-      userId: user.id,
+      assignedCourseId: assignedCourse.id,
     }
     return answerInsert
   })
@@ -127,13 +135,13 @@ export async function POST(request: Request) {
     }).where(
       and(
         eq(moduleProgressesTable.moduleId, first.id),
-        eq(moduleProgressesTable.userId, user.id)
+        eq(moduleProgressesTable.assignedCourseId, assignedCourse.id)
       )
     )
     const restModuleIds = restModules.map((module) => module.id)
     await db.delete(moduleProgressesTable).where(
       and(
-        eq(moduleProgressesTable.userId, user.id),
+        eq(moduleProgressesTable.assignedCourseId, assignedCourse.id),
         inArray(moduleProgressesTable.moduleId, restModuleIds)
       )
     )

@@ -25,41 +25,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Course already assigned" });
   }
 
-  const inserted = await db.insert(assignedCoursesTable).values({
+  await db.insert(assignedCoursesTable).values({
     courseId: input.courseId,
     userId: user.id,
   });
-  const course = await db.query.coursesTable.findFirst({
-    where: eq(coursesTable.id, input.courseId),
-    with: {
-      modules: true,
-    }
-  })
-  if (!course) {
-    return NextResponse.json({ message: "Course not found" }, { status: 404 });
-  }
-
-  const sortedModules = course.modules.sort((a, b) => a.order - b.order);
-
-  const firstModule = sortedModules[0];
-
-  if (!firstModule) {
-    return NextResponse.json({ message: "No modules found for this course" }, { status: 404 });
-  }
-
-  const existingProgress = await db.query.moduleProgressesTable.findFirst({
-    where: and(
-      eq(moduleProgressesTable.moduleId, firstModule.id),
-      eq(moduleProgressesTable.userId, user.id),
-    )
-  });
-
-  if (!existingProgress) {
-    await db.insert(moduleProgressesTable).values({
-      moduleId: firstModule.id,
-      userId: user.id,
-    })
-  }
 
   return NextResponse.json({
     message: "Course assigned and progress started",

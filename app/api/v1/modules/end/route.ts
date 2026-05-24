@@ -1,5 +1,5 @@
 import db from "@/db";
-import { moduleProgressesTable } from "@/schema";
+import { assignedCoursesTable, moduleProgressesTable, modulesTable } from "@/schema";
 import { endModuleInputSchema } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { and, eq } from "drizzle-orm";
@@ -14,9 +14,24 @@ export async function POST(req: Request) {
   }
   const body: unknown = await req.json();
   const input = endModuleInputSchema.parse(body);
+  const module = await db.query.modulesTable.findFirst({
+    where: eq(modulesTable.id, input.moduleId),
+    with: {
+      course: true,
+    }
+  })
+  if (!module) {
+    return NextResponse.json({ message: "Module not found" }, { status: 404 });
+  }
+  const assignedCourse = await db.query.assignedCoursesTable.findFirst({
+    where: eq(assignedCoursesTable.userId, user.id),
+  })
+  if (!assignedCourse) {
+    return NextResponse.json({ message: "You are not assigned to this course" }, { status: 403 });
+  }
   const condition = and(
     eq(moduleProgressesTable.moduleId, input.moduleId),
-    eq(moduleProgressesTable.userId, user.id),
+    eq(moduleProgressesTable.assignedCourseId, assignedCourse.id),
   )
   const existingProgress = await db.query.moduleProgressesTable.findFirst({
     where: condition

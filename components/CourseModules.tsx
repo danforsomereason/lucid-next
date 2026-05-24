@@ -139,26 +139,12 @@ export default function CourseModules(props: {
       }
       setAssignment(newAssignment)
     } else if (output.maximized) {
-      const newModules = modules.map((module, index) => {
-        if (index === 0) {
-          const newModuleProgress = {
-            ...module.moduleProgresses[0],
-            endModule: null,
-          }
-          const newModule = {
-            ...module,
-            moduleProgresses: [newModuleProgress],
-          }
-          return newModule
-        } else {
-          const newModule = {
-            ...module,
-            moduleProgresses: [],
-          }
-          return newModule
-        }
-      })
-      setModules(newModules)
+      const newModuleProgress: ModuleProgress = {
+        ...moduleProgresses[0],
+        endModule: null,
+      }
+      const newModuleProgresses = [newModuleProgress]
+      setModuleProgresses(newModuleProgresses)
       const newAssignment = {
         ...assignment,
         quizAttempts: 0
@@ -241,6 +227,7 @@ export default function CourseModules(props: {
     assignedCourse: assignment,
     completeModule,
     course: props.relatedCourse,
+    moduleProgresses,
     modules,
     modulesCompleted,
     onLastQuestion,
