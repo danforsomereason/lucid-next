@@ -19,9 +19,10 @@ export default function CourseModules(props: {
   savedResults: CheckQuestionOutput[]
   surveyAnswers: SurveyAnswer[]
 }) {
+  console.log('props.modules', props.modules)
   const [assignment, setAssignment] = useState(props.assignedCourse)
   const [results, setResults] = useState<CheckQuestionOutput[]>(props.savedResults)
-  const [modules, setModules] = useState(props.modules)
+  const [modules] = useState(props.modules)
   const [moduleProgresses, setModuleProgresses] = useState(props.moduleProgresses)
   const modulesCompleted = areModulesCompleted(modules, moduleProgresses)
   console.log('modulesCompleted', modulesCompleted)
