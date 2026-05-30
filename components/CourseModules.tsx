@@ -19,7 +19,7 @@ export default function CourseModules(props: {
   savedResults: CheckQuestionOutput[]
   surveyAnswers: SurveyAnswer[]
 }) {
-  console.log('props.modules', props.modules)
+  console.log('props.moduleProgresses', props.moduleProgresses)
   const [assignment, setAssignment] = useState(props.assignedCourse)
   const [results, setResults] = useState<CheckQuestionOutput[]>(props.savedResults)
   const [modules] = useState(props.modules)
@@ -70,6 +70,7 @@ export default function CourseModules(props: {
     }
   }
   async function completeModule() {
+    console.log
     if (!selectedModuleId) {
       throw new Error('No module selected')
     }

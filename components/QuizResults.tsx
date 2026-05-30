@@ -90,6 +90,7 @@ const QuizResults: React.FC = () => {
               <Button
                 variant="contained"
                 color="primary"
+                onClick={() => courseModules.showSurvey()}
               >
                 Start Survey
               </Button>

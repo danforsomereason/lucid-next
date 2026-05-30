@@ -5,13 +5,12 @@ import { SectionItem } from "./styled";
 
 export default function ModuleNav(props: {
   module: Module
-  moduleProgresses: ModuleProgress[]
 }) {
   const courseModules = useCourseModules()
   const previousModule = courseModules.modules.find((m) => {
     return m.order === props.module.order - 1
   });
-  const moduleProgress = props.moduleProgresses.find((m) => {
+  const moduleProgress = courseModules.moduleProgresses.find((m) => {
     return m.moduleId === props.module.id
   });
   const locked = previousModule
