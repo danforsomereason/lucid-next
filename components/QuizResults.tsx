@@ -1,20 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Typography, Paper, Button, Alert } from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-import SchoolIcon from "@mui/icons-material/School";
-import PersonIcon from "@mui/icons-material/Person";
-import DownloadIcon from "@mui/icons-material/Download";
 import { useCourseModules } from "@/context/courseModulesContext";
-import { useRouter } from "next/navigation";
 import QuizResult from "./QuizResult";
 
 const QuizResults: React.FC = () => {
   const courseModules = useCourseModules();
   const passed = courseModules.score >= courseModules.course.passingScore;
-  const certificateUrl = 'CERTIFICATE_URL'
-  const router = useRouter()
 
   const maximized = courseModules.assignedCourse.quizAttempts >= courseModules.course.maximumAttempts
   const reset = maximized || courseModules.assignedCourse.quizAttempts === 0
@@ -40,21 +33,9 @@ const QuizResults: React.FC = () => {
         })}
 
         {passed ? (
-          <>
-            <Alert severity="success" sx={{ mb: 3 }}>
-              Congratulations! You've passed the quiz!
-            </Alert>
-            {certificateUrl && (
-              <Button
-                variant="contained"
-                startIcon={<DownloadIcon />}
-                onClick={() => window.open(certificateUrl)}
-                sx={{ mb: 3 }}
-              >
-                Download Certificate
-              </Button>
-            )}
-          </>
+          <Alert severity="success" sx={{ mb: 3 }}>
+            Congratulations! You've passed the quiz!
+          </Alert>
         ) : (
           <Alert severity="warning" sx={{ mb: 3 }}>
             {reset
@@ -64,32 +45,12 @@ const QuizResults: React.FC = () => {
         )}
 
         <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
-          <Button
-            variant="outlined"
-            startIcon={<HomeIcon />}
-            onClick={() => router.push("/")}
-          >
-            Home
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<SchoolIcon />}
-            onClick={() => router.push("/courses")}
-          >
-            Courses
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<PersonIcon />}
-            onClick={() => router.push("/dashboard")}
-          >
-            Dashboard
-          </Button>
           {passed
             ? (
               <Button
-                variant="contained"
                 color="primary"
+                onClick={courseModules.showSurvey}
+                variant="contained"
               >
                 Start Survey
               </Button>
