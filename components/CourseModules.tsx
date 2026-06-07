@@ -70,6 +70,7 @@ export default function CourseModules(props: {
     }
   }
   async function completeModule() {
+    console.log
     if (!selectedModuleId) {
       throw new Error('No module selected')
     }

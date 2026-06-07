@@ -24,6 +24,18 @@ export async function POST(req: Request) {
   if (existingAssignedCourse) {
     return NextResponse.json({ message: "Course already assigned" });
   }
+  console.log('input.courseId', input.courseId)
+  const modules = await db.query.modulesTable.findMany({
+    where: eq(modulesTable.courseId, input.courseId),
+  });
+  console.log('modules', modules)
+  const sortedModules = modules.toSorted((a, b) => a.order - b.order)
+  const firstModule = sortedModules[0]
+  if (!firstModule) {
+    return NextResponse.json({
+      message: "Course has no modules",
+    }, { status: 500 });
+  }
 
   const [assignedCourse] = await db.insert(assignedCoursesTable).values({
     courseId: input.courseId,
