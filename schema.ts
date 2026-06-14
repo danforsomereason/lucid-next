@@ -9,7 +9,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
-import { time } from "console";
 
 // Enums
 export const roleEnum = pgEnum("role", [

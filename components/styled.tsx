@@ -18,14 +18,10 @@ export const HelpButton = styled(Button)(({ theme }) => ({
 
 export const MainContent = styled(Box)(({ theme }) => ({
     marginLeft: DRAWER_WIDTH,
-    height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
-    position: "fixed",
-    top: NAVBAR_HEIGHT,
     width: `calc(100% - ${DRAWER_WIDTH}px)`,
     display: "flex",
     flexDirection: "column",
     padding: theme.spacing(4),
-    overflow: "hidden",
 }));
 
 export const ModuleContainer = styled(Box)({

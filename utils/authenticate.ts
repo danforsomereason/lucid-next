@@ -4,10 +4,11 @@ import { eq } from "drizzle-orm";
 import { usersTable } from "@/schema";
 import { cookies } from "next/headers";
 import { userSchema } from "@/types";
+import env from "@/env";
 
 function verify(token: string, debug?: boolean) {
   try {
-    const decoded = jwt.verify(token, "TEST_SECRET");
+    const decoded = jwt.verify(token, env.JWT_SECRET);
     return decoded;
   } catch (error) {
     if (debug) {

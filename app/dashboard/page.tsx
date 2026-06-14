@@ -3,7 +3,6 @@
 import { Box, Typography, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import BasicPie from "@/components/BasicPie";
-import { redirect } from 'next/navigation'
 import { useGlobal } from "@/context/globalContext";
 
 // Pie chart will show completed course / required course * 100
@@ -22,10 +21,9 @@ import { useGlobal } from "@/context/globalContext";
 // List of certificates - for course that have been completed
 
 const Dashboard: React.FC = () => {
-  const globalValue = useGlobal();
-  const userName = globalValue?.currentUser?.firstName || "User";
-  if (!globalValue || !globalValue.currentUser) {
-    redirect("/signin");
+  const global = useGlobal();
+  if (!global.currentUser) {
+    throw new Error("Unauthenticated");
   }
 
   return (
@@ -40,7 +38,7 @@ const Dashboard: React.FC = () => {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            Required Courses ({userName})
+            Required Courses ({global.currentUser.firstName})
           </Typography>
           <Box
             sx={{

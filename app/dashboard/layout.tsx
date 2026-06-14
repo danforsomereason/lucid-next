@@ -1,8 +1,10 @@
 'use client'
 
 import { Box } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
+import { useGlobal } from "@/context/globalContext";
+import { useRouter } from "next/navigation";
 
 const drawerWidth = 280;
 
@@ -12,6 +14,18 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const globalValue = useGlobal();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!globalValue?.currentUser) {
+      router.replace("/signin");
+    }
+  }, [globalValue?.currentUser, router]);
+
+  if (!globalValue?.currentUser) {
+    return null;
+  }
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

@@ -1,59 +1,39 @@
+import { useCourseCreator } from "@/context/courseCreatorContext";
+import { useGlobal } from "@/context/globalContext";
+import { questionTypeSchema } from "@/types";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  Alert,
+  Box,
   Button,
+  Card,
+  CardContent,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   Grid2,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
   Stack,
-  TextField,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  DialogContent,
-  Alert,
-  Box,
-  Card,
-  CardContent,
-  IconButton,
+  Typography
 } from "@mui/material";
-import { Fragment, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import { questionTypeSchema } from "@/types";
-import { useCourseCreator } from "@/context/courseCreatorContext";
-import { useGlobal } from "@/context/globalContext";
+import { useState } from "react";
 import LucidInput from "./LucidInput";
 
-export default function CreateCourseConsumer() {
-  const global = useGlobal();
+export default function CreateCourseForm() {
   const courseCreator = useCourseCreator();
   const [clearDialogOpened, setClearDialogOpened] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
-
-  if (!global.currentUser) {
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="error">Unauthenticated</Alert>
-      </Container>
-    );
-  }
-
-  if (!["instructor", "super_admin"].includes(global?.currentUser.role)) {
-    return (
-      <Container sx={{ mt: 4 }}>
-        <Alert severity="warning">
-          You must be classified as an instructor to create a course.
-        </Alert>
-      </Container>
-    );
-  }
 
   const handleOpenClearDialog = () => setClearDialogOpened(true);
   const handleCloseClearDialog = () => setClearDialogOpened(false);

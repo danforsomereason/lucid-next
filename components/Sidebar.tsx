@@ -29,9 +29,15 @@ const Sidebar = ({
   mobileOpen,
   handleDrawerToggle,
 }: SidebarProps) => {
-  const context = useGlobal();
-  const isAdmin = context?.currentUser?.role === 'admin'
-  const isInstructorOrSuperAdmin = context?.currentUser?.role === 'instructor' || context?.currentUser?.role === 'super_admin'
+  const global = useGlobal();
+  if (!global.currentUser) {
+    throw new Error('Unauthenticated');
+  }
+  const isAdmin = global.currentUser.role === 'admin'
+  console.log('isAdmin', isAdmin)
+  const isInstructor = global.currentUser.role === 'instructor'
+  const isSuperAdmin = global.currentUser.role === 'super_admin'
+  const isInstructorOrSuperAdmin = isInstructor || isSuperAdmin
 
   const userMenuItems = [
     { text: "Dashboard", icon: <HomeIcon />, path: "/dashboard" },
@@ -45,11 +51,25 @@ const Sidebar = ({
       icon: <BarChartIcon />,
       path: "/dashboard/progress",
     },
-    { text: "Profile", icon: <PersonIcon />, path: "/dashboard/profile" },
+    {
+      text: "Profile",
+      icon: <PersonIcon />,
+      path: "/dashboard/profile"
+    },
   ];
 
-  const instructorMenuItems = [
+  const adminMenuItems = [
     ...userMenuItems,
+    {
+      text: "Users",
+      icon: <PeopleIcon />,
+      path: "/dashboard/users"
+    },
+    {
+      text: "Settings",
+      icon: <SettingsIcon />,
+      path: "/dashboard/settings",
+    },
     { 
       text: "Create Course", 
       icon: <LaptopChromebookIcon />, 
@@ -57,14 +77,8 @@ const Sidebar = ({
     },
   ];
 
-  const adminMenuItems = [
-    ...userMenuItems,
-    { text: "Users", icon: <PeopleIcon />, path: "/dashboard/users" },
-    {
-      text: "Settings",
-      icon: <SettingsIcon />,
-      path: "/dashboard/settings",
-    },
+  const instructorMenuItems = [
+    ...adminMenuItems,
   ];
 
   const menuItems = isAdmin 

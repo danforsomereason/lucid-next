@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import jwt from 'jsonwebtoken'
 import { cookies } from "next/headers";
+import env from "@/env";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json()
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
     const decoded = { userId: existingUser.id };
     const token = jwt.sign(
       decoded,
-      "TEST_SECRET", // TODO move this to .env
+      env.JWT_SECRET, // TODO move this to .env
       { expiresIn: "1h" }
     );
     const cookieStore = await cookies();

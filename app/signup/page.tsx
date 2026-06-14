@@ -16,16 +16,18 @@ export default function Signup () {
 
     const handlePlanSelection = (planType: string) => {
         switch (planType) {
-            case "Individual":
+            case "Individual": {
                 router.push("/signup/individual");
                 break;
-            case "Team":
-            case "Organization":
-                router.push("/signup/team-org");
+            }
+            case "Team": {
+                router.push("/signup/team")
                 break;
-            case "Enterprise":
-                router.push("/signup/enterprise");
+            }
+            case "Organization": {
+                router.push("/signup/organization");
                 break;
+            }
         }
     };
 

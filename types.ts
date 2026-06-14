@@ -10,9 +10,14 @@ import {
   categoriesTable,
   quizAnswersTable,
   surveyAnswersTable,
+  verifiedUsersTable,
+  organizationsTable,
 } from "./schema";
 import { createSchemaFactory } from "drizzle-zod";
 import { z } from "zod";
+import db from "@/db";
+
+export type Db = typeof db;
 
 const factory = createSchemaFactory({
   coerce: {
@@ -47,6 +52,9 @@ export type Option = z.infer<typeof optionSchema>;
 const moduleProgressSchema = factory.createSelectSchema(moduleProgressesTable);
 export type ModuleProgress = z.infer<typeof moduleProgressSchema>;
 
+const organizationInsertSchema = factory.createInsertSchema(organizationsTable);
+export type OrganizationInsert = z.infer<typeof organizationInsertSchema>;
+
 const questionInsertSchema = factory.createInsertSchema(questionsTable);
 export type QuestionInsert = z.infer<typeof questionInsertSchema>;
 const questionSchema = factory.createSelectSchema(questionsTable);
@@ -64,6 +72,17 @@ const userInsertSchema = factory.createInsertSchema(usersTable);
 export type UserInsert = z.infer<typeof userInsertSchema>;
 const userUpdateSchema = factory.createUpdateSchema(usersTable)
 
+export const verifiedUserSchema = factory.createSelectSchema(verifiedUsersTable);
+export type VerifiedUser = z.infer<typeof verifiedUserSchema>;
+const verifiedUserInsertSchema = factory.createInsertSchema(verifiedUsersTable);
+export type VerifiedUserInsert = z.infer<typeof verifiedUserInsertSchema>;
+
+export const licenseTypeSchema = userInsertSchema.shape.licenseType;
+export type LicenseType = z.infer<typeof licenseTypeSchema>;
+
+export const roleSchema = userInsertSchema.shape.role;
+export type Role = z.infer<typeof roleSchema>;
+
 const questionDefSchema = questionInsertSchema.pick({
   questionText: true,
   questionType: true,
@@ -75,6 +94,7 @@ const questionDefSchema = questionInsertSchema.pick({
 export type QuestionDef = z.infer<typeof questionDefSchema>;
 
 export const questionTypeSchema = questionInsertSchema.shape.questionType;
+export type QuestionType = z.infer<typeof questionTypeSchema>;
 
 const moduleDefSchema = moduleInsertSchema.pick({
   heading: true,
@@ -150,17 +170,31 @@ export const registerInputSchema = userInsertSchema.pick({
   password: true,
   licenseType: true,
 });
+export const registerTeamInputSchema = registerInputSchema.extend({
+  organization: z.string(),
+  verifiedUsers: z.string().array()
+});
+export type RegisterTeamInput = z.infer<typeof registerTeamInputSchema>;
 
 export const registerOutputSchema = z.object({
   token: z.string(),
   user: userSchema,
 });
+export type RegisterOutput = z.infer<typeof registerOutputSchema>;
 
 export const surveyInputSchema = surveyAnswerInsertSchema
 export type SurveyInput = z.infer<typeof surveyInputSchema>;
 
 export const surveyOutputSchema = surveyAnswerSchema;
 export type SurveyOutput = z.infer<typeof surveyOutputSchema>;
+
+export const upgradeUserInputSchema = z.object({
+  userId: z.string(),
+})
+export type UpgradeUserInput = z.infer<typeof upgradeUserInputSchema>;
+
+export const upgradeUserOutputSchema = userSchema;
+export type UpgradeUserOutput = z.infer<typeof upgradeUserOutputSchema>;
 
 export const userProfileUpdateInputSchema = userUpdateSchema.pick({
   firstName: true,
