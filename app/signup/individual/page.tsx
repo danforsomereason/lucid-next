@@ -132,7 +132,6 @@ const IndividualCheckout: React.FC = () => {
         email: formData.email,
         licenseType: formData.licenseType,
         password: formData.password,
-        jobRoleId: 'user'
       };
       const body = JSON.stringify(data);
       const headers = {

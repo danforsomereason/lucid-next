@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     ...input,
     db,
     role: 'user',
-    join: false,
+    join: true,
   });
 
   const output = registerOutputSchema.parse(creation);

@@ -16,7 +16,8 @@ export async function POST(request: Request) {
     ...input,
     db,
     organizationId: organization.id,
-    role: 'admin'
+    role: 'admin',
+    join: false
   });
   const inserts = input.verifiedUsers.map((email) => {
     const insert: VerifiedUserInsert = {

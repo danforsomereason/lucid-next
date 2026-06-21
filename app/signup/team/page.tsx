@@ -366,7 +366,6 @@ const IndividualCheckout: React.FC = () => {
                 <div>Verified Users</div>
                 <Grid2 size={{ xs: 12 }}>
                   <TextField
-                    required
                     fullWidth
                     label="Verified User"
                     name="user"
