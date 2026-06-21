@@ -242,10 +242,10 @@ export const usersTable = pgTable("users", {
 export const verifiedUsersTable = pgTable("verified_users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
+  invitedAt: timestamp("invited_at").notNull().defaultNow(),
   organizationId: uuid("organization_id")
     .notNull()
     .references(() => organizationsTable.id),
-  invitedAt: timestamp("invited_at").notNull().defaultNow(),
 });
 
 // Relations
