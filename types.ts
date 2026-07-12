@@ -52,6 +52,8 @@ export type Option = z.infer<typeof optionSchema>;
 const moduleProgressSchema = factory.createSelectSchema(moduleProgressesTable);
 export type ModuleProgress = z.infer<typeof moduleProgressSchema>;
 
+const organizationSchema = factory.createSelectSchema(organizationsTable);
+export type Organization = z.infer<typeof organizationSchema>;
 const organizationInsertSchema = factory.createInsertSchema(organizationsTable);
 export type OrganizationInsert = z.infer<typeof organizationInsertSchema>;
 
@@ -82,6 +84,11 @@ export type LicenseType = z.infer<typeof licenseTypeSchema>;
 
 export const roleSchema = userInsertSchema.shape.role;
 export type Role = z.infer<typeof roleSchema>;
+
+export const relatedUserSchema = userSchema.extend({
+  organization: organizationSchema.optional(),
+})
+export type RelatedUser = z.infer<typeof relatedUserSchema>;
 
 const questionDefSchema = questionInsertSchema.pick({
   questionText: true,
@@ -159,6 +166,13 @@ export const loginInputSchema = userInsertSchema.pick({
   email: true,
   password: true,
 });
+export type LoginInput = z.infer<typeof loginInputSchema>;
+
+export const loginOutputSchema = z.object({
+  token: z.string(),
+  user: relatedUserSchema
+})
+export type LoginOutput = z.infer<typeof loginOutputSchema>;
 
 export const readCoursesOutputSchema = courseSchema.array()
 export type ReadCoursesOutput = z.infer<typeof readCoursesOutputSchema>

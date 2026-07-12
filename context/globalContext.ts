@@ -1,11 +1,11 @@
 'use client'
 
-import { User } from "@/types";
+import { RelatedUser } from "@/types";
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
 
 export interface GlobalValue {
-  currentUser?: User
-  setCurrentUser: Dispatch<SetStateAction<User | undefined>>;
+  currentUser?: RelatedUser
+  setCurrentUser: Dispatch<SetStateAction<RelatedUser | undefined>>;
 }
 
 export const globalContext = createContext<GlobalValue | undefined>(undefined);

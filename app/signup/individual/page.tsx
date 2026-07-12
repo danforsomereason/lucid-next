@@ -1,7 +1,8 @@
 'use client'
 
 import { useGlobal } from "@/context/globalContext";
-import { checkUserExists } from "@/requests/users";
+import { checkUserExists, registerIndividual } from "@/requests/users";
+import { licenseTypeSchema, registerInputSchema, registerOutputSchema } from "@/types";
 import {
   Box,
   Button,
@@ -11,9 +12,6 @@ import {
   Grid2,
   InputLabel,
   Link,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   Step,
   StepLabel,
   Stepper,
@@ -124,29 +122,15 @@ const IndividualCheckout: React.FC = () => {
   const handleNext = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formErrors) return;
-
+    const licenseType = licenseTypeSchema.parse(formData.licenseType);
     try {
-      const data = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        licenseType: formData.licenseType,
-        password: formData.password,
-      };
-      const body = JSON.stringify(data);
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const init = {
-        method: "POST",
-        body,
-        headers,
-      };
-      const response = await fetch(
-        "http://localhost:3000/api/v1/users/signup",
-        init
+      const output = await registerIndividual(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        licenseType,
+        formData.password
       );
-      const output = await response.json();
       localStorage.setItem("token", output.token);
       globalValue?.setCurrentUser(output.user);
       router.push("/dashboard");

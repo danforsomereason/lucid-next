@@ -3,7 +3,7 @@ import db from "../db";
 import { eq } from "drizzle-orm";
 import { usersTable } from "@/schema";
 import { cookies } from "next/headers";
-import { userSchema } from "@/types";
+import { relatedUserSchema } from "@/types";
 import env from "@/env";
 
 function verify(token: string, debug?: boolean) {
@@ -49,11 +49,14 @@ export default async function authenticate(
 
   const userId = (decoded as { userId: string }).userId;
   const user = await db.query.usersTable.findFirst({
-    where: eq(usersTable.id, userId)
+    where: eq(usersTable.id, userId),
+    with: {
+      organization: true,
+    }
   });
   if (!user) {
     throw new Error("User not found");
   }
-  const parsed = userSchema.parse(user);
+  const parsed = relatedUserSchema.parse(user);
   return parsed;
 }

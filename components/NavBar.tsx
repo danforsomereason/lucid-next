@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useGlobal } from "../context/globalContext";
+import NavBadge from "./NavBadge";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -26,10 +27,6 @@ const NavBar: React.FC = () => {
   if (!mounted) {
     return <></>
   }
-  // need to get the token out of the context as opposed to the localStorage
-  const userName =
-    context?.currentUser?.firstName || "You are not logged in.";
-
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -119,9 +116,7 @@ const NavBar: React.FC = () => {
         ) : (
           // User info and menu button when logged in
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Typography sx={{ color: "var(--white-color)" }}>
-              {userName}
-            </Typography>
+            <NavBadge />
             <IconButton color="inherit" onClick={handleMenuOpen}>
               <MenuIcon />
             </IconButton>

@@ -1,6 +1,6 @@
 import db from "@/db";
 import { usersTable } from "@/schema";
-import { loginInputSchema } from "@/types";
+import { loginInputSchema, loginOutputSchema } from "@/types";
 import bcryptjs from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -13,6 +13,9 @@ export async function POST(request: Request) {
   const input = loginInputSchema.parse(body)
   const existingUser = await db.query.usersTable.findFirst({
     where: eq(usersTable.email, input.email),
+    with: {
+      organization: true,
+    }
   });
 
   if (existingUser) {
@@ -32,7 +35,9 @@ export async function POST(request: Request) {
     );
     const cookieStore = await cookies();
     cookieStore.set("token", token);
-    return NextResponse.json({ token, user: existingUser });
+    const outputData = { token, user: existingUser }
+    const output = loginOutputSchema.parse(outputData);
+    return NextResponse.json(output);
   } else {
     return NextResponse.json({ message: "invalid" }, { status: 400 });
   }

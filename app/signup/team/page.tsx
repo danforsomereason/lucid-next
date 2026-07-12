@@ -2,8 +2,8 @@
 
 import UploadUsers from "@/components/UploadUsers";
 import { useGlobal } from "@/context/globalContext";
-import { checkUserExists } from "@/requests/users";
-import { licenseTypeSchema, RegisterTeamInput, registerTeamInputSchema } from "@/types";
+import { checkUserExists, registerTeam } from "@/requests/users";
+import { licenseTypeSchema, registerOutputSchema, RegisterTeamInput, registerTeamInputSchema } from "@/types";
 import {
   Box,
   Button,
@@ -68,7 +68,7 @@ const IndividualCheckout: React.FC = () => {
     string | null
   >(null);
 
-  const globalValue = useGlobal()
+  const global = useGlobal()
 
   const handleTextFieldChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -125,27 +125,17 @@ const IndividualCheckout: React.FC = () => {
         : formData.licenseType
       console.log('formLicenseType', formLicenseType);
       const licenseType = licenseTypeSchema.parse(formLicenseType)
-      const data: RegisterTeamInput = {
-        ...formData,
+      const output = await registerTeam(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
         licenseType,
-        verifiedUsers,
-      };
-      const parsed = registerTeamInputSchema.parse(data);
-      const body = JSON.stringify(parsed);
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const init = {
-        method: "POST",
-        body,
-        headers,
-      };
-      const response = await fetch(
-        "http://localhost:3000/api/v1/users/signup/team",
-        init
+        formData.organization,
+        formData.password,
+        verifiedUsers
       );
-      const output = await response.json();
-      globalValue?.setCurrentUser(output.user);
+      localStorage.setItem("token", output.token);
+      global.setCurrentUser(output.user);
       router.push("/dashboard");
     } catch (error) {
       console.error("Error during signup:", error);
