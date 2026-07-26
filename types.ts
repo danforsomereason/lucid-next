@@ -86,7 +86,7 @@ export const roleSchema = userInsertSchema.shape.role;
 export type Role = z.infer<typeof roleSchema>;
 
 export const relatedUserSchema = userSchema.extend({
-  organization: organizationSchema.optional(),
+  organization: organizationSchema.nullish(),
 })
 export type RelatedUser = z.infer<typeof relatedUserSchema>;
 

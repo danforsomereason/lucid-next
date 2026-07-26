@@ -10,6 +10,7 @@ import env from "@/env";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json()
+  console.log('body', body)
   const input = loginInputSchema.parse(body)
   const existingUser = await db.query.usersTable.findFirst({
     where: eq(usersTable.email, input.email),
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     cookieStore.set("token", token);
     const outputData = { token, user: existingUser }
+    console.log('outputData', outputData)
     const output = loginOutputSchema.parse(outputData);
     return NextResponse.json(output);
   } else {
