@@ -3,8 +3,9 @@ import db from "../db";
 import { eq } from "drizzle-orm";
 import { usersTable } from "@/schema";
 import { cookies } from "next/headers";
-import { relatedUserSchema } from "@/types";
+import { relatedUserSchema, tokenPayloadSchema } from "@/types";
 import env from "@/env";
+import guardRelatedUserById from "./getRelatedUserById";
 
 function verify(token: string, debug?: boolean) {
   try {
@@ -32,28 +33,23 @@ export default async function authenticate(
     }
     return undefined;
   }
-  const decoded = verify(token, debug);
+  const verified = verify(token, debug);
   if (debug) {
-    console.debug("Decoded at authenticate fx:", decoded);
+    console.debug("authenticate verified:", verified);
   }
-  if (!decoded) {
+  const payload = tokenPayloadSchema.parse(verified);
+  if (!payload) {
     if (debug) {
       console.debug("Decoded empty token");
     }
     return undefined;
   }
-
-  if (typeof decoded !== "object") {
-    throw new Error("Decoded is not an object");
-  }
-
-  const userId = (decoded as { userId: string }).userId;
-  const user = await db.query.usersTable.findFirst({
-    where: eq(usersTable.id, userId),
-    with: {
-      organization: true,
-    }
+  const user = await guardRelatedUserById({
+    db, userId: payload.userId
   });
+  if (debug) {
+    console.debug('authenticate user', user)
+  }
   if (!user) {
     throw new Error("User not found");
   }

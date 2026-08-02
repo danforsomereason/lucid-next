@@ -7,17 +7,18 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import getRegisterOrganizationId from "./getRegisterOrganizationId";
+import guardRelatedUserById from "./guardRelatedUserById";
 
 export default async function createUser (props: {
   db: Db
   join: boolean
-} & UserInsert) {
+} & UserInsert): Promise<RegisterOutput> {
   const existingUser = await props.db.query.usersTable.findFirst({
     where: eq(usersTable.email, props.email),
   });
 
   if (existingUser) {
-    return NextResponse.json({ ok: false }, { status: 403 })
+    throw new Error("User already exists");
   }
 
   const organizationId = await getRegisterOrganizationId({
@@ -41,6 +42,10 @@ export default async function createUser (props: {
     .insert(usersTable)
     .values(values)
     .returning();
+  const relatedUser = await guardRelatedUserById({
+    db: props.db,
+    userId: savedUser.id,
+  });
 
   const token = jwt.sign(
     { userId: savedUser.id },
@@ -51,7 +56,7 @@ export default async function createUser (props: {
   cookieStore.set("token", token);
   const output: RegisterOutput = {
     token,
-    user: savedUser,
+    user: relatedUser,
   };
   return output
 }

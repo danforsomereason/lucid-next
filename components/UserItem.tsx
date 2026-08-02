@@ -11,6 +11,8 @@ export default function UserItem(props: {
     <li key={props.user.id}>
       <p>
         <UserName user={props.user} />
+        {' '}
+        [{props.user.role}]
       </p>
       <Button>
         Remove

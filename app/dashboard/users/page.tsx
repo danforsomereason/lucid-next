@@ -1,5 +1,6 @@
 import UserItem from "@/components/UserItem";
 import VerifiedUserItem from "@/components/VerifiedUserItem";
+import VerifyUserForm from "@/components/VerifyUserForm";
 import db from "@/db";
 import { usersTable, verifiedUsersTable } from "@/schema";
 import authenticate from "@/utils/authenticate";
@@ -25,21 +26,29 @@ export default async function DashboardUsers() {
 
       <h2>Members ({users.length})</h2>
       <ol>
-        {users.map((user) => (
-          <UserItem
-            key={user.id}
-            user={user}
-          />
-        ))}
+        {users.map((user) => {
+          return (
+            <UserItem
+              key={user.id}
+              user={user}
+            />
+          )
+        })}
       </ol>
+      <h2>Invite New Verified User</h2>
+      <VerifyUserForm />
       <h2>Pending Invites ({verifiedUsers.length})</h2>
       <ol>
-        {verifiedUsers.map((verifiedUser) => (
-          <VerifiedUserItem
-            key={verifiedUser.id}
-            verifiedUser={verifiedUser}
-          />
-        ))}
+        {verifiedUsers.map((verifiedUser) => {
+          const user = users.find(u => u.email === verifiedUser.email)
+          return (
+            <VerifiedUserItem
+              key={verifiedUser.id}
+              verifiedUser={verifiedUser}
+              user={user}
+            />
+          )
+        })}
       </ol>
     </>
   );

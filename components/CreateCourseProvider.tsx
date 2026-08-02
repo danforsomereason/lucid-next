@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import { NEW_MODULE, NEW_QUIZ_QUESTION } from "@/constants";
-import { CreateCourseInput, createCourseInputSchema, ModuleDef, QuestionDef } from "@/types";
+import { CreateCourseInput, createCourseInputSchema, INSTRUCTOR_ROLES, ModuleDef, NEW_MODULE, NEW_QUIZ_QUESTION, QuestionDef, RelatedUser } from "@/types";
 import CreateCourseForm from "@/components/CreateCourseForm";
 import {
   CourseCreatorValue,
@@ -10,8 +9,11 @@ import {
 } from "@/context/courseCreatorContext";
 import axios from "axios";
 import z, { ZodError } from "zod";
+import isInstructing from "@/utils/isInstructing";
 
-export default function CreateCourseProvider() {
+export default function CreateCourseProvider(props: {
+  user: RelatedUser
+}) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState('');
   const [modules, setModules] = useState<ModuleDef[]>([NEW_MODULE]);
@@ -216,7 +218,7 @@ export default function CreateCourseProvider() {
     }
     try {
       const body = createCourseInputSchema.parse(input);
-      const response = await axios.post("/api/v1/courses/create", body);
+      await axios.post("/api/v1/courses/create", body);
     } catch (error) {
       if (!(error instanceof Error)) {
         throw new Error("Unknown error occurred");
@@ -257,6 +259,11 @@ export default function CreateCourseProvider() {
     clearForm,
     submitCourse,
   };
+
+  const instructing = isInstructing({ role: props.user.role })
+  if (!instructing) {
+    return <></>
+  }
 
   return (
     <CourseCreatorContext value={courseCreatorValue}>

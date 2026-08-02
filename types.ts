@@ -17,13 +17,14 @@ import { createSchemaFactory } from "drizzle-zod";
 import { z } from "zod";
 import db from "@/db";
 
-export type Db = typeof db;
-
 const factory = createSchemaFactory({
   coerce: {
     date: true
   }
 });
+
+export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0]
+export type Db = typeof db | Tx;
 
 const assignedCourseSchema = factory.createSelectSchema(assignedCoursesTable);
 export type AssignedCourse = z.infer<typeof assignedCourseSchema>;
@@ -60,6 +61,7 @@ export type OrganizationInsert = z.infer<typeof organizationInsertSchema>;
 const questionInsertSchema = factory.createInsertSchema(questionsTable);
 export type QuestionInsert = z.infer<typeof questionInsertSchema>;
 const questionSchema = factory.createSelectSchema(questionsTable);
+export type Question = z.infer<typeof questionSchema>;
 
 const quizAnswerInsertSchema = factory.createInsertSchema(quizAnswersTable);
 export type QuizAnswerInsert = z.infer<typeof quizAnswerInsertSchema>;
@@ -67,6 +69,7 @@ export type QuizAnswerInsert = z.infer<typeof quizAnswerInsertSchema>;
 const surveyAnswerSchema = factory.createSelectSchema(surveyAnswersTable);
 export type SurveyAnswer = z.infer<typeof surveyAnswerSchema>;
 const surveyAnswerInsertSchema = factory.createInsertSchema(surveyAnswersTable);
+export type SurveyAnswerInsert = z.infer<typeof surveyAnswerInsertSchema>;
 
 export const userSchema = factory.createSelectSchema(usersTable)
 export type User = z.infer<typeof userSchema>;
@@ -86,9 +89,25 @@ export const roleSchema = userInsertSchema.shape.role;
 export type Role = z.infer<typeof roleSchema>;
 
 export const relatedUserSchema = userSchema.extend({
-  organization: organizationSchema.nullish(),
+  organization: organizationSchema.nullable(),
 })
 export type RelatedUser = z.infer<typeof relatedUserSchema>;
+
+export const relatedAdminUserSchema = relatedUserSchema.extend({
+  role: z.union([
+    z.literal('super_admin'),
+    z.literal('instructor'),
+    z.literal('admin')
+  ]),
+  organization: organizationSchema,
+  organizationId: z.string(),
+})
+export type RelatedAdminUser = z.infer<typeof relatedAdminUserSchema>;
+
+export const tokenPayloadSchema = z.object({
+  userId: z.string(),
+});
+export type TokenPayload = z.infer<typeof tokenPayloadSchema>;
 
 const questionDefSchema = questionInsertSchema.pick({
   questionText: true,
@@ -192,7 +211,7 @@ export type RegisterTeamInput = z.infer<typeof registerTeamInputSchema>;
 
 export const registerOutputSchema = z.object({
   token: z.string(),
-  user: userSchema,
+  user: relatedUserSchema,
 });
 export type RegisterOutput = z.infer<typeof registerOutputSchema>;
 
@@ -207,7 +226,7 @@ export const upgradeUserInputSchema = z.object({
 })
 export type UpgradeUserInput = z.infer<typeof upgradeUserInputSchema>;
 
-export const upgradeUserOutputSchema = userSchema;
+export const upgradeUserOutputSchema = relatedUserSchema;
 export type UpgradeUserOutput = z.infer<typeof upgradeUserOutputSchema>;
 
 export const userProfileUpdateInputSchema = userUpdateSchema.pick({
@@ -215,6 +234,14 @@ export const userProfileUpdateInputSchema = userUpdateSchema.pick({
   lastName: true,
   licenseType: true
 })
+
+export const verifyUserInputSchema = z.object({
+  email: z.string()
+})
+export type VerifyUserInput = z.infer<typeof verifyUserInputSchema>;
+
+export const verifyUserOutputSchema = verifiedUserSchema;
+export type VerifyUserOutput = z.infer<typeof verifyUserOutputSchema>;
 
 export const relatedCourseSchema = courseSchema.extend({
   learningObjectives: learningObjectiveSchema.array(),
@@ -237,3 +264,37 @@ const safeQuestionSchema = relatedQuestionSchema.omit({
   explanation: true,
 })
 export type SafeQuestion = z.infer<typeof safeQuestionSchema>;
+
+// UI
+
+export const INSTRUCTOR_ROLES = ["instructor", "super_admin"]
+
+export const NEW_MODULE: ModuleDef = {
+  heading: "",
+  content: "",
+  estimatedMinutes: 0,
+};
+
+export const NEW_QUIZ_QUESTION: QuestionDef = {
+  questionText: "",
+  questionType: "Multiple Choice",
+  options: ["", ""],
+  correctOptionOrder: 0,
+  explanation: "",
+};
+
+export const SURVEY_QUESTIONS = [
+  'This course met the objectives stated in the course description.',
+  'After completing this course, how knowledgeable and/or equipped do you feel in this area?',
+  'The course information was current and accurate.',
+  'This course information was relevant to my profession.',
+  'The references used in the development of this program included current literature and were aligned with best practices.',
+  'The instructional methods were effective.',
+  'The author/instructor was knowledgeable and presented the information clearly.',
+  'The instructor was responsive and/or available to participants if needed.',
+  'If you had any questions, did the administrator respond quickly and thoroughly?',
+  'The registration process for this course was straightforward.',
+  'The course technology was user-friendly.',
+  'The total length of time to complete the course:',
+  'Please provide any additional comments you may have regarding this course:'
+]

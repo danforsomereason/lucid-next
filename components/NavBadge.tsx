@@ -19,12 +19,11 @@ export default function NavBadge() {
     <>
       <Typography sx={{ color: "var(--white-color)" }}>
         {global.currentUser.firstName}
-
       </Typography>
       <Badge>
-        {global.currentUser.organization?.name},
+        [{global.currentUser.organization?.name},
         {' '}
-        {global.currentUser?.role}
+        {global.currentUser?.role}]
       </Badge>
     </>
   )

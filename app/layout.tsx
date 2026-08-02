@@ -22,7 +22,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const currentUser = await authenticate()
-  console.log('currentUser', currentUser)
   return (
     <html lang="en">
       <body>

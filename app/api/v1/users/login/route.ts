@@ -1,6 +1,6 @@
 import db from "@/db";
 import { usersTable } from "@/schema";
-import { loginInputSchema, loginOutputSchema } from "@/types";
+import { loginInputSchema, loginOutputSchema, TokenPayload } from "@/types";
 import bcryptjs from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -28,16 +28,15 @@ export async function POST(request: Request) {
     if (!matchingPassword) {
       return NextResponse.json({ message: "wrong password" }, { status: 400 });
     }
-    const decoded = { userId: existingUser.id };
+    const payload: TokenPayload = { userId: existingUser.id };
     const token = jwt.sign(
-      decoded,
+      payload,
       env.JWT_SECRET, // TODO move this to .env
       { expiresIn: "1h" }
     );
     const cookieStore = await cookies();
     cookieStore.set("token", token);
     const outputData = { token, user: existingUser }
-    console.log('outputData', outputData)
     const output = loginOutputSchema.parse(outputData);
     return NextResponse.json(output);
   } else {

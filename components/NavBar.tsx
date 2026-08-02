@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useGlobal } from "../context/globalContext";
 import NavBadge from "./NavBadge";
+import Link from "@mui/material/Link";
 
 const NavBar: React.FC = () => {
   const router = useRouter();
@@ -54,7 +55,9 @@ const NavBar: React.FC = () => {
     { label: "Courses", path: "/courses" },
   ];
 
-  const menuItems = context?.currentUser ? authenticatedMenuItems : publicMenuItems;
+  const menuItems = context.currentUser ? authenticatedMenuItems : publicMenuItems;
+
+  const logoHref = context.currentUser ? "/dashboard" : "/";
 
   return (
     <AppBar
@@ -64,19 +67,18 @@ const NavBar: React.FC = () => {
       <Toolbar
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <Typography
-          variant="h4"
-          onClick={() => {
-            router.push("/");
-          }}
+        <Link
+          href={logoHref}
           sx={{
             color: "var(--secondary-color)",
             fontWeight: "bold",
             cursor: "pointer",
           }}
+          underline="none"
+          variant="h4"
         >
           LUCID
-        </Typography>
+        </Link>
 
         {!context?.currentUser ? (
           <>

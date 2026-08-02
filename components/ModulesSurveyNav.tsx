@@ -1,7 +1,7 @@
 import PollIcon from "@mui/icons-material/Poll";
 import { useCourseModules } from "@/context/courseModulesContext";
-import { SURVEY_QUESTIONS } from "@/constants";
 import ModulesNav from "./ModulesNav";
+import { SURVEY_QUESTIONS } from "@/types";
 
 export default function ModulesSurveyNav() {
   const courseModules = useCourseModules()

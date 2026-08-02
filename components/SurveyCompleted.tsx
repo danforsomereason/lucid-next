@@ -65,22 +65,27 @@ export default function SurveyCompleted() {
               if (!tab) {
                 return
               }
-              tab.opener = null
               setGenerating(true)
               try {
                 const userName = `${global.currentUser.firstName} ${global.currentUser.lastName}`
-                const buffer = await generateCertificatePdf({
+                const userData = {
                   userName,
                   courseName: courseModules.course.title,
                   ceHours: courseModules.course.ceHours,
                   completionDate:
                     courseModules.assignedCourse.completedAt,
                   score: courseModules.score,
-                })
+                }
+                const buffer = await generateCertificatePdf(userData)
                 const blob = new Blob([new Uint8Array(buffer)], {
                   type: "application/pdf",
                 })
                 const url = URL.createObjectURL(blob)
+                // DEBUG: Download
+                // const link = document.createElement("a")
+                // link.href = url
+                // link.download = "certificate.pdf"
+                // link.click()
                 tab.location.href = url
                 window.setTimeout(() => {
                   URL.revokeObjectURL(url)

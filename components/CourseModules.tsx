@@ -1,14 +1,13 @@
 'use client'
 
 import { CourseModulesContext, CourseModulesContextValue } from "@/context/courseModulesContext"
-import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, Module, ModuleProgress, RelatedCourse, RelatedModule, SafeQuestion, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
+import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, Module, ModuleProgress, RelatedCourse, RelatedModule, SafeQuestion, SURVEY_QUESTIONS, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
 import areModulesCompleted from "@/utils/areModulesCompleted"
 import axios from "axios"
 import { useState } from "react"
 import CourseModulesContent from "./CourseModulesContent"
 import ModulesSidebarController from "./ModulesSidebarController"
 import { MainContent, ModuleContainer } from "./styled"
-import { SURVEY_QUESTIONS } from "@/constants"
 
 export default function CourseModules(props: {
   assignedCourse: AssignedCourse

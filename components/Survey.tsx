@@ -1,10 +1,10 @@
-import { SURVEY_QUESTIONS } from "@/constants";
 import { useCourseModules } from "@/context/courseModulesContext";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { Box, Button, Paper, Typography } from "@mui/material";
 import SurveyField from "./SurveyField";
 import SurveyCompleted from "./SurveyCompleted";
+import { SURVEY_QUESTIONS } from "@/types";
 
 export default function Survey() {
   const courseModules = useCourseModules()
