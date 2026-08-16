@@ -1,6 +1,6 @@
 'use client'
 
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 
 export default function useGlobalUser() {
   const global = useGlobal()

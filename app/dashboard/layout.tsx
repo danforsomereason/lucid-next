@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { useRouter } from "next/navigation";
 
 const drawerWidth = 280;

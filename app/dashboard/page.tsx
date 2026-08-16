@@ -3,7 +3,7 @@
 import { Box, Typography, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import BasicPie from "@/components/BasicPie";
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 
 // Pie chart will show completed course / required course * 100
 // If the user belongs to an organization, the org will determine required courses

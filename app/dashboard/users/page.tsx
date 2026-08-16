@@ -1,9 +1,12 @@
 import UserItem from "@/components/UserItem";
+import UsersList from "@/components/UsersList";
+import UsersProvider from "@/components/UsersProvider";
 import VerifiedUserItem from "@/components/VerifiedUserItem";
 import VerifyUserForm from "@/components/VerifyUserForm";
 import db from "@/db";
 import { usersTable, verifiedUsersTable } from "@/schema";
 import authenticate from "@/utils/authenticate";
+import getRelatedUsers from "@/utils/getRelatedUsers";
 import { eq } from "drizzle-orm";
 
 export default async function DashboardUsers() {
@@ -14,27 +17,16 @@ export default async function DashboardUsers() {
   if (!currentUser.organizationId) {
     return <p>Unauthorized</p>
   }
-  const users = await db.query.usersTable.findMany({
-    where: eq(usersTable.organizationId, currentUser.organizationId),
-  })
+  const usersWhere = eq(usersTable.organizationId, currentUser.organizationId)
+  const users = await getRelatedUsers({ db, where: usersWhere })
   const verifiedUsers = await db.query.verifiedUsersTable.findMany({
     where: eq(verifiedUsersTable.organizationId, currentUser.organizationId),
   })
 
   return (
-    <>
-
+    <UsersProvider rows={users}>
       <h2>Members ({users.length})</h2>
-      <ol>
-        {users.map((user) => {
-          return (
-            <UserItem
-              key={user.id}
-              user={user}
-            />
-          )
-        })}
-      </ol>
+      <UsersList rows={users} />
       <h2>Invite New Verified User</h2>
       <VerifyUserForm />
       <h2>Pending Invites ({verifiedUsers.length})</h2>
@@ -50,6 +42,6 @@ export default async function DashboardUsers() {
           )
         })}
       </ol>
-    </>
+    </UsersProvider>
   );
 }

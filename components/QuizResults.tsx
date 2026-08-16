@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Box, Typography, Paper, Button, Alert } from "@mui/material";
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import QuizResult from "./QuizResult";
 
 const QuizResults: React.FC = () => {

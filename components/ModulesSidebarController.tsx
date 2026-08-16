@@ -4,7 +4,7 @@ import { Typography } from "@mui/material";
 import ModulesHelpButton from "./ModulesHelpButton";
 import ModulesQuizNav from "./ModulesQuizNav";
 import { CourseTitle, ModulesSidebar } from "./styled";
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import ModuleNav from "./ModuleNav";
 import ModulesSurveyNav from "./ModulesSurveyNav";
 

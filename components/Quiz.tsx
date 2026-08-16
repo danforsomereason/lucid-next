@@ -1,4 +1,4 @@
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import { Paper, Typography, FormControl, Alert, Box, Button, RadioGroup } from "@mui/material";
 import QuizOption from "./QuizOption";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';

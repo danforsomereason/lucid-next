@@ -1,4 +1,4 @@
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import CourseModule from "./CourseModule";
 import Quiz from "./Quiz";
 import Survey from "./Survey";

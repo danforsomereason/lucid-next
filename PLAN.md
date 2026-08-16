@@ -2,7 +2,7 @@
 
 ## Phase 1: Enable features
 
-- Enable instructor upgrade from users page
+- Enable instructor upgrade from users page (context)
 
 ## Phase 2: Style Interface
 

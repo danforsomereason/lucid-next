@@ -1,19 +1,16 @@
 'use client'
 
-import { useState } from "react";
-import { CreateCourseInput, createCourseInputSchema, INSTRUCTOR_ROLES, ModuleDef, NEW_MODULE, NEW_QUIZ_QUESTION, QuestionDef, RelatedUser } from "@/types";
 import CreateCourseForm from "@/components/CreateCourseForm";
-import {
-  CourseCreatorValue,
-  CourseCreatorContext,
-} from "@/context/courseCreatorContext";
-import axios from "axios";
-import z, { ZodError } from "zod";
+import CourseCreatorContext from "@/context/CourseCreatorContext";
+import { CourseCreatorContextValue, CreateCourseInput, createCourseInputSchema, ModuleDef, NEW_MODULE, NEW_QUIZ_QUESTION, QuestionDef } from "@/types";
 import isInstructing from "@/utils/isInstructing";
+import useGlobalUser from "@/utils/useGlobalUser";
+import axios from "axios";
+import { useState } from "react";
+import z, { ZodError } from "zod";
 
-export default function CreateCourseProvider(props: {
-  user: RelatedUser
-}) {
+export default function CreateCourseProvider() {
+  const globalUser = useGlobalUser();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState('');
   const [modules, setModules] = useState<ModuleDef[]>([NEW_MODULE]);
@@ -234,7 +231,7 @@ export default function CreateCourseProvider(props: {
     }
   }
 
-  const courseCreatorValue: CourseCreatorValue = {
+  const courseCreatorValue: CourseCreatorContextValue = {
     ceHours,
     description,
     maximumAttempts,
@@ -260,7 +257,7 @@ export default function CreateCourseProvider(props: {
     submitCourse,
   };
 
-  const instructing = isInstructing({ role: props.user.role })
+  const instructing = isInstructing({ role: globalUser.role })
   if (!instructing) {
     return <></>
   }

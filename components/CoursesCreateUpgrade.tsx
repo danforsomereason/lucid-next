@@ -1,17 +1,16 @@
 'use client'
 
-import { useGlobal } from "@/context/globalContext";
-import { UpgradeUserInput, upgradeUserInputSchema, upgradeUserOutputSchema, User } from "@/types";
+import { useGlobal } from "@/context/GlobalContext";
+import { useUsers } from "@/context/UsersContext";
+import { UpgradeUserInput, upgradeUserInputSchema, upgradeUserOutputSchema } from "@/types";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 
-export default function CoursesCreateUpgrade(props: {
-  user: User
-  users: User[]
-}) {
+export default function CoursesCreateUpgrade() {
   const global = useGlobal()
-  const [userId, setUserId] = useState("");
-  const items = props.users.map((user) => (
+  const users = useUsers()
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const items = users.rows.map((user) => (
     <MenuItem key={user.id} value={user.id}>
       {user.firstName} {user.lastName}
     </MenuItem>
@@ -22,7 +21,7 @@ export default function CoursesCreateUpgrade(props: {
       onSubmit={async (event) => {
         event.preventDefault();
         const input: UpgradeUserInput = {
-          userId: userId,
+          userId: selectedUserId,
         }
         const parsed = upgradeUserInputSchema.parse(input);
         const json = JSON.stringify(parsed);
@@ -36,7 +35,7 @@ export default function CoursesCreateUpgrade(props: {
         const data = await response.json();
         console.log('data', data);
         const output = upgradeUserOutputSchema.parse(data);
-        if (output.id === userId) {
+        if (output.id === global.currentUser?.id) {
           global.setCurrentUser(output);
         }
       }}
@@ -45,9 +44,9 @@ export default function CoursesCreateUpgrade(props: {
         <InputLabel>User</InputLabel>
         <Select
           label="User"
-          value={userId}
+          value={selectedUserId}
           onChange={(event) => {
-            setUserId(event.target.value);
+            setSelectedUserId(event.target.value);
           }}
           sx={{
             "& .MuiInputBase-root": {

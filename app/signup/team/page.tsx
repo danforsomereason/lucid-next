@@ -1,7 +1,7 @@
 'use client'
 
 import UploadUsers from "@/components/UploadUsers";
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { checkUserExists, registerTeam } from "@/requests/users";
 import { licenseTypeSchema, registerOutputSchema, RegisterTeamInput, registerTeamInputSchema } from "@/types";
 import {

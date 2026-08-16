@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Button, TextField, Typography, Box, Link } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { login } from "@/requests/users";
 
 interface SignUpFormData {

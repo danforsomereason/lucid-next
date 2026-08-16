@@ -1,22 +1,14 @@
 'use client'
 
-import { User } from "@/types"
-import { Button } from "@mui/material"
-import UserName from "./UserName"
+import UserProvider from "./UserProvider"
+import UserItemConsumer from "./UserItemConsumer"
 
 export default function UserItem(props: {
-  user: User
+  userId: string
 }) {
   return (
-    <li key={props.user.id}>
-      <p>
-        <UserName user={props.user} />
-        {' '}
-        [{props.user.role}]
-      </p>
-      <Button>
-        Remove
-      </Button>
-    </li>
+    <UserProvider userId={props.userId}>
+      <UserItemConsumer />
+    </UserProvider>
   )
 }

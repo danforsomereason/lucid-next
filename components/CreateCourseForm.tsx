@@ -1,5 +1,5 @@
-import { useCourseCreator } from "@/context/courseCreatorContext";
-import { useGlobal } from "@/context/globalContext";
+import { useCourseCreator } from "@/context/CourseCreatorContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { questionTypeSchema } from "@/types";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";

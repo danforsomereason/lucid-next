@@ -1,4 +1,4 @@
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import QuizIcon from "@mui/icons-material/Quiz";
 import ModulesNav from "./ModulesNav";
 

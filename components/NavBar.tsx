@@ -12,7 +12,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useGlobal } from "../context/globalContext";
+import { useGlobal } from "../context/GlobalContext";
 import NavBadge from "./NavBadge";
 import Link from "@mui/material/Link";
 

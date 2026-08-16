@@ -1,6 +1,6 @@
 import { FormControl, RadioGroup } from "@mui/material"
 import OptionView from "./OptionView"
-import { useCourseModules } from "@/context/courseModulesContext"
+import { useCourseModules } from "@/context/CourseModulesContext"
 import LucidInput from "./LucidInput"
 
 export default function SurveyField() {

@@ -1,28 +1,25 @@
 'use client'
 
-import React, { useContext } from "react";
+import { RelatedCourse } from "@/types";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
     Box,
-    Typography,
+    Button,
     Card,
     CardContent,
+    Container,
+    Grid,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
-    Grid,
-    Skeleton,
-    useTheme,
-    useMediaQuery,
-    Container,
-    Button,
+    Typography,
+    useTheme
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import "../styles/CourseDescription.css";
-import { globalContext } from "../context/globalContext";
-import { useRouter } from "next/navigation";
-import { Course, RelatedCourse } from "@/types";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import React from "react";
+import "../styles/CourseDescription.css";
 
 interface CourseDescriptionProps {
   course: RelatedCourse
@@ -31,8 +28,6 @@ interface CourseDescriptionProps {
 const CourseDescription: React.FC<CourseDescriptionProps> = ({ course }) => {
     const router = useRouter();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-    const global = useContext(globalContext);
 
     const handleBeginCourse = async () => {
         const body = { courseId: course.id };

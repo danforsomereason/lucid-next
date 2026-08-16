@@ -1,7 +1,7 @@
 import Button from "@mui/material/Button"
 import { generateCertificatePdf } from "@/utils/generateCertificate";
-import { useCourseModules } from "@/context/courseModulesContext";
-import { useGlobal } from "@/context/globalContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { useState } from "react";
 import { Alert, Box, Paper, Typography } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";

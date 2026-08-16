@@ -1,4 +1,4 @@
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import { Module, ModuleProgress } from "@/types";
 import ModulesNavLabel from "./ModulesNavLabel";
 import { SectionItem } from "./styled";

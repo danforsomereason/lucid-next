@@ -1,5 +1,5 @@
 import PollIcon from "@mui/icons-material/Poll";
-import { useCourseModules } from "@/context/courseModulesContext";
+import { useCourseModules } from "@/context/CourseModulesContext";
 import ModulesNav from "./ModulesNav";
 import { SURVEY_QUESTIONS } from "@/types";
 

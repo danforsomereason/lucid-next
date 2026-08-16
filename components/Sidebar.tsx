@@ -15,7 +15,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import LaptopChromebookIcon from '@mui/icons-material/LaptopChromebook';
 import Link from "next/link";
-import { useGlobal } from "../context/globalContext";
+import { useGlobal } from "../context/GlobalContext";
 
 const drawerWidth = 280;
 const navbarHeight = 86;

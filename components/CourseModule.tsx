@@ -1,6 +1,6 @@
 'use client'
 
-import { useCourseModules } from "@/context/courseModulesContext"
+import { useCourseModules } from "@/context/CourseModulesContext"
 import { Paper, Typography, Box, Button } from "@mui/material"
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 

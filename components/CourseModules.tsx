@@ -1,7 +1,7 @@
 'use client'
 
-import { CourseModulesContext, CourseModulesContextValue } from "@/context/courseModulesContext"
-import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, Module, ModuleProgress, RelatedCourse, RelatedModule, SafeQuestion, SURVEY_QUESTIONS, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
+import CourseModulesContext from "@/context/CourseModulesContext"
+import { AssignedCourse, CheckQuestionInput, CheckQuestionOutput, CheckQuestionsInput, checkQuestionsInputSchema, checkQuestionsOutputSchema, CourseModulesContextValue, EndModuleInput, endModuleInputSchema, endModuleOutputSchema, Module, ModuleProgress, RelatedCourse, SafeQuestion, SURVEY_QUESTIONS, SurveyAnswer, SurveyInput, surveyOutputSchema } from "@/types"
 import areModulesCompleted from "@/utils/areModulesCompleted"
 import axios from "axios"
 import { useState } from "react"

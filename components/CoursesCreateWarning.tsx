@@ -1,11 +1,12 @@
-import { Role } from "@/types";
+'use client'
+
 import isInstructing from "@/utils/isInstructing";
+import useGlobalUser from "@/utils/useGlobalUser";
 import { Container, Alert } from "@mui/material";
 
-export default function CoursesCreateWarning(props: {
-  role: Role
-}) {
-  const instructing = isInstructing({ role: props.role })
+export default function CoursesCreateWarning() {
+  const globalUser = useGlobalUser()
+  const instructing = isInstructing({ role: globalUser.role })
 
   if (instructing) {
     return <></>

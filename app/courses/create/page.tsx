@@ -1,9 +1,11 @@
 import CoursesCreateUpgrade from "@/components/CoursesCreateUpgrade";
 import CoursesCreateWarning from "@/components/CoursesCreateWarning";
 import CreateCourseProvider from "@/components/CreateCourseProvider";
+import UsersProvider from "@/components/UsersProvider";
 import db from "@/db";
 import { usersTable } from "@/schema";
 import authenticateRedirect from "@/utils/authenticateRedirect";
+import getRelatedUsers from "@/utils/getRelatedUsers";
 import { and, eq, ne } from "drizzle-orm";
 
 export default async function CoursesCreate() {
@@ -16,19 +18,15 @@ export default async function CoursesCreate() {
     ne(usersTable.role, "super_admin"),
     ne(usersTable.role, 'instructor')
   )
-  const users = await db.query.usersTable.findMany({
+  const users = await getRelatedUsers({
+    db,
     where: condition,
   });
   return (
-    <>
-      <CoursesCreateWarning
-        role={user.role}
-      />
-      <CoursesCreateUpgrade
-        user={user}
-        users={users}
-      />
-      <CreateCourseProvider user={user} />
-    </>
+    <UsersProvider rows={users}>
+      <CoursesCreateWarning />
+      <CoursesCreateUpgrade />
+      <CreateCourseProvider />
+    </UsersProvider>
   )
 }

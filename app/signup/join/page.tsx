@@ -1,6 +1,6 @@
 'use client'
 
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { checkUserExists, registerJoin } from "@/requests/users";
 import { licenseTypeSchema } from "@/types";
 import {

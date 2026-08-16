@@ -16,6 +16,7 @@ import {
 import { createSchemaFactory } from "drizzle-zod";
 import { z } from "zod";
 import db from "@/db";
+import { Dispatch, SetStateAction } from "react";
 
 const factory = createSchemaFactory({
   coerce: {
@@ -76,6 +77,7 @@ export type User = z.infer<typeof userSchema>;
 const userInsertSchema = factory.createInsertSchema(usersTable);
 export type UserInsert = z.infer<typeof userInsertSchema>;
 const userUpdateSchema = factory.createUpdateSchema(usersTable)
+export type UserFind = NonNullable<Parameters<typeof db.query.usersTable.findMany>[0]>;
 
 export const verifiedUserSchema = factory.createSelectSchema(verifiedUsersTable);
 export type VerifiedUser = z.infer<typeof verifiedUserSchema>;
@@ -298,3 +300,92 @@ export const SURVEY_QUESTIONS = [
   'The total length of time to complete the course:',
   'Please provide any additional comments you may have regarding this course:'
 ]
+
+export interface GlobalValue {
+  currentUser?: RelatedUser
+  setCurrentUser: Dispatch<SetStateAction<RelatedUser | undefined>>;
+}
+
+export interface CourseCreatorContextValue {
+  ceHours: string;
+  description: string;
+  maximumAttempts: string;
+  modules: ModuleDef[];
+  passingScore: string;
+  quizQuestions: QuestionDef[];
+  title: string;
+  updateCeHours: (value: string) => void;
+  updateDescription: (value: string) => void;
+  updateMaximumAttempts: (value: string) => void;
+  updateOption: (
+    questionIndex: number,
+    optionIndex: number,
+    optionValue: string
+  ) => void;
+  updatePassingScore: (value: string) => void;
+  updateQuestion: <K extends keyof QuestionDef>(
+    key: K,
+    index: number,
+    value: QuestionDef[K]
+  ) => void;
+  updateTitle: (value: string) => void;
+  addModule: () => void;
+  updateModule: <K extends keyof ModuleDef>(
+    key: K,
+    index: number,
+    value: ModuleDef[K]
+  ) => void;
+  removeModule: (moduleIndex: number) => void
+  addQuestion: () => void;
+  removeQuestion: (questionIndex: number) => void;
+  addOption: (questionIndex: number) => void;
+  removeOption: (questionIndex: number, optionIndex: number) => void;
+  clearForm: () => void;
+  submitCourse: () => Promise<void>
+}
+
+export interface CourseModulesContextValue {
+  advanceQuestion: () => Promise<void>
+  advanceSurvey: () => Promise<void>
+  assignedCourse: AssignedCourse
+  completeModule: () => Promise<void>
+  course: RelatedCourse
+  moduleProgresses: ModuleProgress[]
+  modules: Module[]
+  modulesCompleted: boolean
+  onLastQuestion: boolean
+  questions: SafeQuestion[]
+  quizCompleted: boolean
+  quizShown: boolean
+  results: CheckQuestionOutput[]
+  restart: () => void
+  retakeQuiz: () => void
+  score: number
+  selectModule: (moduleId: string) => void
+  selectOption: (optionId: string) => void
+  selectedModuleId?: string
+  selectedModule?: Module
+  selectedOption?: Option
+  selectedOptionId?: string
+  selectedQuestionId?: string
+  selectedQuestion?: SafeQuestion
+  selectSurveyAnswer: (answer: string) => void
+  showQuiz: () => void
+  showSurvey: () => void
+  surveyAnswer: string
+  surveyAnswers: SurveyAnswer[]
+  surveyCompleted: boolean
+  surveyShown: boolean
+}
+
+export interface UsersContextValue {
+  rows: RelatedUser[]
+  upgrade: (props: { 
+    userId: string
+  }) => Promise<void>
+}
+
+export interface UserContextValue {
+  row: RelatedUser
+  upgrade: () => Promise<void>
+}

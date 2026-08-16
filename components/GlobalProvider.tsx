@@ -1,5 +1,5 @@
 'use client'
-import { globalContext } from "@/context/globalContext";
+import GlobalContext from "@/context/GlobalContext";
 import { RelatedUser } from "@/types";
 import { ReactNode, useState } from "react";
 
@@ -10,8 +10,8 @@ export default function GlobalProvider(props: {
   const [currentUser, setCurrentUser] = useState(props.currentUser);
 
   return (
-    <globalContext.Provider value={{ currentUser, setCurrentUser }}>
+    <GlobalContext value={{ currentUser, setCurrentUser }}>
       {props.children}
-    </globalContext.Provider>
+    </GlobalContext>
   )
 }

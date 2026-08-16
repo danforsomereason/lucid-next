@@ -1,4 +1,4 @@
-import { useGlobal } from "@/context/globalContext";
+import { useGlobal } from "@/context/GlobalContext";
 import { Badge, Typography } from "@mui/material";
 
 export default function NavBadge() {
