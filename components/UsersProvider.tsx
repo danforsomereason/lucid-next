@@ -3,7 +3,7 @@
 import { useGlobal } from "@/context/GlobalContext";
 import UsersContext from "@/context/UsersContext";
 import { RelatedUser, UpgradeUserInput, upgradeUserInputSchema, upgradeUserOutputSchema, UsersContextValue } from "@/types";
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useCallback } from "react";
 
 export default function UsersProvider(props: {
   children: ReactNode
@@ -12,9 +12,9 @@ export default function UsersProvider(props: {
   const global = useGlobal()
   const [rows, setRows] = useState(props.rows)
 
-  async function upgrade(props: {
+  const upgrade = useCallback(async (props: {
     userId: string
-  }) {
+  }) => {
     const input: UpgradeUserInput = {
       userId: props.userId,
     }
@@ -40,7 +40,7 @@ export default function UsersProvider(props: {
     if (output.id === global.currentUser?.id) {
       global.setCurrentUser(output);
     }
-  }
+  }, [])
 
   const value: UsersContextValue = {
     rows,

@@ -18,13 +18,11 @@ export default function CourseModules(props: {
   savedResults: CheckQuestionOutput[]
   surveyAnswers: SurveyAnswer[]
 }) {
-  console.log('props.moduleProgresses', props.moduleProgresses)
   const [assignment, setAssignment] = useState(props.assignedCourse)
   const [results, setResults] = useState<CheckQuestionOutput[]>(props.savedResults)
   const [modules] = useState(props.modules)
   const [moduleProgresses, setModuleProgresses] = useState(props.moduleProgresses)
   const modulesCompleted = areModulesCompleted(modules, moduleProgresses)
-  console.log('modulesCompleted', modulesCompleted)
   const [selectedModuleId, setSelectedModuleId] = useState<string | undefined>(() => {
     if (modulesCompleted) {
       return undefined
@@ -32,7 +30,6 @@ export default function CourseModules(props: {
     return props.modules[0].id
   })
   const quizCompleted = assignment.completedAt !== null
-  console.log('quizCompleted', quizCompleted)
   const [selectedQuestionId, setSelectedQuestionId] = useState<string | undefined>(() => {
     if (quizCompleted) {
       return undefined
@@ -43,7 +40,6 @@ export default function CourseModules(props: {
     return undefined
   })
   const [quizShown, setQuizShown] = useState(() => !quizCompleted && modulesCompleted)
-  console.log('quizShown', quizShown)
   const [selectedOptionId, setSelectedOptionId] = useState<string | undefined>(undefined)
   const [answers, setAnswers] = useState<CheckQuestionInput[]>([])
   const [surveyAnswer, setSurveyAnswer] = useState('')
@@ -69,7 +65,6 @@ export default function CourseModules(props: {
     }
   }
   async function completeModule() {
-    console.log
     if (!selectedModuleId) {
       throw new Error('No module selected')
     }
@@ -118,7 +113,6 @@ export default function CourseModules(props: {
     setSelectedModuleId(undefined)
   }
   function showSurvey() {
-    console.log('showing survey')
     setSurveyShown(true)
     setQuizShown(false)
     setSelectedModuleId(undefined)

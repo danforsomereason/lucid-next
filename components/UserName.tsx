@@ -1,7 +1,7 @@
-import { User } from "@/types";
+import { useUser } from "@/context/UserContext"
 
-export default function UserName (props: {
-  user: User
-}) {
-  return <>{props.user.firstName} {props.user.lastName}</>
+export default function UserName () {
+  const user = useUser()
+
+  return <>{user.row.firstName} {user.row.lastName}</>
 }

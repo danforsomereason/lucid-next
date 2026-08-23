@@ -34,7 +34,6 @@ const Sidebar = ({
     throw new Error('Unauthenticated');
   }
   const isAdmin = global.currentUser.role === 'admin'
-  console.log('isAdmin', isAdmin)
   const isInstructor = global.currentUser.role === 'instructor'
   const isSuperAdmin = global.currentUser.role === 'super_admin'
   const isInstructorOrSuperAdmin = isInstructor || isSuperAdmin

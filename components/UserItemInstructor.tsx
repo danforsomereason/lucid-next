@@ -1,24 +1,18 @@
 'use client'
 
-import { User } from "@/types"
+import { useUser } from "@/context/UserContext"
 import isInstructing from "@/utils/isInstructing"
 import { Button } from "@mui/material"
-import axios from "axios"
 
-export default function UserItemInstructor(props: {
-  user: User
-}) {
-  const instructing = isInstructing({ role: props.user.role })
+export default function UserItemInstructor() {
+  const user = useUser()
+  const instructing = isInstructing({ role: user.row.role })
   if (instructing) {
     return <></>
   }
   return (
     <Button
-      onClick={async () => {
-        await axios.post(`/api/v1/users/upgrade`, {
-          userId: props.user.id,
-        })
-      }}
+      onClick={user.upgrade}
     >
       Upgrade to Instructor
     </Button>

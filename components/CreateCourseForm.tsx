@@ -26,6 +26,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import LucidInput from "./LucidInput";
+import { QUESTION_TYPES } from "@/schema";
 
 export default function CreateCourseForm() {
   const courseCreator = useCourseCreator();
@@ -294,9 +295,13 @@ export default function CreateCourseForm() {
                           },
                         }}
                       >
-                        <MenuItem value="True/False">True/False</MenuItem>
-                        <MenuItem value="Multiple Choice">Multiple Choice</MenuItem>
-                        <MenuItem value="All That Apply">All That Apply</MenuItem>
+                        {QUESTION_TYPES.map(type => {
+                          return (
+                            <MenuItem value={type} key={type}>
+                              {type}
+                            </MenuItem>
+                          )
+                        })}
                       </Select>
                     </FormControl>
 
@@ -416,15 +421,17 @@ export default function CreateCourseForm() {
           Save Course
         </Button>
       </Stack>
-      {submitStatus && (
-        <Alert
-          severity={submitStatus.type}
-          sx={{ mb: 3 }}
-          onClose={() => setSubmitStatus(null)}
-        >
-          {submitStatus.message}
-        </Alert>
-      )}
+      {
+        submitStatus && (
+          <Alert
+            severity={submitStatus.type}
+            sx={{ mb: 3 }}
+            onClose={() => setSubmitStatus(null)}
+          >
+            {submitStatus.message}
+          </Alert>
+        )
+      }
 
       <Dialog onClose={handleCloseClearDialog} open={clearDialogOpened}>
         <DialogTitle>Clear Form?</DialogTitle>
@@ -448,6 +455,6 @@ export default function CreateCourseForm() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Container >
   );
 }

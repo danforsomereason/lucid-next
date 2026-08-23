@@ -1,13 +1,11 @@
-import { SURVEY_QUESTIONS } from "@/constants";
 import db from "@/db";
 import { assignedCoursesTable, surveyAnswersTable } from "@/schema";
-import { surveyInputSchema, SurveyOutput } from "@/types";
+import { SURVEY_QUESTIONS, surveyInputSchema, SurveyOutput } from "@/types";
 import authenticate from "@/utils/authenticate";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST (request: Request) {
-  console.log('survey route')
   const user = await authenticate();
   if (!user) {
     return NextResponse.json({

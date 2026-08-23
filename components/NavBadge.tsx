@@ -3,7 +3,6 @@ import { Badge, Typography } from "@mui/material";
 
 export default function NavBadge() {
   const global = useGlobal();
-  console.log('global.currentUser', global.currentUser)
   if (!global.currentUser) {
     throw new Error('User missing')
   }

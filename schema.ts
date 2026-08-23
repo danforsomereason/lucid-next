@@ -27,11 +27,11 @@ export const approvedByEnum = pgEnum("approved_by", [
   "Nursing",
 ]);
 
-export const questionTypeEnum = pgEnum("question_type", [
+export const QUESTION_TYPES = [
   "True/False",
   "Multiple Choice",
-  "All That Apply",
-]);
+] as const
+export const questionTypeEnum = pgEnum("question_type", QUESTION_TYPES);
 
 export const licenseTypeEnum = pgEnum("license_type", [
   "counseling",

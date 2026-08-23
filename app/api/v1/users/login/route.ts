@@ -10,7 +10,6 @@ import env from "@/env";
 
 export async function POST(request: Request) {
   const body: unknown = await request.json()
-  console.log('body', body)
   const input = loginInputSchema.parse(body)
   const existingUser = await db.query.usersTable.findFirst({
     where: eq(usersTable.email, input.email),

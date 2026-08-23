@@ -123,7 +123,6 @@ const IndividualCheckout: React.FC = () => {
       const formLicenseType = formData.licenseType === 'unlicensed'
         ? undefined
         : formData.licenseType
-      console.log('formLicenseType', formLicenseType);
       const licenseType = licenseTypeSchema.parse(formLicenseType)
       const output = await registerTeam(
         formData.firstName,

@@ -33,7 +33,6 @@ export default function CoursesCreateUpgrade() {
           body: json,
         });
         const data = await response.json();
-        console.log('data', data);
         const output = upgradeUserOutputSchema.parse(data);
         if (output.id === global.currentUser?.id) {
           global.setCurrentUser(output);

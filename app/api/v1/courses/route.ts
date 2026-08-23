@@ -1,18 +1,23 @@
 import db from '@/db'
+import { coursesTable, usersTable } from '@/schema'
 import { readCoursesOutputSchema } from '@/types'
 import authenticate from '@/utils/authenticate'
+import { eq, inArray } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 
 export async function GET () {
   const user = await authenticate()
-  const courses = await db.query.coursesTable.findMany()
-  if (user?.organizationId) {
-    const organizationCourses = await db
-      .select({ course: courses })
-      .from(courses)
-      .innerJoin(instructors, eq(courses.instructorId, instructors.id))
-      .where(eq(instructors.orgId, targetOrgId)) 
+  if (!user || !user.organizationId) {
+    const output: unknown[] = []
+    return NextResponse.json({ output })
   }
+  const usersWhere = eq(usersTable.organizationId, user.organizationId)
+  const users = await db.query.usersTable.findMany({ where: usersWhere })
+
+  const userIds = users.map(user => user.id)
+  const coursesWhere = inArray(coursesTable.instructorId, userIds)
+
+  const courses = await db.query.coursesTable.findMany({ where: coursesWhere })
 
   const output = readCoursesOutputSchema.parse(courses)
   return NextResponse.json(output)

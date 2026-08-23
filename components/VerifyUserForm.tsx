@@ -20,7 +20,6 @@ export default function VerifyUserForm() {
           '/api/v1/users/verify',
           body,
         )
-        console.log('response', response)
       }}
     >
       <TextField

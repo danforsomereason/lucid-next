@@ -20,7 +20,6 @@ export async function POST(request: Request) {
       role: 'admin',
       join: false
     });
-    console.log('creation', creation)
     if (input.verifiedUsers.length > 0) {
       const inserts = input.verifiedUsers.map((email) => {
         const insert: VerifiedUserInsert = {

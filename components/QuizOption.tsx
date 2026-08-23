@@ -1,5 +1,4 @@
 import { Option } from "@/types";
-import { FormControlLabel, Radio } from "@mui/material";
 import OptionView from "./OptionView";
 
 interface QuizOptionProps {

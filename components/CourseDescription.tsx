@@ -33,10 +33,8 @@ const CourseDescription: React.FC<CourseDescriptionProps> = ({ course }) => {
         const body = { courseId: course.id };
         const response = await axios.post("/api/v1/courses/assign", body);
         if (response.status === 409) {
-            console.log("Course already assigned. Proceeding to modules.");
+            console.warn("Course already assigned. Proceeding to modules.");
         } else if (response.status !== 200) throw new Error("Course not found");
-
-        console.log("Data - Assigned Course Response", response.data);
 
         router.push(`/course/${course.id}/modules`);
     };

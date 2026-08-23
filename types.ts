@@ -267,6 +267,16 @@ const safeQuestionSchema = relatedQuestionSchema.omit({
 })
 export type SafeQuestion = z.infer<typeof safeQuestionSchema>;
 
+export const deleteVerifiedUserInputSchema = z.object({
+  verifiedUserId: z.string(),
+});
+export type DeleteVerifiedUserInput = z.infer<typeof deleteVerifiedUserInputSchema>;
+
+export const deleteVerifiedUserOutputSchema = z.object({
+  rowCount: z.number(),
+});
+export type DeleteVerifiedUserOutput = z.infer<typeof deleteVerifiedUserOutputSchema>;
+
 // UI
 
 export const INSTRUCTOR_ROLES = ["instructor", "super_admin"]
@@ -388,4 +398,17 @@ export interface UsersContextValue {
 export interface UserContextValue {
   row: RelatedUser
   upgrade: () => Promise<void>
+}
+
+export interface VerifiedUsersContextValue {
+  rows: VerifiedUser[]
+  delete: (props: {
+    verifiedUserId: string
+  }) => Promise<void>
+}
+
+export interface VerifiedUserContextValue {
+  row: VerifiedUser
+  delete: () => Promise<void>
+  user?: RelatedUser
 }

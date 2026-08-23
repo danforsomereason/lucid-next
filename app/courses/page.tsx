@@ -71,18 +71,10 @@ const Courses: React.FC = () => {
       const categoryId = searchParams.get("category");
       if (categoryId) {
         const data = await getCoursesByCategory(categoryId)
-        // console.log("Course data structure:", data[0]);
-        // console.log("Course ID type:", typeof data[0]._id);
-        // console.log("Course ID value:", data[0]._id);
-        // console.log("Filtered courses:", data);
         setCourses(data);
         setFilteredCourses(data);
       } else {
         const data = await getCourses()
-        // console.log("Course data structure:", data[0]);
-        // console.log("Course ID type:", typeof data[0]._id);
-        // console.log("Course ID value:", data[0]._id);
-        // console.log("All courses:", data);
         setCourses(data);
         setFilteredCourses(data);
       }
